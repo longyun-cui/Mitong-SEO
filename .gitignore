@@ -1,43 +1,7 @@
-.DS_Store
-node_modules/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-#################
-## Node.js
-#################
-
-node_modules
-npm-debug.log
-src/version.js
-
-#################
-## Grunt
-#################
-
-.grunt
-_SpecRunner.html
-reports
-jsdoc
-dist
-build/temp
-coverage/
-
-typings/
-
-#################
-## Eclipse
-#################
-
-*.pydevproject
-.project
-".gitignore" 194L, 2287C
-
 #################
 ## Learvel
 #################
+
 /node_modules
 /public/hot
 /public/storage
@@ -46,9 +10,11 @@ typings/
 /storage/resource
 /vendor
 /.idea
+/.vscode
 /.vagrant
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
 .env
+composer.lock
