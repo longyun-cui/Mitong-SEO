@@ -1,8 +1,8 @@
 @extends('admin.layout.layout')
 
-@section('title','softorg 管理员后台')
-@section('header','softorg')
-@section('description','管理员后台')
+@section('head_title','米同科技')
+@section('header','企业后台')
+@section('description','企业后台')
 @section('breadcrumb')
     <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
     <li><a href="#"><i class="fa "></i>Here</a></li>
@@ -13,9 +13,9 @@ admin.index
 @endsection
 
 
-@section('js')
-    <script>
-        $(function() {
-        });
-    </script>
+@section('custom-script')
+<script>
+    $(function() {
+    });
+</script>
 @endsection

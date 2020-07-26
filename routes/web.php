@@ -12,31 +12,8 @@ require __DIR__.'/frontend.php';
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//    return redirect(config('common.website.front.prefix').'/softorg');
-//});
-
-
-
-
-Route::get(config('common.website.front.prefix').'/', function () {
-//    return view('welcome');
-    return redirect(config('common.website.front.prefix').'/softorg');
-});
-
-
-
-
-//Auth::routes();
-//
-//Route::get('/home', 'HomeController@index')->name('home');
-
-
-
-
-Route::get('/home', function () {
-    return view('front.'.config('common.view.front.template').'.index');
+Route::get('/', function () {
+    return view('welcome');
 });
 
 
@@ -59,6 +36,38 @@ Route::group(['prefix' => 'common'], function () {
 });
 
 
+/*
+ * 超级管理员
+ */
+Route::group(['prefix' => 'super-admin', 'namespace' => 'Super'], function () {
+    require(__DIR__ . '/Super/route.php');
+});
+
+
+/*
+ * 管理员
+ */
+Route::group(['prefix' => 'admin', 'namespace' => 'MT\Admin'], function () {
+    require(__DIR__ . '/MT/Admin/route.php');
+});
+
+
+/*
+ * 代理商
+ */
+Route::group(['prefix' => 'agent', 'namespace' => 'MT\Agent'], function () {
+    require(__DIR__ . '/MT/Agent/route.php');
+});
+
+
+/*
+ * 客户
+ */
+Route::group(['prefix' => 'client', 'namespace' => 'MT\Client'], function () {
+    require(__DIR__ . '/MT/Client/route.php');
+});
+
+
 
 
 /*前台注册与登录*/
@@ -69,64 +78,6 @@ Route::group(['prefix' => 'user', 'namespace' => 'Front'], function () {
         Route::match(['get','post'], 'login','AuthController@login');
         Route::match(['get','post'], 'logout','AuthController@logout');
     });
-});
-
-
-
-
-/*
- * TEST 测试
- */
-Route::group(['prefix' => 'test', 'namespace' => 'Test'], function () {
-    require(__DIR__ . '/Test/route.php');
-});
-
-
-/*
- * 开发中
- */
-Route::group(['prefix' => 'developing', 'namespace' => 'Developing'], function () {
-    require(__DIR__ . '/Developing/route.php');
-});
-
-
-/*
- * 根
- */
-Route::group(['namespace' => 'Root'], function () {
-    require(__DIR__ . '/Root/route.php');
-});
-
-
-/*
- * 超级管理员
- */
-Route::group(['namespace' => 'Super'], function () {
-    require(__DIR__ . '/Super/route.php');
-});
-
-
-/*
- * 企业对内管理员
- */
-Route::group(['namespace' => 'Inside'], function () {
-    require(__DIR__ . '/Inside/route.php');
-});
-
-
-/*
- * 企业对外管理员
- */
-Route::group(['namespace' => 'Outside'], function () {
-    require(__DIR__ . '/Outside/route.php');
-});
-
-
-/*
- * 企业站
- */
-Route::group(['namespace' => 'Org'], function () {
-    require(__DIR__ . '/Org/route.php');
 });
 
 

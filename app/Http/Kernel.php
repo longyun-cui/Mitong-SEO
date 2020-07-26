@@ -60,11 +60,13 @@ class Kernel extends HttpKernel
 
 
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'agent' => \App\Http\Middleware\AgentMiddleware::class,
+        'client' => \App\Http\Middleware\ClientMiddleware::class,
+
         'wechat.share' => \App\Http\Middleware\WechatShareMiddleware::class,
 
         'super.admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
 
-        'org.admin' => \App\Http\Middleware\OrgAdminMiddleware::class,
     ];
 
 

@@ -5,11 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 class Softorg extends Model
 {
     //
+    protected $connection = "mysql2";
+
     protected $table = "softorg_organization";
+
     protected $fillable = [
         'sort', 'type', 'name', 'website_name', 'short', 'slogan', 'description', 'logo', 'address', 'telephone', 'email', 'qq', 'wechat', 'weibo'
     ];
+
     protected $dateFormat = 'U';
+
+
+
 
     function administrators()
     {

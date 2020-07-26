@@ -1,11 +1,11 @@
-@extends('admin.layout.auth')
+@extends('root.admin.layout.auth')
 
 @section('title','登陆')
 
 @section('content')
 <div class="login-box">
     <div class="login-logo">
-        <a href="/admin"><b>轻机构</b> 后台登录</a>
+        <a href="/admin"><b>{{ config('common.name') }}</b> 后台</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -45,7 +45,7 @@
         <!-- /.social-auth-links -->
 
         <a href="#">忘记密码</a><br>
-        <a href="/admin/register" class="text-center">注册新用户</a>
+        {{--<a href="/admin/register" class="text-center">注册新用户</a>--}}
 
     </div>
     <!-- /.login-box-body -->

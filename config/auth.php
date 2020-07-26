@@ -46,14 +46,14 @@ return [
             'provider' => 'admins',
         ],
 
-        'super_admin' => [
+        'agent' => [
             'driver' => 'session',
-            'provider' => 'super_admins',
+            'provider' => 'agents',
         ],
 
-        'org_admin' => [
+        'client' => [
             'driver' => 'session',
-            'provider' => 'org_admins',
+            'provider' => 'clients',
         ],
 
         'api' => [
@@ -87,17 +87,17 @@ return [
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Administrator::class,
+            'model' => App\Models\MT\User::class,
         ],
 
-        'super_admins' => [
+        'agents' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Sys\SysAdministrator::class,
+            'model' => App\Models\MT\User::class,
         ],
 
-        'org_admins' => [
+        'clients' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Org\OrgAdministrator::class,
+            'model' => App\Models\MT\User::class,
         ],
 
         // 'users' => [

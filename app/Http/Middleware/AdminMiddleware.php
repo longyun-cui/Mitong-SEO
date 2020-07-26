@@ -4,7 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use App\Models\Softorg;
+
+use App\Models\MT\User;
+
 use Auth, Response;
 
 class AdminMiddleware
@@ -28,10 +30,10 @@ class AdminMiddleware
         }
         else
         {
-            $admin = Auth::guard('admin')->user();
-            $org_id = $admin->org_id;
-            $org = Softorg::find($org_id);
-            view()->share('org', $org);
+            $user = Auth::guard('admin')->user();
+            $user_id = $user->id;
+            $user_data = User::with('ep','parent','fund')->find($user_id);
+            view()->share('user_data', $user_data);
         }
         return $next($request);
 

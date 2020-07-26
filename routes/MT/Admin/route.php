@@ -1,0 +1,61 @@
+<?php
+
+
+/*
+ * 超级后台
+ */
+Route::group([], function () {
+
+
+    // 测试
+    Route::group(['prefix' => 'test'], function () {
+
+        $controller = "TestController";
+
+        Route::match(['get','post'], '/', $controller.'@index');
+        Route::match(['get','post'], '/temp', $controller.'@temp');
+        Route::match(['get','post'], '/search-keyword', $controller.'@search_keyword');
+
+    });
+
+
+    // 注册登录
+    Route::group(['namespace' => 'Auth'], function () {
+
+        $controller = "AuthController";
+
+        Route::match(['get','post'], 'login', $controller.'@login');
+        Route::match(['get','post'], 'logout', $controller.'@logout');
+
+    });
+
+
+    // 后台管理，需要登录
+    Route::group(['middleware' => 'admin'], function () {
+
+        $controller = "IndexController";
+
+        Route::get('/', $controller.'@index');
+        Route::get('index', $controller.'@index');
+
+
+        Route::match(['get','post'], '/user/agent-list', $controller.'@view_user_agent_list');
+        Route::match(['get','post'], '/user/client-list', $controller.'@view_user_client_list');
+
+        Route::match(['get','post'], '/user/agent-login', $controller.'@operate_user_agent_login');
+        Route::match(['get','post'], '/user/client-login', $controller.'@operate_user_client_login');
+
+
+        Route::match(['get','post'], '/business/site-list', $controller.'@view_business_site_list');
+        Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
+
+
+        Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
+        Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');
+        Route::match(['get','post'], '/finance/expense-record', $controller.'@view_finance_expense_record');
+
+
+    });
+
+
+});

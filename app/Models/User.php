@@ -21,6 +21,9 @@ class User extends Authenticatable
 
     protected $dateFormat = 'U';
 
+
+
+
     function ext()
     {
         return $this->hasOne('App\Models\UserExt','user_id','id');

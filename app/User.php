@@ -8,7 +8,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = "softorg_users";
+    protected $table = "users";
 
     protected $fillable = [
         'sort', 'type', 'mobile', 'email', 'password', 'name', 'nickname',
@@ -21,6 +21,9 @@ class User extends Authenticatable
 
     protected $dateFormat = 'U';
 
+
+
+
     function ext()
     {
         return $this->hasOne('App\UserExt','user_id','id');
@@ -28,7 +31,7 @@ class User extends Authenticatable
 
     function org()
     {
-        return $this->hasOne('App\Org\OrgOrganization','user_id','id');
+        return $this->hasOne('App\Org\Organization','user_id','id');
     }
 
 
