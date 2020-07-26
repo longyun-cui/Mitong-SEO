@@ -58,8 +58,9 @@ class IndexRepository {
     public function get_user_agent_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-        $query = User::select('id','pid','epid','username','usergroup','createtime')
-            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
+//        $query = User::select('id','pid','epid','username','usergroup','createtime','userstatus')
+        $query = User::select('*')
+//            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('ep','parent','fund')
             ->withCount([
                 'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
@@ -137,6 +138,41 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+    // 返回【客户列表】数据
+    public function delete_user_agent($post_data)
+    {
+        $admin = Auth::guard('admin')->user();
+        $id = decode($post_data["id"]);
+        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试");
+
+        $activity = Activity::find($id);
+        if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
+
+        DB::beginTransaction();
+        try
+        {
+            $bool = $activity->delete();
+            if($bool)
+            {
+                $item = Item::find($activity->item_id);
+                if($item)
+                {
+                    $bool1 = $item->delete();
+                    if(!$bool1) throw new Exception("delete-item--fail");
+                }
+            }
+            else throw new Exception("delete-activity--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            return response_fail([],'删除失败，请重试');
+        }
+    }
+
 
 
     /*
@@ -183,9 +219,11 @@ class IndexRepository {
     public function get_business_keyword_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','sitename','keyword','searchengine','price','createtime')
-            ->with('creator')
-            ->orderby("id","desc");
+//        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','sitename','keyword','searchengine','price','createtime')
+        $query = SEOKeyword::select('*')->with('creator');
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
 
         $total = $query->count();
 

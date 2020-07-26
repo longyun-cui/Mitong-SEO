@@ -23,7 +23,11 @@ class IndexRepository {
     // 返回【主页】视图
     public function view_client_index()
     {
-        return view('mt.client.index');
+        $client = Auth::guard("client")->user();
+        $client_id = $client->id;
+        $expense_funds = ExpenseRecord::where('ownuserid',$client_id)->sum('price');
+        return view('mt.client.index')
+            ->with(['expense_funds'=>$expense_funds]);
     }
 
 
@@ -109,7 +113,9 @@ class IndexRepository {
     public function get_business_my_keyword_list_datatable($post_data)
     {
         $client_id = Auth::guard("client")->user()->id;
-        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','sitename','keyword','searchengine','price','createtime')
+//        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','website','sitename','keyword','searchengine','price','createtime','initialrangking','latestranking')
+        $query = SEOKeyword::select('*')
+            ->with('site')
             ->where('createuserid',$client_id)
             ->orderby("id","desc");
 
@@ -189,8 +195,7 @@ class IndexRepository {
         $client_id = Auth::guard("client")->user()->id;
         $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
             ->with('user','site','keyword')
-            ->where('ownuserid',$client_id)
-            ->orderby("id","desc");
+            ->where('ownuserid',$client_id);
 
         $total = $query->count();
 

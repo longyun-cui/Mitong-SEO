@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\User;
+use App\Models\MT\User;
 use App\Models\MT\Administrator;
 
 use Response, Auth, Validator, DB, Exception;
@@ -40,12 +40,12 @@ class AuthController extends Controller
 
             // 手机验证
             $mobile = request()->get('mobile');
-            $admin = Administrator::whereMobile($mobile)->first();
+            $admin = User::whereMobileno($mobile)->first();
 
             if($admin)
             {
-                if($admin->active == 1)
-                {
+//                if($admin->active == 1)
+//                {
                     $password = request()->get('password');
                     if(password_check($password,$admin->password))
                     {
@@ -53,8 +53,8 @@ class AuthController extends Controller
                         return response_success();
                     }
                     else return response_error([],'账户or密码不正确');
-                }
-                else return response_error([],'账户尚未激活，请先激活账户。');
+//                }
+//                else return response_error([],'账户尚未激活，请先激活账户。');
             }
             else return response_error([],'账户不存在');
         }

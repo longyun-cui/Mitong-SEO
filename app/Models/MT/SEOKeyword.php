@@ -27,6 +27,11 @@ class SEOKeyword extends Model
         return $this->belongsTo('App\Models\MT\User','createuserid','id');
     }
 
+    function site()
+    {
+        return $this->belongsTo('App\Models\MT\SEOSite','siteid','id');
+    }
+
 
     /**
      * 获得此文章的所有评论。

@@ -43,11 +43,27 @@
                         <th>id</th>
                         <th>关键词</th>
                         <th>搜索引擎</th>
-                        <th>状态</th>
+                        <th>站点</th>
                         <th>创建时间</th>
-                        <th>操作</th>
+                        <th>单价</th>
+                        <th>初始排名</th>
+                        <th>最新排名</th>
+                        <th>检测时间</th>
+                        <th>最新消费</th>
+                        <th>达标天数</th>
+                        <th>累计消费</th>
+                        <th>状态</th>
+                        <th>历史数据</th>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -146,12 +162,10 @@
                         }
                     },
                     {
-                        "data": "keywordstatus",
+                        "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
-                            else return data;
+                            return data;
                         }
                     },
                     {
@@ -162,17 +176,76 @@
                         }
                     },
                     {
+                        "data": "price",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元/天';
+                        }
+                    },
+                    {
+                        "data": "initialranking",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "latestranking",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "detectiondate",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "latestconsumption",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元';
+                        }
+                    },
+                    {
+                        "data": "standarddays",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'天';
+                        }
+                    },
+                    {
+                        "data": "totalconsumption",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元';
+                        }
+                    },
+                    {
+                        "data": "keywordstatus",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
+                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                            else return data;
+                        }
+                    },
+                    {
                         'data': 'id',
                         'orderable': false,
                         render: function(value) {
                             var html =
-                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                        '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >查看详情</a>';
                             return html;
                         }
                     }
@@ -251,20 +324,20 @@
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
         });
 
         // 【数据分析】
         $("#item-main-body").on('click', ".item-statistics-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+            window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
             {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+                window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
         // 【删除】

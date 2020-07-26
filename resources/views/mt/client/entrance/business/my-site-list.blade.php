@@ -165,12 +165,12 @@
                         'orderable': false,
                         render: function(value) {
                             var html =
-                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                        '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                 '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
                             return html;
                         }

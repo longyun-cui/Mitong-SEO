@@ -44,12 +44,10 @@
                         <th>站点</th>
                         <th>关键词</th>
                         <th>价格</th>
-                        <th>价格</th>
                         <th>记录时间</th>
                         <th>操作</th>
                     </tr>
                     <tr>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -159,14 +157,7 @@
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
-                    {
-                        "data": "price",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
+                            return data+'元';
                         }
                     },
                     {

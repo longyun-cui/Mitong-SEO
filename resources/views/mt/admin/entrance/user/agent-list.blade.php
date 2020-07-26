@@ -240,12 +240,13 @@
 //                        }
 //                    },
                     {
-                        'data': 'status',
+                        'data': 'userstatus',
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == 0) return '<small class="btn btn-xs">未启用</small>';
-                            else if(data == 1) return '<small class="btn btn-xs">正常</small>';
-                            else return '<small class="btn btn-xs bg-red">禁用</small>';
+                            return data;
+//                            if(data == 0) return '<small class="btn btn-xs">未启用</small>';
+//                            else if(data == 1) return '<small class="btn btn-xs">正常</small>';
+//                            else return '<small class="btn btn-xs bg-red">禁用</small>';
                         }
                     },
                     {
