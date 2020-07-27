@@ -374,8 +374,8 @@ class IndexController extends Controller
 
 
         $xParam_decode = json_decode($xParam,true);
-        if(isset($xParam_decode["Value"])) $task_id = $xParam_decode["Value"]["TaskId"]*10;
-        elseif(isset($xParam_decode["value"])) $task_id = $xParam_decode["value"]["TaskId"];
+        if(isset($xParam_decode["Value"])) $task_id = $xParam_decode["Value"]["TaskId"]."Value";
+        elseif(isset($xParam_decode["value"])) $task_id = $xParam_decode["value"]["TaskId"]."v";
         else $task_id = 0;
 //        dd($xParam_decode);
 
