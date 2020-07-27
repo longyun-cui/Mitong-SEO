@@ -373,12 +373,12 @@ class IndexController extends Controller
         $xSign = request("xSign",'');
 
 
-        $xParam_decode = json_decode(stripslashes($xParam),true);
+        $xParam_decode = json_decode($xParam,true);
 //        dd($xParam_decode);
 
 
-//        $keyword = SEOKeyword::where('taskId',$xParam_decode["value"]["TaskId"])->first();
-        $keyword = SEOKeyword::where('id',11575)->first();
+        $keyword = SEOKeyword::where('taskId',$xParam_decode["Value"]["TaskId"])->first();
+//        $keyword = SEOKeyword::where('id',11575)->first();
         $keyword->reviewopinion = $xParam;
         $keyword->save();
 //        dd($keyword->toArray());
