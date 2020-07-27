@@ -382,8 +382,8 @@ class IndexController extends Controller
 //        $keyword->save();
 //        dd($keyword->toArray());
 
-        $keyword = SEOKeyword::where('id',11575)->first();
-        $keyword->reviewopinion = "test channal";
+        $keyword = SEOKeyword::where('id',11574)->first();
+        $keyword->reviewopinion = "test channal ".rand(0,10);
         $keyword->save();
 
 /*
