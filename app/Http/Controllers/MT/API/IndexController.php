@@ -366,16 +366,17 @@ class IndexController extends Controller
     public function receive_from_youbangyun()
     {
         header("Content-Type:text/html;charset=UTF-8");
-        iconv("GB2312","UTF-8");
+//        iconv("GB2312","UTF-8");
 
-        $xAction = $_POST["xAction"];
-        $xParam = $_POST["xParam"];
-        $xSign = $_POST["xSign"];
+        $xAction = request("xAction",'');
+        $xParam = request("xParam",'test');
+        $xSign = request("xSign",'');
 
 
-        $keyword = SEOKeyword::where('id',1)->find();
+        $keyword = SEOKeyword::find(1);
         $keyword->reviewopinion = $xParam;
         $keyword->save;
+
 /*
 //        $Dao = M('keyword');
 //        $ra = $Dao->execute("UPDATE `ts_keyword` set reviewopinion = '{$xParam}' WHERE id = 1");
