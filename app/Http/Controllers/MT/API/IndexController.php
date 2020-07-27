@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\MT\Admin;
+namespace App\Http\Controllers\MT\API;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -14,7 +14,7 @@ use App\Repositories\MT\Admin\TestRepository;
 use Response, Auth, Validator, DB, Exception;
 use QrCode;
 
-class TestController extends Controller
+class IndexController extends Controller
 {
     //
     private $repo;

@@ -37,6 +37,14 @@ Route::group(['prefix' => 'common'], function () {
 
 
 /*
+ * API
+ */
+Route::group(['prefix' => 'api', 'namespace' => 'MT\API'], function () {
+    require(__DIR__ . '/MT/API/route.php');
+});
+
+
+/*
  * 超级管理员
  */
 Route::group(['prefix' => 'super-admin', 'namespace' => 'Super'], function () {
