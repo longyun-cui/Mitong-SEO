@@ -373,7 +373,7 @@ class IndexController extends Controller
         $xSign = request("xSign",'');
 
 
-        $xParam_decode = json_decode($xParam,true);
+        $xParam_decode = json_decode(stripslashes($xParam),true);
 //        dd($xParam_decode);
 
 
