@@ -20,11 +20,11 @@ Route::group([], function () {
     });
 
     // API
-    Route::group(['prefix' => 'test'], function () {
+    Route::group(['prefix' => 'api'], function () {
 
         $controller = "TestController";
 
-        Route::match(['get','post'], '/api/receive/youbangyu', $controller.'@receive_from_youbangyun');
+        Route::match(['get','post'], '/receive/youbangyu', $controller.'@receive_from_youbangyun');
 
     });
 
