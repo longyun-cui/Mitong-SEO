@@ -105,7 +105,7 @@ class TestController extends Controller
         $data = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate','<',$date)
-            ->orderby('id','desc')->limit(5)
+            ->orderby('id','desc')->limit(2)
             ->get()->toArray();
 
 //        dd($data);
@@ -365,8 +365,6 @@ class TestController extends Controller
     //接受通知 更新关键词排行
     public function receive_from_youbangyun()
     {
-        dd(2);
-
         header("Content-Type:text/html;charset=UTF-8");
         iconv("GB2312","UTF-8");
 
