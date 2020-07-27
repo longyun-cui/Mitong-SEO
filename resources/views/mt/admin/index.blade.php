@@ -80,48 +80,30 @@
         <!-- /.widget-user -->
     </div>
     <!-- /.col -->
-    <div class="col-md-4">
-        <!-- Widget: user widget style 1 -->
-        <div class="box box-widget widget-user">
-            <!-- Add the bg color to the header using any of the bg-* classes -->
-            <div class="widget-user-header bg-black" style="background: url('../dist/img/photo1.png') center center;">
-                <h3 class="widget-user-username">Elizabeth Pierce</h3>
-                <h5 class="widget-user-desc">Web Designer</h5>
-            </div>
-            <div class="widget-user-image">
-                <img src="/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-            </div>
-            <div class="box-footer">
-                <div class="row">
-                    <div class="col-sm-4 border-right">
-                        <div class="description-block">
-                            <h5 class="description-header">3,200</h5>
-                            <span class="description-text">SALES</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-4 border-right">
-                        <div class="description-block">
-                            <h5 class="description-header">13,000</h5>
-                            <span class="description-text">FOLLOWERS</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-4">
-                        <div class="description-block">
-                            <h5 class="description-header">35</h5>
-                            <span class="description-text">PRODUCTS</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>今日概览</h4>
+                <div>
+                    <span>优化关键词数</span>
+                    <span class="text-red" style="font-size:24px;">{{ $index_data['keyword_num'] or 0 }}</span>
+                    <span style="margin-right:12px;">个</span>
+
+                    <span>达标关键词数</span>
+                    <span class="text-red" style="font-size:24px;">{{ $index_data['keyword_standard_num'] or 0 }}</span>
+                    <span style="margin-right:12px;">个</span>
+
+                    <span>达标消费</span>
+                    <span class="text-red" style="font-size:24px;">￥{{ $index_data['keyword_standard_cost'] or 0 }}</span>
+                    <span style="margin-right:12px;">元</span>
                 </div>
-                <!-- /.row -->
             </div>
         </div>
-        <!-- /.widget-user -->
+        <!-- /.box -->
     </div>
     <!-- /.col -->
 </div>
@@ -131,9 +113,9 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
             <div class="inner">
-                <h3>150</h3>
+                <h3>{{ $index_data['agent_num'] or 0 }}</h3>
 
-                <p>New Orders</p>
+                <p>1级代理</p>
             </div>
             <div class="icon">
                 <i class="ion ion-bag"></i>
@@ -144,11 +126,26 @@
     <!-- ./col -->
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
+        <div class="small-box bg-yellow">
+            <div class="inner">
+                <h3>{{ $index_data['agent2_num'] or 0 }}</h3>
+
+                <p>二级代理</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6 _none">
+        <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                <h3><sup style="font-size: 20px">%</sup></h3>
 
-                <p>Bounce Rate</p>
+                <p>客户数</p>
             </div>
             <div class="icon">
                 <i class="ion ion-stats-bars"></i>
@@ -159,26 +156,11 @@
     <!-- ./col -->
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <h3>44</h3>
-
-                <p>User Registrations</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
         <div class="small-box bg-red">
             <div class="inner">
-                <h3>65</h3>
+                <h3>{{ $index_data['service_num'] or 0 }}</h3>
 
-                <p>Unique Visitors</p>
+                <p>客户</p>
             </div>
             <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -188,6 +170,102 @@
     </div>
     <!-- ./col -->
 </div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title">今日优化</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-wrench"></i></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <!-- ./box-body -->
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
+                            <h3 class="description-header">35,210.43</h3>
+                            <span class="description-text">优化关键词</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
+                            <h5 class="description-header">$10,390.90</h5>
+                            <span class="description-text">达标关键词</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
+                            <h5 class="description-header">￥24,813.53</h5>
+                            <span class="description-text">TOTAL PROFIT</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block">
+                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
+                            <h5 class="description-header">1200</h5>
+                            <span class="description-text">GOAL COMPLETIONS</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.box-footer -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+
+<!-- Default box -->
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Title</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                <i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        Start creating your amazing application!
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer">
+        Footer
+    </div>
+    <!-- /.box-footer-->
+</div>
+<!-- /.box -->
 
 <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">

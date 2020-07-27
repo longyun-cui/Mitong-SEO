@@ -10,7 +10,7 @@ class SEOKeyword extends Model
     protected $fillable = [
         'sort', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
         'title', 'subtitle', 'description', 'content', 'cover_pic',
-        'visit_num', 'share_num'
+        'keywordstatus', 'standardstatus'
     ];
 
     protected $dateFormat = 'U';

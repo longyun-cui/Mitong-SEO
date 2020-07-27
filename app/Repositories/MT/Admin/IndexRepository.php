@@ -24,7 +24,31 @@ class IndexRepository {
     // 返回（后台）主页视图
     public function view_admin_index()
     {
-        return view('mt.admin.index');
+        $admin = Auth::guard("admin")->user();
+
+        $agent_num = User::where(['usergroup'=>'Agent'])->count();
+        $index_data['agent_num'] = $agent_num;
+
+        $agent2_num = User::where(['usergroup'=>'Agent2'])->count();
+        $index_data['agent2_num'] = $agent2_num;
+
+        $service_num = User::where(['usergroup'=>'Service'])->count();
+        $index_data['service_num'] = $service_num;
+
+        $keyword_num = SEOKeyword::where(['keywordstatus'=>'优化中'])->count();
+        $index_data['keyword_num'] = $keyword_num;
+
+        $keyword_standard_num = SEOKeyword::where(['keywordstatus'=>'优化中','standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->count();
+        $index_data['keyword_standard_num'] = $keyword_standard_num;
+
+        $keyword_standard_cost = SEOKeyword::where(['keywordstatus'=>'优化中','standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->sum('price');
+        $index_data['keyword_standard_cost'] = $keyword_standard_cost;
+
+        return view('mt.admin.index')->with('index_data',$index_data);
     }
 
 
@@ -102,7 +126,8 @@ class IndexRepository {
     public function get_user_client_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-        $query = User::select('id','pid','epid','username','usergroup','createtime')
+        $query = User::select('*')
+//        $query = User::select('id','pid','epid','username','usergroup','createtime')
             ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('parent','ep','fund')
             ->withCount(['sites','keywords'])
@@ -138,7 +163,8 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【客户列表】数据
+
+    // 删除【代理商】
     public function delete_user_agent($post_data)
     {
         $admin = Auth::guard('admin')->user();
@@ -173,6 +199,40 @@ class IndexRepository {
         }
     }
 
+    // 删除【客户】
+    public function delete_user_client($post_data)
+    {
+        $admin = Auth::guard('admin')->user();
+        $id = $post_data["id"];
+
+        $user = User::find($id);
+        if($user->admin_id != $admin->id) return response_error([],"你没有操作权限");
+
+        DB::beginTransaction();
+        try
+        {
+            $bool = $user->delete();
+            if($bool)
+            {
+                $item = Item::find($user->item_id);
+                if($item)
+                {
+                    $bool1 = $item->delete();
+                    if(!$bool1) throw new Exception("delete-item--fail");
+                }
+            }
+            else throw new Exception("delete-user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            return response_fail([],'删除失败，请重试');
+        }
+    }
+
 
 
     /*
@@ -181,10 +241,15 @@ class IndexRepository {
     // 返回【站点列表】数据
     public function get_business_site_list_datatable($post_data)
     {
-        $admin_id = Auth::guard("admin")->user()->id;
-        $query = SEOSite::select('id','createuserid','createusername','sitestatus','sitename','website','ftp','createtime')
-            ->with('creator')
-            ->orderby("id","desc");
+        $admin = Auth::guard("admin")->user();
+        $query = SEOSite::select('*')->with('creator')
+            ->withCount([
+                'keywords',
+                'keywords as keywords_standard_count'=>function ($query) { $query->where('standardstatus','已达标'); },
+                'keywords as consumption_sum'=>function ($query) {
+                    $query->select(DB::raw("sum(price) as consumption_sum"))->where('standardstatus','已达标');
+                }
+            ]);
 
         $total = $query->count();
 
@@ -219,11 +284,56 @@ class IndexRepository {
     public function get_business_keyword_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-//        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','sitename','keyword','searchengine','price','createtime')
         $query = SEOKeyword::select('*')->with('creator');
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 返回【关键词列表】数据
+    public function get_business_keyword_today_list_datatable($post_data)
+    {
+        $admin_id = Auth::guard("admin")->user()->id;
+        $query = SEOKeyword::select('*')->with('creator')
+            ->where('keywordstatus','优化中');
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['latest_ranking']))
+        {
+            if($post_data['latest_ranking'] = 1)
+            {
+                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
+            }
+        }
 
         $total = $query->count();
 
@@ -264,9 +374,17 @@ class IndexRepository {
     public function get_finance_recharge_record_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-        $query = FundRechargeRecord::select('id','userid','puserid','createuserid','amount','createtime')
+        $query = FundRechargeRecord::select('*')
+//        $query = FundRechargeRecord::select('id','userid','puserid','createuserid','amount','createtime')
             ->with('user','parent','creator')
             ->orderby("id","desc");
+
+        if(!empty($post_data['creator'])) $query->where('createusername', 'like', "%{$post_data['creator']}%");
+//        {
+//
+//
+//            $query->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
+//        }
 
         $total = $query->count();
 
@@ -301,7 +419,8 @@ class IndexRepository {
     public function get_finance_expense_record_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
-        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
+        $query = ExpenseRecord::select('*')
+//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
             ->with('user','site','keyword')
             ->orderby("id","desc");
 

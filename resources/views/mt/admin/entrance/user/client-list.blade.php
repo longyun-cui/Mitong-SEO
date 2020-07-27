@@ -44,13 +44,19 @@
                         <th>代理商</th>
                         <th>站点</th>
                         <th>关键词</th>
-                        <th>总资产</th>
+                        <th>资产总额</th>
+                        <th>累计消费</th>
+                        <th>余额</th>
                         <th>资金余额</th>
+                        <th>可用余额</th>
                         <th>创建时间</th>
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -174,17 +180,43 @@
                             }
                         },
                         {
-                            "data": "id",
+                            "data": "fund_total",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return row.fund == null ? '未知' : row.fund.totalfunds;
+//                                return row.fund == null ? '未知' : row.fund.balancefunds;
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "fund_expense",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+                                return data;
                             }
                         },
                         {
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return row.fund == null ? '未知' : row.fund.balancefunds;
+                                var $balance = row.fund_total - row.fund_expense;
+                                if($balance < 0) return '<b class="text-red">'+$balance+'</b>';
+                                else return $balance;
+                            }
+                        },
+                        {
+                            "data": "fund_balance",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+//                                return row.fund == null ? '未知' : row.fund.balancefunds;
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "fund_available",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+//                                return row.fund == null ? '未知' : row.fund.availablefunds;
+                                return data;
                             }
                         },
 //                    {

@@ -25,6 +25,12 @@ class SEOSite extends Model
         return $this->belongsTo('App\Models\MT\User','createuserid','id');
     }
 
+    // 名下关键词
+    function keywords()
+    {
+        return $this->hasMany('App\Models\MT\SEOKeyword','siteid','id');
+    }
+
 
     /**
      * 获得此文章的所有评论。

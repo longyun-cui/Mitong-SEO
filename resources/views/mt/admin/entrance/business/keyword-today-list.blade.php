@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','站点列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','站点列表')
+@section('header','关键词列表')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -38,38 +38,55 @@
                     <tr role='row' class='heading'>
                         <th>id</th>
                         <th>客户</th>
-                        <th>站点名称</th>
-                        <th>website</th>
-                        <th>关键词数</th>
-                        <th>今日达标关键词</th>
-                        <th>达标消费</th>
-                        <th>状态</th>
+                        <th>关键词</th>
+                        <th>搜索引擎</th>
+                        <th>站点</th>
                         <th>创建时间</th>
-                        <th>操作</th>
+                        <th>单价</th>
+                        <th>初始排名</th>
+                        <th>最新排名</th>
+                        <th>检测时间</th>
+                        <th>最新消费</th>
+                        <th>达标天数</th>
+                        <th>累计消费</th>
+                        <th>状态</th>
+                        <th>历史数据</th>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
+                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td></td>
                         <td></td>
+                        <td></td>
+                        <td>
+                            <select name="latest_ranking" class="form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="1">已达标</option>
+                            </select>
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -107,11 +124,14 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/site-list') }}",
+                    'url': "{{ url('/admin/business/keyword-today') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.keyword = $('input[name="keyword"]').val();
+                        d.website = $('input[name="website"]').val();
+                        d.latest_ranking = $('select[name="latest_ranking"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -143,7 +163,14 @@
                         }
                     },
                     {
-                        "data": "sitename",
+                        "data": "keyword",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "searchengine",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
@@ -157,57 +184,69 @@
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-//                            return row.keywords_count == null ? 0 : row.keywords_count;
-                            if(row.keywords_count)
-                            {
-                                if(row.keywords_count > 0) return '<span class="text-blue">'+row.keywords_count+'</span>';
-                                else row.keywords_count;
-                            }
-                            else return 0;
+                            return data;
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(row.keywords_standard_count)
-                            {
-                                if(row.keywords_standard_count > 0) return '<span class="text-blue">'+row.keywords_standard_count+'</span>';
-                                else row.keywords_standard_count;
-                            }
-                            else return 0;
+                            return parseInt(data)+'元/天';
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-//                            return row.consumption_sum == null ? 0 : row.consumption_sum;
-                            if(row.consumption_sum)
-                            {
-                                if(row.consumption_sum > 0) return '<span class="text-blue">'+parseInt(row.consumption_sum)+'元</span>';
-                                else parseInt(row.consumption_sum);
-                            }
-                            else return 0;
+                            return data;
                         }
                     },
                     {
-                        "data": "sitestatus",
+                        "data": "latestranking",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
+                            else return data;
+                        }
+                    },
+                    {
+                        "data": "detectiondate",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "latestconsumption",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元';
+                        }
+                    },
+                    {
+                        "data": "standarddays",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'天';
+                        }
+                    },
+                    {
+                        "data": "totalconsumption",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元';
+                        }
+                    },
+                    {
+                        "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
                             else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
                             else return data;
-                        }
-                    },
-                    {
-                        "data": "createtime",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
                         }
                     },
                     {
@@ -219,9 +258,10 @@
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
                             return html;
                         }
                     }
@@ -296,6 +336,14 @@
 </script>
 <script>
     $(function() {
+
+        // 表格【查询】
+        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+            if(event.keyCode ==13)
+            {
+                $("#filter-submit").click();
+            }
+        });
 
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {

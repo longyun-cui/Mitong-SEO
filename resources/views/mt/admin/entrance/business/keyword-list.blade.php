@@ -55,9 +55,9 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control item-search-keyup" name="keyword" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
                         <td></td>
-                        <td><input type="text" class="form-control item-search-keyup" name="website" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -75,7 +75,7 @@
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
+                                    <li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#">Separated link</a></li>
                                 </ul>
@@ -200,7 +200,8 @@
                         "data": "latestranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
+                            else return data;
                         }
                     },
                     {

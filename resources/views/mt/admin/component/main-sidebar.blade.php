@@ -73,14 +73,14 @@
                     <i class="fa fa-text-width"></i><span>关键词列表</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_business_keyword__active or '' }}">
-                <a href="{{ url('/admin/business/keyword-') }}">
-                    <i class="fa fa-text-width"></i><span>关键词审核</span>
+            <li class="treeview {{ $sidebar_business_keyword_today_active or '' }}">
+                <a href="{{ url('/admin/business/keyword-today') }}">
+                    <i class="fa fa-text-width"></i><span>今日优化关键词</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_business_keyword__active or '' }}">
-                <a href="{{ url('/admin/business/keyword-') }}">
-                    <i class="fa fa-text-width"></i><span>今日新增关键词</span>
+            <li class="treeview {{ $sidebar_business_keyword_undo_active or '' }}">
+                <a href="{{ url('/admin/business/keyword-undo') }}">
+                    <i class="fa fa-text-width"></i><span>待审核关键词</span>
                 </a>
             </li>
 

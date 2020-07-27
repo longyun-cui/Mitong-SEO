@@ -46,20 +46,20 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="creator" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
+                                <button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>
                                 <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
+                                    <li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#">Separated link</a></li>
                                 </ul>
@@ -106,6 +106,7 @@
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.creator = $('input[name="creator"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -169,12 +170,12 @@
                         'orderable': false,
                         render: function(value) {
                             var html =
-                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                        '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                 '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
                             return html;
                         }

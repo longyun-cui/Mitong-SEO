@@ -105,6 +105,28 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
     }
 
+    // 返回【关键词列表】视图
+    public function view_business_keyword_today_list()
+    {
+        if(request()->isMethod('get'))
+        {
+            return view('mt.admin.entrance.business.keyword-today-list')
+                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_today_list_active'=>'active']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
+    }
+
+    // 返回【关键词列表】视图
+    public function view_business_keyword_undo_list()
+    {
+        if(request()->isMethod('get'))
+        {
+            return view('mt.admin.entrance.business.keyword-list')
+                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_list_active'=>'active']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
+    }
+
 
 
 
