@@ -374,14 +374,16 @@ class IndexController extends Controller
 
 
         $xParam_decode = json_decode($xParam,true);
+        if(isset($xParam_decode["Value"])) $task_id = $xParam_decode["Value"]["TaskId"];
+        elseif(isset($xParam_decode["value"])) $task_id = $xParam_decode["value"]["TaskId"];
+        else $task_id = 0;
 //        dd($xParam_decode);
 
 
-        $keyword = SEOKeyword::where('taskId',$xParam_decode["Value"]["TaskId"])->first();
+        $keyword = SEOKeyword::where('id',11574)->first();
 //        $keyword = SEOKeyword::where('id',11575)->first();
-        $keyword->reviewopinion = $xParam;
+        $keyword->reviewopinion = $task_id;
         $keyword->save();
-//        dd($keyword->toArray());
 
 
 /*
