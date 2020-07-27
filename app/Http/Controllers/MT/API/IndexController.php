@@ -378,8 +378,9 @@ class IndexController extends Controller
 
 
         $keyword = SEOKeyword::where('taskId',$xParam_decode["value"]["TaskId"])->first();
-        $keyword->reviewopinion = $xParam;
+        $keyword->reviewopinion = json_encode($xParam_decode);
         $keyword->save();
+        dd($keyword->toArray());
 
 /*
 //        $Dao = M('keyword');
