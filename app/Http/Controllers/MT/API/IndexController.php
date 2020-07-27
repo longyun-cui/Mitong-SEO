@@ -365,8 +365,6 @@ class IndexController extends Controller
     //接受通知 更新关键词排行
     public function receive_from_youbangyun()
     {
-        dd(2);
-
         header("Content-Type:text/html;charset=UTF-8");
         iconv("GB2312","UTF-8");
 
