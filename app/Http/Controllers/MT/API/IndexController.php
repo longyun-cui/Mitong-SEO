@@ -6,6 +6,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Models\MT\User;
+use App\Models\MT\ExpenseRecord;
+use App\Models\MT\FundRechargeRecord;
+use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\SEOSite;
 use App\Models\MT\SEOKeyword;
 
@@ -381,43 +384,119 @@ class IndexController extends Controller
 
 
         $keyword = SEOKeyword::where('taskId',$xParam_decode["Value"]["TaskId"])->first();
-        $keyword->reviewopinion = $xParam;
-        $keyword->save();
+
+        DB::beginTransaction();
+        try
+        {
+            $dataTaskId = $xParam_decode["Value"]["TaskId"];
+            $dataRankFirst = $xParam_decode["Value"]["RankFirst"];
+            $dataRankLast = $xParam_decode["Value"]["RankLast"];
+            $dataRankLastChange = $xParam_decode["Value"]["RankLastChange"];
+            $dataUpdateTime = $xParam_decode["Value"]["UpdateTime"];
+
+            $keyword_id = $keyword->id;
+            $current_time = date('Y-m-d H:i:s');
+
+            $rank = $dataRankLast;
+
+            $keyword->reviewopinion = $xParam;
+
+            $keyword->latestranking = $rank;
+            if(!$keyword->detectiondate)
+            {
+                $keyword->initialranking = $rank + rand(10,15);
+            }
+
+            if($rank > 0 and $rank <= 10)
+            {
+                $keyword->standarddate = $current_time;// 达标时间
+                $keyword->standardstatus = '已达标';// 达标状态
+                $keyword->latestconsumption = $keyword->price; // 最新消费
+                $keyword->standarddays = $keyword->standarddays + 1;// 达标天数
+                $keyword->totalconsumption 	= $keyword->totalconsumption + $keyword->price; // 累计消费
+
+                if(!$keyword->firststandarddate)
+                {
+                    // 如果关键词是首次达标，则需要冻结该关键词90天，90天内部能解冻，并且冻结30天的费用
+                    // 冻结费用
+                    // $freezefunds = $data_kw['price'] * 30;
+                    // 90天之后的日期:允许解冻日期
+                    $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
+                    $keyword->unfreezedate = $unfreeze_date;// 解冻日期
+
+                    //冻结关键词90天 ====================================>
+                    $keyword->firststandarddate = $current_time;// 首次达标时间
+                }
+            }
+            else
+            {
+                $keyword->standardstatus = '未达标';// 达标状态
+                $keyword->latestconsumption = 0; // 最新消费
+            }
+
+            $keyword->save();
+
+
+            // 添加检测记录
+            $seo_detect_record = SEOKeywordDetectRecord::where(['keywordid',$keyword])
+                ->whereDate('createtime',date("Y-m-d"))
+                ->first();
+            if(!$seo_detect_record)
+            {
+                $seo_detect_record = new SEOKeywordDetectRecord;
+
+                $detect_data['keywordid'] = $keyword_id;
+                $detect_data['ownuserid'] = $keyword->userid;
+                $detect_data['createtime'] = $current_time;
+                $detect_data['detecttime'] = $current_time;
+                $detect_data['keyword'] = $keyword->keyword;
+                $detect_data['website'] = $keyword->website;
+                $detect_data['searchengine'] = $keyword->searchengine;
+
+                $bool1 = $seo_detect_record->fill($detect_data)->save();
+                if(!$bool1) throw new Exception("insert-detect-record-fail");
+            }
+
+
+            // 添加扣费记录
+            $expense_record = ExpenseRecord::where(['keywordid',$keyword])
+                ->whereDate('createtime',date("Y-m-d"))
+                ->first();
+            if(!$expense_record)
+            {
+                $expense_record = new SEOKeywordDetectRecord;
+
+                $expense_data['keywordid'] = $keyword_id;
+                $expense_data['ownuserid'] = $keyword->userid;
+                $expense_data['createtime'] = $current_time;
+                $expense_data['keyword'] = $keyword->keyword;
+                $expense_data['siteid'] = $keyword->siteid;
+                $expense_data['price'] = $keyword->price;
+                $expense_data['detect_id'] = $seo_detect_record->id;
+
+                $bool1 = $expense_record->fill($expense_data)->save();
+                if(!$bool1) throw new Exception("insert-expense-record-fail");
+            }
+
+            DB::commit();
+            echo 1;
+//            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],'操作失败，请重试！');
+        }
+
+
+
+
 
 
 /*
-//        $Dao = M('keyword');
-//        $ra = $Dao->execute("UPDATE `ts_keyword` set reviewopinion = '{$xParam}' WHERE id = 1");
-//        $xParam_from_SQL = $Dao->query("SELECT id,updateTime,reviewopinion FROM `ts_keyword` where id = 1");
 
-        $model_keyword = D('Biz/Keyword');
-        $data['reviewopinion'] = $xParam;
-        $model_keyword->where('id=1')->save($data);
-        $xParam_from_SQL = $model_keyword->where('id=1')->find();
-
-        $xParam_decode = json_decode(stripslashes($xParam_from_SQL['reviewopinion']),true);
-        $dataTaskId = $xParam_decode["Value"]["TaskId"];
-        $dataRankFirst = $xParam_decode["Value"]["RankFirst"];
-        $dataRankLast = $xParam_decode["Value"]["RankLast"];
-        $dataRankLastChange = $xParam_decode["Value"]["RankLastChange"];
-        $dataUpdateTime = $xParam_decode["Value"]["UpdateTime"];
-
-
-//        $nowTimeA = $Dao->execute("SELECT id FROM `ts_keyword` where taskId = {$dataTaskId}");
-//        $data = $Dao->query("SELECT * FROM `ts_keyword` where taskId = '{$dataTaskId}'");
-//        $keyword_id = $data[0]['id'];
-//        $keyword_type = $data[0]['type'];
-//        $keyword_keyword = $data[0]['keyword'];
-//        $keyword_website = $data[0]['website'];
-//        $keyword_searchengine = $data[0]['searchengine'];
-
-
-        $keyword_sql = $model_keyword->where("taskId={$dataTaskId}")->find();
-        $keyword_id = $keyword_sql['id'];
-        $keyword_type = $keyword_sql['type'];
-        $keyword_keyword = $keyword_sql['keyword'];
-        $keyword_website = $keyword_sql['website'];
-        $keyword_searchengine = $keyword_sql['searchengine'];
 
 
         $return = $this->receive_keywords_rank($keyword_id,$keyword_keyword,$keyword_type,$dataRankLast,$keyword_website);

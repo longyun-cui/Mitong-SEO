@@ -35,21 +35,30 @@ class TestController extends Controller
     public function temp()
     {
 
-        $user = User::all();
+        $users = User::all();
+        foreach ($users as $u)
+        {
+            $userpass = $u->userpass;
+            $pass_decrypt = basic_decrypt($user->userpass);
+            $user->password = password_encode($pass_decrypt);
+            $user->save();
+        }
 
-        $userpass = $user->userpass;
-        $pass_encrypt = basic_encrypt("df123456");
-        $pass_decrypt = basic_decrypt($user->userpass);
+    }
 
-        $user->password = $pass_decrypt;
-        $user->save();
-        $password = $user->password;
 
-        echo $userpass."<br>";
-        echo $pass_encrypt."<br>";
-        echo $pass_decrypt."<br>";
-        echo $password."<br>";
-        dd($pass_decrypt);
+    // 修改密码
+    public function update_password()
+    {
+        $users = User::all();
+        foreach ($users as $user)
+        {
+            $userpass = $user->userpass;
+            $pass_decrypt = basic_decrypt($userpass);
+            $user->password = password_encode($pass_decrypt);
+            $user->save();
+            echo $user->id.'--'.$pass_decrypt."<br>";
+        }
     }
 
     // 返回主页视图

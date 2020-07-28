@@ -4,6 +4,7 @@ namespace App\Repositories\MT\Admin;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
+use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\SEOSite;
 use App\Models\MT\SEOKeyword;
 
