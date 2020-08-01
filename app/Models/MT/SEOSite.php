@@ -7,9 +7,11 @@ class SEOSite extends Model
     //
     protected $table = "seo_site";
     protected $fillable = [
-        'sort', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
-        'title', 'subtitle', 'description', 'content', 'cover_pic',
-        'visit_num', 'share_num'
+        'owner_id','createuserid', 'createusername', 'createtime',
+        'sitename', 'website', 'sitestatus',
+        'ftp', 'managebackground', 'mbgstatus',
+        'reviewdate', 'reviewopinion', 'reviewuserid', 'reviewusername',
+        'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
     protected $dateFormat = 'U';
 

@@ -1,12 +1,13 @@
-@extends('mt.client.layout.layout')
+@extends('mt.admin.layout.layout')
 
-@section('head_title','消费记录  - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','消费记录')
+@section('header','关键词列表')
 @section('description','搜索引擎智能营销系统-米同科技')
 
+
 @section('breadcrumb')
-    <li><a href="{{url('/client')}}"><i class="fa fa-dashboard"></i>首页</a></li>
+    <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
     <li><a href="#"><i class="fa "></i>Here</a></li>
 @endsection
 
@@ -18,13 +19,9 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
-                    <a href="{{url(config('common.org.admin.prefix').'/item/create')}}">
-                        <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加内容</button>
-                    </a>
                 </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
@@ -41,33 +38,37 @@
                     <tr role='row' class='heading'>
                         <th>id</th>
                         <th>客户</th>
-                        <th>站点</th>
                         <th>关键词</th>
-                        <th>价格</th>
-                        <th>记录时间</th>
-                        {{--<th>操作</th>--}}
+                        <th>搜索引擎</th>
+                        <th>站点</th>
+                        <th>创建时间</th>
+                        <th>单价</th>
+                        <th>状态</th>
+                        <th>历史数据</th>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
+                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        {{--<td>--}}
-                            {{--<div class="btn-group">--}}
-                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
-                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
-                                    {{--<span class="caret"></span>--}}
-                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
-                                {{--</button>--}}
-                                {{--<ul class="dropdown-menu" role="menu">--}}
-                                    {{--<li><a href="#">重置</a></li>--}}
-                                    {{--<li class="divider"></li>--}}
-                                    {{--<li><a href="#">Separated link</a></li>--}}
-                                {{--</ul>--}}
-                            {{--</div>--}}
-                        {{--</td>--}}
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>
+                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                     </thead>
                     <tbody>
@@ -104,11 +105,13 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/client/finance/expense-record') }}",
+                    'url': "{{ url('/admin/business/keyword-undo') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.keyword = $('input[name="keyword"]').val();
+                        d.website = $('input[name="website"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -133,31 +136,31 @@
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.user == null ? '未知' : row.user.username;
+                            return row.creator == null ? '未知' : row.creator.username;
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
+                            return data;
                         }
                     },
                     {
-                        "data": "id",
+                        "data": "searchengine",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.keyword == null ? '未知' : row.keyword.keyword;
+                            return data;
                         }
                     },
                     {
-                        "data": "price",
+                        "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data+'元';
+                            return data;
                         }
                     },
                     {
@@ -167,21 +170,38 @@
                             return data;
                         }
                     },
-                    {{--{--}}
-                        {{--'data': 'id',--}}
-                        {{--'orderable': false,--}}
-                        {{--render: function(value) {--}}
-                            {{--var html =--}}
-                                {{--'<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+--}}
-                                {{--'<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+--}}
-                                {{--'<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+--}}
-                                {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
+                    {
+                        "data": "price",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data)+'元/天';
+                        }
+                    },
+                    {
+                        "data": "keywordstatus",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
+                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                            else return data;
+                        }
+                    },
+                    {
+                        'data': 'id',
+                        'orderable': false,
+                        render: function(value) {
+                            var html =
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
-                                {{--'<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';--}}
-                            {{--return html;--}}
-                        {{--}--}}
-                    {{--}--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
+                            return html;
+                        }
+                    }
                 ],
                 "drawCallback": function (settings) {
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
@@ -253,6 +273,14 @@
 </script>
 <script>
     $(function() {
+
+        // 表格【查询】
+        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+            if(event.keyCode ==13)
+            {
+                $("#filter-submit").click();
+            }
+        });
 
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {

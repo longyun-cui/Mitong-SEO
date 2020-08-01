@@ -9,8 +9,10 @@ class ExpenseRecord extends Model
     protected $table = "expense_record";
 
     protected $fillable = [
-        'status', 'category', 'sort', 'type', 'mobile', 'email', 'password', 'name', 'true_name', 'nickname',
-        'org_id',
+        'owner_id', 'ownuserid', 'createuserid', 'createusername', 'createtime',
+        'detect_id', 'productid', 'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price',
+        'standarddate', 'durationdays',
+        'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
 
     protected $hidden = [

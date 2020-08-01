@@ -3,14 +3,15 @@ namespace App\Models\MT;
 use Illuminate\Database\Eloquent\Model;
 
 
-class FundRechargeRecord extends Model
+class FundFreezeRecord extends Model
 {
     //
-    protected $table = "funds_recharge_record";
+    protected $table = "funds_freeze_record";
 
     protected $fillable = [
-        'owner_id', 'userid', 'usertype', 'createuserid', 'createusername', 'createtime', 'createdate',
-        'amount', 'unit',
+        'owner_id','createuserid', 'createusername', 'createtime', 'createdate',
+        'fundsid', 'siteid', 'keywordid',
+        'freezefunds', 'unfreezedate',
         'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
 

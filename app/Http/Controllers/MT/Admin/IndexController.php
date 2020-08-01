@@ -59,6 +59,41 @@ class IndexController extends Controller
     }
 
 
+    // 新增【代理商】
+    public function operate_user_agent_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_agent_create();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_agent_save(request()->all());
+    }
+
+    // 编辑【代理商】
+    public function operate_user_agent_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_agent_edit();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_agent_save(request()->all());
+    }
+
+
+    // 【1级代理商】充值
+    public function operate_user_agent_recharge()
+    {
+        return $this->repo->operate_user_agent_recharge(request()->all());
+    }
+
+
+    // 删除【代理商】
+    public function operate_user_agent_delete()
+    {
+        return $this->repo->operate_user_agent_delete(request()->all());
+    }
+
+    // 删除【客户】
+    public function operate_user_client_delete()
+    {
+        return $this->repo->operate_user_client_delete(request()->all());
+    }
+
+
     // 登录【代理商】
     public function operate_user_agent_login()
     {
@@ -111,7 +146,7 @@ class IndexController extends Controller
         if(request()->isMethod('get'))
         {
             return view('mt.admin.entrance.business.keyword-today-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_today_list_active'=>'active']);
+                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_today_active'=>'active']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
@@ -121,10 +156,10 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.business.keyword-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_list_active'=>'active']);
+            return view('mt.admin.entrance.business.keyword-undo-list')
+                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_undo_active'=>'active']);
         }
-        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_undo_list_datatable(request()->all());
     }
 
 

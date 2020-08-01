@@ -113,14 +113,14 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
             <div class="inner">
-                <h3>{{ $index_data['agent_num'] or 0 }}</h3>
+                <h3>{{ $index_data['agent_count'] or 0 }}</h3>
 
                 <p>1级代理</p>
             </div>
             <div class="icon">
                 <i class="ion ion-bag"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -135,7 +135,7 @@
             <div class="icon">
                 <i class="ion ion-person-add"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -150,7 +150,7 @@
             <div class="icon">
                 <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -158,14 +158,14 @@
         <!-- small box -->
         <div class="small-box bg-red">
             <div class="inner">
-                <h3>{{ $index_data['service_num'] or 0 }}</h3>
+                <h3>{{ $index_data['client_num'] or 0 }}</h3>
 
                 <p>客户</p>
             </div>
             <div class="icon">
                 <i class="ion ion-pie-graph"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ url('/admin/user/client-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -175,7 +175,7 @@
     <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">今日优化</h3>
+                <h3 class="box-title">代理商概览</h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -201,8 +201,8 @@
                     <div class="col-sm-3 col-xs-6">
                         <div class="description-block border-right">
                             <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
-                            <h3 class="description-header">35,210.43</h3>
-                            <span class="description-text">优化关键词</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</h5>
+                            <span class="description-text">总数</span>
                         </div>
                         <!-- /.description-block -->
                     </div>
@@ -210,8 +210,8 @@
                     <div class="col-sm-3 col-xs-6">
                         <div class="description-block border-right">
                             <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
-                            <h5 class="description-header">$10,390.90</h5>
-                            <span class="description-text">达标关键词</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_fund_total_sum'] or 0 }}</h5>
+                            <span class="description-text">资金总额</span>
                         </div>
                         <!-- /.description-block -->
                     </div>
@@ -219,8 +219,8 @@
                     <div class="col-sm-3 col-xs-6">
                         <div class="description-block border-right">
                             <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
-                            <h5 class="description-header">￥24,813.53</h5>
-                            <span class="description-text">TOTAL PROFIT</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_fund_balance_sum'] or 0 }}</h5>
+                            <span class="description-text">资金余额</span>
                         </div>
                         <!-- /.description-block -->
                     </div>
@@ -230,6 +230,78 @@
                             <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
                             <h5 class="description-header">1200</h5>
                             <span class="description-text">GOAL COMPLETIONS</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.box-footer -->
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title">客户概览</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-wrench"></i></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <!-- ./box-body -->
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
+                            <h3 class="description-header" style="font-size:24px;">{{ $index_data['client_num'] or 0 }}</h3>
+                            <span class="description-text">客户数</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_total_sum'] or 0 }}</h5>
+                            <span class="description-text">资金总额</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_expense_sum'] or 0 }}</h5>
+                            <span class="description-text">累计消费</span>
+                        </div>
+                        <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-3 col-xs-6">
+                        <div class="description-block">
+                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
+                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_balance_sum'] or 0 }}</h5>
+                            <span class="description-text">资金余额</span>
                         </div>
                         <!-- /.description-block -->
                     </div>

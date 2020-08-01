@@ -58,10 +58,9 @@
                     <tr>
                         <td></td>
                         <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -70,18 +69,28 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <select name="keywordstatus" class="form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="优化中">优化中</option>
+                                <option value ="待审核">待审核</option>
+                                <option value ="合作停">合作停</option>
+                            </select>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -124,6 +133,9 @@
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.keyword = $('input[name="keyword"]').val();
+                        d.website = $('input[name="website"]').val();
+                        d.keywordstatus = $('select[name="keywordstatus"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();

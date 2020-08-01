@@ -18,14 +18,6 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-
-                <div class="caption">
-                    <i class="icon-pin font-blue"></i>
-                    <span class="caption-subject font-blue sbold uppercase"></span>
-                    <a href="{{url(config('common.org.admin.prefix').'/item/create')}}">
-                        <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加内容</button>
-                    </a>
-                </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
                         <i class="fa fa-minus"></i></button>
@@ -55,7 +47,7 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -67,18 +59,20 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -121,6 +115,7 @@
                         "dataType" : 'json',
                         "data": function (d) {
                             d._token = $('meta[name="_token"]').attr('content');
+                            d.username = $('input[name="username"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -277,11 +272,11 @@
 //                                    '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    '<a class="btn btn-xs item-login-submit" data-id="'+value+'">登录</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
                                     '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                     '<a class="btn btn-xs item-password-submit" data-id="'+value+'">密码</a>'+
-                                    '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                    '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                    '<a class="btn btn-xs item-login-submit" data-id="'+value+'">登录</a>';
                                 return html;
                             }
                         }
@@ -401,7 +396,7 @@
                     ,btn: ['确定', '取消']
                     ,yes: function(index){
                         $.post(
-                            "{{ url('/item/delete') }}",
+                            "{{ url('/admin/user/client-delete') }}",
                             {
                                 _token: $('meta[name="_token"]').attr('content'),
                                 id:that.attr('data-id')

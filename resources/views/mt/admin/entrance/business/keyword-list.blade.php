@@ -66,20 +66,29 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <select name="keywordstatus" class="form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="优化中">优化中</option>
+                                <option value ="待审核">待审核</option>
+                                <option value ="合作停">合作停</option>
+                            </select>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -100,6 +109,10 @@
         </div>
         <!-- END PORTLET-->
     </div>
+</div>
+
+<div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;"></div>
 </div>
 @endsection
 
@@ -124,6 +137,7 @@
                         d._token = $('meta[name="_token"]').attr('content');
                         d.keyword = $('input[name="keyword"]').val();
                         d.website = $('input[name="website"]').val();
+                        d.keywordstatus = $('select[name="keywordstatus"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -179,7 +193,9 @@
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            newDate = new Date(data);
+                            return newDate.toLocaleDateString('chinese',{hour12:false});
                         }
                     },
                     {
@@ -208,7 +224,9 @@
                         "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            newDate = new Date(data);
+                            return newDate.toLocaleDateString('chinese',{hour12:false});
                         }
                     },
                     {
@@ -253,7 +271,7 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
+                                '<a class="btn btn-xs item-detail-show" data-id="'+value+'" >数据详情</a>';
                             return html;
                         }
                     }
@@ -308,11 +326,13 @@
             });
 
             dt.on('click', '.filter-cancel', function () {
-                $('textarea.form-filter, select.form-filter, input.form-filter', dt).each(function () {
+                $('textarea.form-filter, input.form-filter, select.form-filter', dt).each(function () {
                     $(this).val("");
                 });
 
-                $('select.form-filter').selectpicker('refresh');
+//                $('select.form-filter').selectpicker('refresh');
+                $('select.form-filter option').attr("selected",false);
+                $('select.form-filter').find('option:eq(0)').attr('selected', true);
 
                 ajax_datatable.ajax.reload();
             });
@@ -356,6 +376,24 @@
                 window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
         });
 
+        // 【编辑】
+        $("#item-main-body").on('click', ".item-detail-show", function() {
+            var that = $(this);
+            {{--$.post(--}}
+                {{--"{{ url('/item/delete') }}",--}}
+                {{--{--}}
+                    {{--_token: $('meta[name="_token"]').attr('content'),--}}
+                    {{--id:that.attr('data-id')--}}
+                {{--},--}}
+                {{--function(data){--}}
+                    {{--if(!data.success) layer.msg(data.msg);--}}
+                    {{--else location.reload();--}}
+                {{--},--}}
+                {{--'json'--}}
+            {{--);--}}
+            $('#modal-body').modal('show');
+        });
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
@@ -363,18 +401,6 @@
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
-                    $.post(
-                        "{{ url('/item/delete') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
                 }
             });
         });

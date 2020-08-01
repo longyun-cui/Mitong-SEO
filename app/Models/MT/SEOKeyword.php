@@ -8,9 +8,13 @@ class SEOKeyword extends Model
     protected $table = "seo_keyword";
 
     protected $fillable = [
-        'sort', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
-        'title', 'subtitle', 'description', 'content', 'cover_pic',
-        'keywordstatus', 'standardstatus'
+        'owner_id', 'createuserid', 'createusername', 'createtime',
+        'taskId', 'updateTime', 'reviewopinion',
+        'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price', 'unit', 'unit2', 'keywordstatus',
+        'keywordstatus', 'standardstatus', 'standarddays', 'is_detect', 'detectiondate',
+        'initialranking', 'latestranking', 'latestconsumption', 'totalconsumption', 'reviewdate', 'reviewuserid', 'reviewusername',
+        'firststandarddate', 'standarddate', 'optimizetime', 'cooperationstopdate', 'freezefunds', 'unfreezedate', 'unfreezetime',
+        'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime'
     ];
 
     protected $dateFormat = 'U';

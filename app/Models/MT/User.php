@@ -11,9 +11,18 @@ class User extends Authenticatable
     protected $table = "user";
 
     protected $fillable = [
-        'status', 'category', 'sort', 'type', 'mobile', 'email', 'password', 'name', 'true_name', 'nickname',
-        'org_id',
+        'active', 'pid', 'epid', 'epname', 'usergroup', 'userno', 'departno', 'roleno',
+        'createuserid', 'createusername', 'createtime',
+        'username', 'truename', 'email', 'mobileno', 'telephone', 'QQnumber', 'wechat_id', 'contact',
+        'userpass', 'password', 'question', 'answer',
+        'usertype', 'usertype_desc', 'product', 'product_desc', 'seller_id', 'operation_id', 'customer_id',
+        'isopen_oem', 'isopen_subagent', 'is_recharge_limit',
+        'regfrom', 'userstatus', 'usersessionid', 'expand_info',
+        'fund_total', 'fund_expense', 'fund_expense_2', 'fund_balance', 'fund_available', 'fund_frozen', 'fund_frozen_init',
+        'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
+
+    protected $datas = ['deleted_at'];
 
     protected $hidden = [
         'password', 'remember_token',

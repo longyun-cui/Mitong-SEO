@@ -33,41 +33,26 @@
                                 </a>
                             </li>
 
-                            <li class="header">添加目录</li>
+                            <li class="header">添加用户</li>
                             <li class="header">
-                                <a href="{{url('/admin/menu/create')}}">
-                                    <i class="fa fa-plus text-blue"></i> 添加目录
+                                <a href="{{url('/admin/user/agent-edit')}}">
+                                    <i class="fa fa-plus text-blue"></i> 添加代理商
                                 </a>
                             </li>
 
-                            <li class="header">添加内容</li>
-                            <li class="header">
+                            <li class="header _none">添加内容</li>
+                            <li class="header _none">
                                 <a href="{{url('/admin/item/create?category=about')}}">
                                     <i class="fa fa-plus text-green"></i> 添加关于企业
                                 </a>
                             </li>
-                            <li class="header">
+                            <li class="header _none">
                                 <a href="{{url('/admin/item/create?category=advantage')}}">
                                     <i class="fa fa-plus text-green"></i> 添加选择我们
                                 </a>
                             </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=cooperation')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加合作伙伴
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=service')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加业务
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=product')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加产品
-                                </a>
-                            </li>
 
-                            <li class="header">
+                            <li class="header _none">
                                 <a href="{{url('/admin/item/create?category=client')}}">
                                     <i class="fa fa-plus text-green"></i> 添加客户
                                 </a>

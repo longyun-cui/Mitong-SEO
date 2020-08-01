@@ -4,6 +4,7 @@ namespace App\Repositories\MT\Agent;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
+use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\SEOSite;
 use App\Models\MT\SEOKeyword;
 
@@ -35,15 +36,14 @@ class IndexRepository {
     // 返回【子代理商列表】数据
     public function get_user_sub_agent_list_datatable($post_data)
     {
-        $agent_id = Auth::guard("agent")->user()->id;
-        $query = User::select('id','pid','epid','username','usergroup','createtime')
-            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
+        $mine = Auth::guard("agent")->user()->id;
+        $mine_id = Auth::guard("agent")->user()->id;
+        $query = User::select('*')
+//        $query = User::select('id','pid','epid','username','usergroup','createtime')
+//            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('ep','parent','fund')
-            ->withCount([
-                'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
-                'clients'
-            ])
-            ->where('userstatus','正常')->where('status',1)->where('pid',$agent_id)->whereIn('usergroup',['Agent2'])
+            ->withCount(['clients'])
+            ->where('userstatus','正常')->where('status',1)->where('pid',$mine_id)->whereIn('usergroup',['Agent2'])
             ->orderby("id","desc");
 
         $total = $query->count();
@@ -79,7 +79,8 @@ class IndexRepository {
     public function get_user_client_list_datatable($post_data)
     {
         $agent_id = Auth::guard("agent")->user()->id;
-        $query = User::select('id','pid','epid','username','usergroup','createtime')
+        $query = User::select('*')
+//        $query = User::select('id','pid','epid','username','usergroup','createtime')
             ->with('parent','ep','fund')
             ->withCount(['sites','keywords'])
             ->where('userstatus','正常')->where('status',1)->where('pid',$agent_id)->whereIn('usergroup',['Service'])
@@ -112,6 +113,587 @@ class IndexRepository {
         }
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
+    }
+
+
+
+
+    // 返回【添加二级代理商】视图
+    public function view_user_sub_agent_create()
+    {
+        $mine = Auth::guard('agent')->user();
+        $view_blade = 'mt.agent.entrance.user.sub-agent-edit';
+        return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
+    }
+
+    // 返回【编辑二级代理商】视图
+    public function view_user_sub_agent_edit()
+    {
+        $mine = Auth::guard('agent')->user();
+        $id = request("id",0);
+        $view_blade = 'mt.agent.entrance.user.sub-agent-edit';
+
+        if($id == 0)
+        {
+            return view($view_blade)->with(['operate'=>'create', 'operate_id'=>$id]);
+        }
+        else
+        {
+            $sub_agent = User::with(['parent'])->find($id);
+            if($sub_agent)
+            {
+                if(!in_array($sub_agent->usergroup,['Agent2'])) return response("该用户不是二级代理商！", 404);
+                if($sub_agent->pid != $mine->id) return response("该客户不是你的二级代理，你无权操作！！", 404);
+                $sub_agent->custom = json_decode($sub_agent->custom);
+                $sub_agent->custom2 = json_decode($sub_agent->custom2);
+                $sub_agent->custom3 = json_decode($sub_agent->custom3);
+
+                return view($view_blade)->with(['operate'=>'edit', 'operate_id'=>$id, 'data'=>$sub_agent]);
+            }
+            else return response("该用户不存在！", 404);
+        }
+    }
+
+    // 保存【二级代理商】
+    public function operate_user_sub_agent_save($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'username.required' => '请输入用户名',
+            'mobileno.required' => '请输入电话',
+            'epname.required' => '请输入企业全称',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'username' => 'required',
+            'mobileno' => 'required',
+            'epname' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $mine = Auth::guard('agent')->user();
+        if($mine->usergroup != "Agent") return response_error([],"你没有操作权限");
+
+
+        $operate = $post_data["operate"];
+        $operate_id = $post_data["operate_id"];
+
+        if($operate == 'create') // 添加 ( $id==0，添加一个新用户 )
+        {
+            $sub_agent = new User;
+            $current_time = date('Y-m-d H:i:s');
+            $post_data["usergroup"] = "Agent2";
+            $post_data["pid"] = $mine->id;
+            $post_data["createuserid"] = $mine->id;
+            $post_data["createtime"] = $current_time;
+            $post_data["userstatus"] = "正常";
+            $post_data["status"] = 1;
+        }
+        else if($operate == 'edit') // 编辑
+        {
+            $sub_agent = User::find($operate_id);
+            if(!$sub_agent) return response_error([],"该用户不存在，刷新页面重试");
+        }
+        else return response_error([],"参数有误");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $sub_agent_data = $post_data;
+            unset($sub_agent_data['operate']);
+            unset($sub_agent_data['operate_id']);
+            $bool = $sub_agent->fill($sub_agent_data)->save();
+            if($bool)
+            {
+                // 封面图片
+                if(!empty($post_data["cover"]))
+                {
+                    // 删除原封面图片
+                    $sub_agent_cover_pic = $sub_agent->cover_pic;
+                    if(!empty($sub_agent_cover_pic) && file_exists(storage_path("resource/" . $sub_agent_cover_pic)))
+                    {
+                        unlink(storage_path("resource/" . $sub_agent_cover_pic));
+                    }
+
+                    $result = upload_storage($post_data["cover"]);
+                    if($result["result"])
+                    {
+                        $sub_agent->cover_pic = $result["local"];
+                        $sub_agent->save();
+                    }
+                    else throw new Exception("upload-cover-fail");
+                }
+
+            }
+            else throw new Exception("insert--user--fail");
+
+            DB::commit();
+            return response_success(['id'=>$mine->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+//            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 返回【添加客户】视图
+    public function view_user_client_create()
+    {
+        $mine = Auth::guard('agent')->user();
+        $view_blade = 'mt.agent.entrance.user.client-edit';
+        return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
+    }
+
+    // 返回【编辑客户】视图
+    public function view_user_client_edit()
+    {
+        $mine = Auth::guard('agent')->user();
+        $id = request("id",0);
+        $view_blade = 'mt.agent.entrance.user.client-edit';
+
+        if($id == 0)
+        {
+            return view($view_blade)->with(['operate'=>'create', 'operate_id'=>$id]);
+        }
+        else
+        {
+            $client = User::with(['parent'])->find($id);
+            if($client)
+            {
+                if(!in_array($client->usergroup,['Service'])) return response("该用户不是客户！", 404);
+                if($client->pid != $mine->id) return response("该客户不是你的客户，你无权操作！！", 404);
+                $client->custom = json_decode($client->custom);
+                $client->custom2 = json_decode($client->custom2);
+                $client->custom3 = json_decode($client->custom3);
+
+                return view($view_blade)->with(['operate'=>'edit', 'operate_id'=>$id, 'data'=>$client]);
+            }
+            else return response("该用户不存在！", 404);
+        }
+    }
+
+    // 保存【客户】
+    public function operate_user_client_save($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'username.required' => '请输入用户名',
+            'mobileno.required' => '请输入电话',
+            'epname.required' => '请输入企业全称',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'username' => 'required',
+            'mobileno' => 'required',
+            'epname' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $mine = Auth::guard('agent')->user();
+        if($mine->usergroup != "Agent") return response_error([],"你没有操作权限");
+
+
+        $operate = $post_data["operate"];
+        $operate_id = $post_data["operate_id"];
+
+        if($operate == 'create') // 添加 ( $id==0，添加一个新用户 )
+        {
+            $client = new User;
+            $current_time = date('Y-m-d H:i:s');
+            $post_data["usergroup"] = "Service";
+            $post_data["pid"] = $mine->id;
+            $post_data["createuserid"] = $mine->id;
+            $post_data["createtime"] = $current_time;
+            $post_data["userstatus"] = "正常";
+            $post_data["status"] = 1;
+        }
+        else if($operate == 'edit') // 编辑
+        {
+            $client = User::find($operate_id);
+            if(!$client) return response_error([],"该用户不存在，刷新页面重试");
+        }
+        else return response_error([],"参数有误");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $client_data = $post_data;
+            unset($client_data['operate']);
+            unset($client_data['operate_id']);
+            $bool = $client->fill($client_data)->save();
+            if($bool)
+            {
+                // 封面图片
+                if(!empty($post_data["cover"]))
+                {
+                    // 删除原封面图片
+                    $client_cover_pic = $client->cover_pic;
+                    if(!empty($mine_cover_pic) && file_exists(storage_path("resource/" . $client_cover_pic)))
+                    {
+                        unlink(storage_path("resource/" . $client_cover_pic));
+                    }
+
+                    $result = upload_storage($post_data["cover"]);
+                    if($result["result"])
+                    {
+                        $client->cover_pic = $result["local"];
+                        $client->save();
+                    }
+                    else throw new Exception("upload-cover-fail");
+                }
+
+            }
+            else throw new Exception("insert--user--fail");
+
+            DB::commit();
+            return response_success(['id'=>$client->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 【二级代理商】充值
+    public function operate_user_sub_agent_recharge($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+            'recharge-amount.required' => '请输入金额',
+            'recharge-amount.numeric' => '金额必须为数字',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+            'recharge-amount' => 'required|numeric',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge') return response_error([],"参数有误");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试");
+
+        $mine = Auth::guard('agent')->user();
+        if($mine->usergroup != "Agent") return response_error([],"你没有操作权限");
+
+        $time = date('Y-m-d H:i:s');
+        $amount = $post_data['recharge-amount'];
+        // 充值金额不能为0
+        if($amount == 0) return response_error([],"充值金额不能为0！");
+        // 充值金额应该大于资金余额
+        if($amount > 0)
+        {
+            if(($mine->fund_balance - $amount) < 0) return response_error([],"您的余额不足");
+        }
+
+        $sub_agent = User::find($id);
+        if(!$sub_agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($sub_agent->usergroup,['Agent2'])) return response_error([],"该用户不是1级代理商，你不能操作");
+        if($sub_agent->pid != $mine->id) return response_error([],"该客户不是你的二级代理商，你无权充值/退款操作！");
+
+        // 退款金额应该小于资金余额
+        if($amount < 0)
+        {
+            if(($sub_agent->fund_balance + $amount) < 0) return response_error([],"退款金额不能超过该账户余额");
+        }
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $FundRechargeRecord = New FundRechargeRecord;
+            $FundRechargeRecord_data['owner_id'] = $mine->id;
+            $FundRechargeRecord_data['createuserid'] = $mine->id;
+            $FundRechargeRecord_data['createusername'] = $mine->username;
+            $FundRechargeRecord_data['createtime'] = $time;
+            $FundRechargeRecord_data['userid'] = $id;
+            $FundRechargeRecord_data['usertype'] = 'sub';
+            $FundRechargeRecord_data['status'] = 1;
+            $FundRechargeRecord_data['amount'] = $amount;
+
+            $bool = $FundRechargeRecord->fill($FundRechargeRecord_data)->save();
+            if($bool)
+            {
+                $sub_agent->increment('fund_total',$amount);
+                $sub_agent->increment('fund_balance',$amount);
+                $mine->decrement('fund_total',$amount);
+                $mine->decrement('fund_balance',$amount);
+            }
+            else throw new Exception("insert--fund-record--fail");
+
+            DB::commit();
+            return response_success(['id'=>$sub_agent->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+    // 【客户】充值
+    public function operate_user_client_recharge($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+            'recharge-amount.required' => '请输入金额',
+            'recharge-amount.numeric' => '金额必须为数字',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+            'recharge-amount' => 'required|numeric',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge') return response_error([],"参数有误");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试");
+
+
+        $mine = Auth::guard('agent')->user();
+        if(!in_array($mine->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限");
+
+        $time = date('Y-m-d H:i:s');
+        $amount = $post_data['recharge-amount'];
+        // 充值金额不能为0
+        if($amount == 0) return response_error([],"充值金额不能为0！");
+        // 充值金额应该大于资金余额
+        if($amount > 0)
+        {
+            if(($mine->fund_balance - $amount) < 0) return response_error([],"您的余额不足");
+        }
+
+        $client = User::find($id);
+        if(!$client) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($client->usergroup,['Service'])) return response_error([],"该用户不是客户，你不能操作");
+        if($client->pid != $mine->id) return response_error([],"该客户不是你的客户，你无权充值/退款操作！");
+
+        // 退款金额应该小于资金余额
+        if($amount < 0)
+        {
+            if(($client->fund_balance + $amount) < 0) return response_error([],"退款金额不能超过该账户余额");
+        }
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $FundRechargeRecord = New FundRechargeRecord;
+            $FundRechargeRecord_data['owner_id'] = $mine->id;
+            $FundRechargeRecord_data['createuserid'] = $mine->id;
+            $FundRechargeRecord_data['createusername'] = $mine->username;
+            $FundRechargeRecord_data['createtime'] = $time;
+            $FundRechargeRecord_data['userid'] = $id;
+            $FundRechargeRecord_data['usertype'] = 'client';
+            $FundRechargeRecord_data['status'] = 1;
+            $FundRechargeRecord_data['amount'] = $amount;
+
+            $bool = $FundRechargeRecord->fill($FundRechargeRecord_data)->save();
+            if($bool)
+            {
+                $client->increment('fund_total',$amount);
+                $client->increment('fund_balance',$amount);
+                $mine->decrement('fund_total',$amount);
+                $mine->decrement('fund_balance',$amount);
+            }
+            else throw new Exception("insert--fund-record--fail");
+
+            DB::commit();
+            return response_success(['id'=>$client->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 删除【代理商】
+    public function operate_user_sub_agent_delete($post_data)
+    {
+        $mine = Auth::guard('agent')->user();
+        if($mine->usergroup != "Agent") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $sub_agent = User::find($id);
+        if($sub_agent)
+        {
+            if(!in_array($sub_agent->usergroup,['Agent2'])) return response_error([],"该用户不是二级代理商！");
+            if($sub_agent->pid != $mine->id) return response_error([],"该客户不是你的二级代理商，你无权删除！");
+            if($sub_agent->fund_balance > 0) return response_error([],"该用户还有余额！");
+        }
+        else return response_error([],'账户不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $mine->content;
+            $cover_pic = $mine->cover_pic;
+
+            // 删除名下客户
+            $clients = User::where(['pid'=>$id,'usergroup'=>'Service'])->get();
+            foreach ($clients as $c)
+            {
+                $client_id =  $c->id;
+                $client  = User::find($client_id);
+
+                // 删除【站点】
+                $deletedRows_1 = SEOSite::where('owner_id', $client_id)->delete();
+
+                // 删除【关键词】
+                $deletedRows_2 = SEOKeyword::where('owner_id', $client_id)->delete();
+
+                // 删除【关键词检测记录】
+                $deletedRows_3 = SEOKeywordDetectRecord::where('owner_id', $client_id)->delete();
+
+                // 删除【扣费记录】
+                $deletedRows_4 = ExpenseRecord::where('owner_id', $client_id)->delete();
+
+                // 删除【用户】
+//                $mine->pivot_menus()->detach(); // 删除相关目录
+                $bool = $client->delete();
+                if(!$bool) throw new Exception("delete--user--fail");
+            }
+
+            // 删除【用户】
+//            $mine->pivot_menus()->detach(); // 删除相关目录
+            $bool = $sub_agent->delete();
+            if(!$bool) throw new Exception("delete--user--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+//            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 删除【客户】
+    public function operate_user_client_delete($post_data)
+    {
+        $mine = Auth::guard('agent')->user();
+        if(!in_array($mine->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
+
+        $client = User::find($id);
+        if($client)
+        {
+            if(!in_array($client->usergroup,['Service'])) return response_error([],"该用户不是客户！");
+            if($client->pid != $mine->id) return response_error([],"该客户不是你的客户，你无权删除！");
+            if($client->fund_balance > 0) return response_error([],"该用户还有余额");
+        }
+        else return response_error([],'账户不存在，刷新页面试试');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $client->content;
+            $cover_pic = $client->cover_pic;
+
+
+            // 删除【站点】
+            $deletedRows_1 = SEOSite::where('createuserid', $id)->delete();
+
+            // 删除【关键词】
+            $deletedRows_2 = SEOKeyword::where('createuserid', $id)->delete();
+
+            // 删除【关键词检测记录】
+            $deletedRows_3 = SEOKeywordDetectRecord::where('ownuserid', $id)->delete();
+
+            // 删除【扣费记录】
+            $deletedRows_4 = ExpenseRecord::where('ownuserid', $id)->delete();
+
+            // 删除【用户】
+//            $client->pivot_menus()->detach(); // 删除相关目录
+            $bool = $client->delete();
+            if(!$bool) throw new Exception("delete--user--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+//            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
     }
 
 

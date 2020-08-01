@@ -35,12 +35,12 @@
 
                             <li class="header">添加用户</li>
                             <li class="header">
-                                <a href="{{url('/admin/menu/create')}}">
+                                <a href="{{url('/agent/user/sub-agent-create')}}">
                                     <i class="fa fa-plus text-blue"></i> 添加子代理
                                 </a>
                             </li>
                             <li class="header">
-                                <a href="{{url('/admin/menu/create')}}">
+                                <a href="{{url('/agent/user/client-create')}}">
                                     <i class="fa fa-plus text-blue"></i> 添加客户
                                 </a>
                             </li>

@@ -51,6 +51,67 @@ class IndexController extends Controller
 
 
 
+    // 新增【代理商】
+    public function operate_user_sub_agent_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_sub_agent_create();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_sub_agent_save(request()->all());
+    }
+
+    // 编辑【代理商】
+    public function operate_user_sub_agent_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_sub_agent_edit();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_sub_agent_save(request()->all());
+    }
+
+
+    // 新增【客户】
+    public function operate_user_client_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client_create();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_client_save(request()->all());
+    }
+
+    // 编辑【客户】
+    public function operate_user_client_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client_edit();
+        else if (request()->isMethod('post')) return $this->repo->operate_user_client_save(request()->all());
+    }
+
+
+    // 【二级代理商】充值
+    public function operate_user_sub_agent_recharge()
+    {
+        return $this->repo->operate_user_sub_agent_recharge(request()->all());
+    }
+
+
+    // 【客户】充值
+    public function operate_user_client_recharge()
+    {
+        return $this->repo->operate_user_client_recharge(request()->all());
+    }
+
+
+
+
+    // 删除【二级代理商】
+    public function operate_user_sub_agent_delete()
+    {
+        return $this->repo->operate_user_sub_agent_delete(request()->all());
+    }
+
+    // 删除【客户】
+    public function operate_user_client_delete()
+    {
+        return $this->repo->operate_user_client_delete(request()->all());
+    }
+
+
+
+
     /*
      * 财务系统
      */

@@ -8,9 +8,13 @@ class SEOKeywordDetectRecord extends Model
     protected $table = "seo_keyword_detect_record";
 
     protected $fillable = [
-        'sort', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
-        'title', 'subtitle', 'description', 'content', 'cover_pic',
-        'visit_num', 'share_num'
+        'owner_id', 'ownuserid', 'createuserid', 'createusername', 'createtime',
+        'expense_id', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
+        'keywordid', 'keyword', 'siteid', 'website', 'searchengine',
+        'rank', 'rank_original', 'rank_real',
+        'rankbaidumobile', 'rank360', 'ranksougou', 'rankshenma',
+        'token', 'postdata',
+        'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
 
     protected $dateFormat = 'U';

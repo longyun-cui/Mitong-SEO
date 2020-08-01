@@ -119,6 +119,10 @@ class IndexRepository {
             ->where('createuserid',$client_id)
             ->orderby("id","desc");
 
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus']);
+
         $total = $query->count();
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
