@@ -247,6 +247,18 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_finance_expense_record_datatable(request()->all());
     }
 
+    // 返回【财务概览】视图
+    public function view_finance_expense_record_daily()
+    {
+
+        if(request()->isMethod('get'))
+        {
+            return view('mt.admin.entrance.finance.expense-record-daily')
+                ->with(['sidebar_finance_active'=>'active','sidebar_finance_expense_daily_active'=>'active']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_finance_expense_record_daily_datatable(request()->all());
+    }
+
 
 
 

@@ -1063,6 +1063,54 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+    // 返回【消费记录】数据
+    public function get_finance_expense_record_daily_datatable($post_data)
+    {
+        $admin_id = Auth::guard("admin")->user()->id;
+        $query = ExpenseRecord::select('*')
+//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
+            ->with('user','site','keyword')
+            ->orderby("id","desc");
+
+        if(!empty($post_data['createtime']))
+        {
+            $query->whereDate('createtime', $post_data['createtime']);
+        }
+        else
+        {
+            $query->whereDate('createtime', date("Y-m-d") );
+        }
+
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
 
 
 

@@ -105,6 +105,11 @@
                     <i class="fa fa-cny text-red"></i><span>消费记录</span>
                 </a>
             </li>
+            <li class="treeview {{ $sidebar_finance_expense_daily_active or '' }}">
+                <a href="{{ url('/admin/finance/expense-record-daily') }}">
+                    <i class="fa fa-cny text-red"></i><span>每日消费</span>
+                </a>
+            </li>
 
 
 
