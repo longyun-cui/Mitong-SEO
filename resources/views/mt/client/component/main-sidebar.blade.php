@@ -86,37 +86,26 @@
 
 
 
-            {{--站点&关键词管理--}}
+            {{--工单管理--}}
             <li class="header">工单管理</li>
 
-            <li class="treeview {{ $sidebar_item_active or '' }}">
-                <a href="#">
-                    <i class="fa fa-text-width"></i>
-                    <span>工单管理</span>
-                    <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
+            <li class="treeview {{ $sidebar_work_list_active or '' }}">
+                <a href="{{ url('/client/work/work-list') }}">
+                    <i class="fa fa-envelope"></i> <span>我的工单</span>
                 </a>
-                <ul class="treeview-menu">
-                    <li class="{{ $sidebar_finance_recharge_active or '' }}">
-                        <a href="{{ url('/admin/item/list') }}"><i class="fa fa-circle-o"></i> <span>我的工单</span></a>
-                    </li>
-                </ul>
             </li>
 
 
 
 
             {{--留言管理--}}
-            <li class="header">留言管理</li>
+            <li class="header">公告&通知管理</li>
 
-            <li class="treeview">
-                <a href="{{ url('/admin/message/list?category=all') }}">
-                    <i class="fa fa-envelope"></i> <span>全部留言</span>
+            <li class="treeview {{ $sidebar_notice_all_active or '' }}">
+                <a href="{{ url('/client/work/work-list') }}">
+                    <i class="fa fa-envelope"></i> <span>通知列表</span>
                 </a>
             </li>
-
-
 
 
 

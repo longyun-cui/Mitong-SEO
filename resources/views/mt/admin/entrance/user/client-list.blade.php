@@ -37,8 +37,9 @@
                         <th>站点</th>
                         <th>关键词</th>
                         <th>资产总额</th>
-                        <th>累计消费</th>
-                        <th>余额</th>
+                        <th>累计消费1(keyword)</th>
+                        <th>累计消费2(expense)</th>
+                        <th>余额(差额)</th>
                         <th>资金余额</th>
                         <th>可用余额</th>
                         <th>创建时间</th>
@@ -48,6 +49,7 @@
                     <tr>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -184,6 +186,13 @@
                         },
                         {
                             "data": "fund_expense",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "fund_expense_2",
                             'orderable': false,
                             render: function(data, type, row, meta) {
                                 return data;

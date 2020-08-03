@@ -84,51 +84,18 @@
 
 
 
-            {{--工单管理--}}
-            <li class="header">工单管理</li>
-
-            <li class="treeview {{ $sidebar_item_active or '' }}">
-                <a href="#">
-                    <i class="fa fa-text-width"></i>
-                    <span>工单管理</span>
-                    <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li class="">
-                        <a href="{{ url('/admin/item/list') }}">
-                            <i class="fa fa-circle-o"></i> <span>关键词审核</span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('/admin/item/list?category=about') }}">
-                            <i class="fa fa-circle-o"></i> <span>关键词审核</span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('/admin/item/list?category=advantage') }}">
-                            <i class="fa fa-circle-o"></i> <span>关键词审核</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-
-
-            {{--留言管理--}}
+            {{--通知&公告管理--}}
             <li class="header">通知&公告管理</li>
 
             <li class="treeview">
-                <a href="{{ url('/agent/message/list?category=all') }}">
+                <a href="{{ url('/agent/notice/notice-list') }}">
                     <i class="fa fa-envelope"></i> <span>全部通知</span>
                 </a>
             </li>
 
             <li class="treeview">
-                <a href="{{ url('/agent/message/list?category=all') }}">
-                    <i class="fa fa-envelope"></i> <span>公告</span>
+                <a href="{{ url('/agent/notice/my-notice-list') }}">
+                    <i class="fa fa-envelope"></i> <span>我的公告</span>
                 </a>
             </li>
 

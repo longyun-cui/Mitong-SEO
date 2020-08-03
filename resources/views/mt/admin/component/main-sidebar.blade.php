@@ -112,25 +112,10 @@
             {{--工单管理--}}
             <li class="header">工单管理</li>
 
-            <li class="treeview {{ $sidebar_work_active or '' }}">
-                <a href="#">
-                    <i class="fa fa-file"></i>
-                    <span>工单管理</span>
-                    <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                    </span>
+            <li class="treeview {{ $sidebar_work_list_active or '' }}">
+                <a href="{{ url('/client/work/work-list') }}">
+                    <i class="fa fa-envelope"></i> <span>工单列表</span>
                 </a>
-                <ul class="treeview-menu">
-                    <li class="{{ $sidebar_work_active or '' }}">
-                        <a href="{{ url('/admin/work/work-list') }}"><i class="fa fa-circle-o"></i> <span>工单列表</span></a>
-                    </li>
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/work/site') }}"><i class="fa fa-circle-o"></i> <span>关键词审核</span></a>
-                    </li>
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/work/site') }}"><i class="fa fa-circle-o"></i> <span>站点列表</span></a>
-                    </li>
-                </ul>
             </li>
 
 
@@ -139,7 +124,7 @@
             {{--留言管理--}}
             <li class="header">公告&通知管理</li>
 
-            <li class="treeview {{ $sidebar_item_active or '' }}">
+            <li class="treeview {{ $sidebar_notice_active or '' }}">
                 <a href="#">
                     <i class="fa fa-envelope"></i>
                     <span>公告&通知管理</span>
@@ -148,14 +133,14 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site-list') }}"><i class="fa fa-circle-o"></i> <span>关键词列表</span></a>
+                    <li class="{{ $sidebar_notice_all_active or '' }}">
+                        <a href="{{ url('/admin/notice/notice-all') }}"><i class="fa fa-circle-o"></i> <span>全部通知</span></a>
                     </li>
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site') }}"><i class="fa fa-circle-o"></i> <span>关键词审核</span></a>
+                    <li class="{{ $sidebar_notice_agent_active or '' }}">
+                        <a href="{{ url('/admin/notice/notice-agent') }}"><i class="fa fa-circle-o"></i> <span>代理商公告</span></a>
                     </li>
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site') }}"><i class="fa fa-circle-o"></i> <span>站点列表</span></a>
+                    <li class="{{ $sidebar_notice_client_active or '' }}">
+                        <a href="{{ url('/admin/notice/notice-client') }}"><i class="fa fa-circle-o"></i> <span>客户公告</span></a>
                     </li>
                 </ul>
             </li>

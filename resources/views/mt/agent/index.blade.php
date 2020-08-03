@@ -97,7 +97,7 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
             <div class="inner">
-                <h3>9</h3>
+                <h3>9<sup style="font-size: 20px">个</sup></h3>
 
                 <p>客户</p>
             </div>
@@ -112,7 +112,7 @@
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
-                <h3>1<sup style="font-size: 20px">%</sup></h3>
+                <h3>1<sup style="font-size: 20px">个</sup></h3>
 
                 <p>子代理</p>
             </div>
@@ -162,7 +162,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">总资金</span>
-                <span class="info-box-number">{{ $user_data->fund->totalfunds or '' }}<small>%</small></span>
+                <span class="info-box-number">{{ $user_data->fund->totalfunds or '' }} <small>元</small></span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -175,7 +175,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">总支出</span>
-                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }}</span>
+                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }} <small>元</small></span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -192,7 +192,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">资金余额</span>
-                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }}</span>
+                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }} <small>元</small></span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -205,7 +205,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">New Members</span>
-                <span class="info-box-number">2,000</span>
+                <span class="info-box-number">2,000 <small>元</small></span>
             </div>
             <!-- /.info-box-content -->
         </div>

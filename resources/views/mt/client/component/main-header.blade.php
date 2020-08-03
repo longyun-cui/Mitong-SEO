@@ -33,63 +33,17 @@
                                 </a>
                             </li>
 
-                            <li class="header">添加目录</li>
+                            <li class="header">添加站点</li>
                             <li class="header">
-                                <a href="{{url('/admin/menu/create')}}">
-                                    <i class="fa fa-plus text-blue"></i> 添加目录
+                                <a href="{{url('/client/business/site-create')}}">
+                                    <i class="fa fa-plus text-blue"></i> 添加站点
                                 </a>
                             </li>
 
-                            <li class="header">添加内容</li>
+                            <li class="header">添加关键词</li>
                             <li class="header">
-                                <a href="{{url('/admin/item/create?category=about')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加关于企业
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=advantage')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加选择我们
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=cooperation')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加合作伙伴
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=service')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加业务
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=product')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加产品
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=case')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加案例
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=faq')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加常见问题
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=coverage')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加资讯
-                                </a>
-                            </li>
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=activity')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加活动
-                                </a>
-                            </li>
-
-                            <li class="header">
-                                <a href="{{url('/admin/item/create?category=client')}}">
-                                    <i class="fa fa-plus text-green"></i> 添加客户
+                                <a href="{{url('/client/business/keyword-search')}}">
+                                    <i class="fa fa-plus text-green"></i> 添加关键词
                                 </a>
                             </li>
 
