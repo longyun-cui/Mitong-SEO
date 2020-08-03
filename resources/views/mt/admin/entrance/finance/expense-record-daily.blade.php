@@ -49,7 +49,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="createtime" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="createtime" /></td>
                         <td>
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
@@ -70,6 +70,12 @@
                     </thead>
                     <tbody>
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Total:</th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
                 </table>
                 <!-- datatable end -->
             </div>
@@ -252,6 +258,12 @@
 </script>
 <script>
     $(function() {
+
+        $(".form_datetime").datepicker({
+            language:  'zh-CN',
+            format: 'yyyy-mm-dd'
+
+        });
 
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {

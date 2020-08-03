@@ -1083,6 +1083,7 @@ class IndexRepository {
 
 
         $total = $query->count();
+        $fund_total = $query->sum('price');
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
         $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
@@ -1107,6 +1108,7 @@ class IndexRepository {
         {
             $list[$k]->encode_id = encode($v->id);
         }
+//        $list["fund_total"] = $fund_total;
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
