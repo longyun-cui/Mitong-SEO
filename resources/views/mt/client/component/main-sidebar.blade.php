@@ -98,14 +98,8 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="active @if(!empty($category) && ($category == '' || $category == 'all')) active @endif">
-                        <a href="{{ url('/admin/item/list') }}"><i class="fa fa-circle-o"></i> <span>关键词审核</span></a>
-                    </li>
-                    <li class="@if(!empty($category) && $category == 'about') active @endif">
-                        <a href="{{ url('/admin/item/list?category=about') }}"><i class="fa fa-circle-o"></i> 关于企业模块</a>
-                    </li>
-                    <li class="@if(!empty($category) && $category == 'advantage') active @endif">
-                        <a href="{{ url('/admin/item/list?category=advantage') }}"><i class="fa fa-circle-o"></i> 选择我们模块</a>
+                    <li class="{{ $sidebar_finance_recharge_active or '' }}">
+                        <a href="{{ url('/admin/item/list') }}"><i class="fa fa-circle-o"></i> <span>我的工单</span></a>
                     </li>
                 </ul>
             </li>
@@ -124,64 +118,6 @@
 
 
 
-
-            {{--目录管理--}}
-            <li class="header">自定义内容管理</li>
-
-            <li class="treeview">
-                <a href="{{ url('/admin/menu/list') }}">
-                    <i class="fa fa-folder-open-o text-blue"></i> <span>目录列表</span>
-                </a>
-            </li>
-
-            <li class="treeview _none">
-                <a href="{{ url('/admin/item/list') }}">
-                    <i class="fa fa-file-o text-blue"></i> <span>内容列表</span>
-                </a>
-            </li>
-
-
-            <li class="treeview _none">
-                <a href="{{ url('/admin/menu/sort') }}">
-                    <i class="fa fa-sort text-red"></i> <span>目录排序</span>
-                </a>
-            </li>
-
-
-            <li class="treeview">
-                <a href=""><i class="fa fa-th text-aqua"></i> <span>特殊内容</span>
-                    <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="{{ url('/admin/product/list') }}">
-                            <i class="fa fa-file-text text-red"></i> <span>产品列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/article/list') }}">
-                            <i class="fa fa-file-text text-red"></i> <span>文章列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/activity/list') }}">
-                            <i class="fa fa-calendar-check-o text-red"></i> <span>活动/会议列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/survey/list') }}">
-                            <i class="fa fa-question-circle text-red"></i> <span>调研问卷列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/slide/list') }}">
-                            <i class="fa fa-th-large text-red"></i> <span>幻灯片列表</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
 
 
 

@@ -10,7 +10,7 @@ class SEOKeyword extends Model
     protected $fillable = [
         'owner_id', 'createuserid', 'createusername', 'createtime',
         'taskId', 'updateTime', 'reviewopinion',
-        'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price', 'unit', 'unit2', 'keywordstatus',
+        'cartid', 'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price', 'unit', 'unit2', 'keywordstatus',
         'keywordstatus', 'standardstatus', 'standarddays', 'is_detect', 'detectiondate',
         'initialranking', 'latestranking', 'latestconsumption', 'totalconsumption', 'reviewdate', 'reviewuserid', 'reviewusername',
         'firststandarddate', 'standarddate', 'optimizetime', 'cooperationstopdate', 'freezefunds', 'unfreezedate', 'unfreezetime',

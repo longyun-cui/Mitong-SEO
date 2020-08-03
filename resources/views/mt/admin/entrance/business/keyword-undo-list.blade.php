@@ -44,7 +44,7 @@
                         <th>创建时间</th>
                         <th>单价</th>
                         <th>状态</th>
-                        <th>历史数据</th>
+                        <th>操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -56,18 +56,20 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -87,6 +89,113 @@
             </div>
         </div>
         <!-- END PORTLET-->
+    </div>
+</div>
+
+<div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">代理商充值</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="review" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--站点ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-id"></span>
+                                </div>
+                            </div>
+                            {{--关键词--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-keyword"></span>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-name"></span>
+                                </div>
+                            </div>
+                            {{--站点--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-website"></span>
+                                </div>
+                            </div>
+                            {{--站点--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">调整价格</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="text" class="form-control review-price" name="review-price" placeholder="调整价格" value="0">
+                                </div>
+                            </div>
+                            {{--审核意见--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">审核结果</label>
+                                <div class="col-md-8 ">
+                                    <select name="keywordstatus" class="form-control form-filter">
+                                        <option value ="0">请选择</option>
+                                        <option value ="待审核">待审核</option>
+                                        <option value ="优化中">优化中</option>
+                                        <option value ="合作停">合作停</option>
+                                        <option value ="被拒绝">被拒绝</option>
+                                    </select>
+                                </div>
+                            </div>
+                            {{--备注--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">备注</label>
+                                <div class="col-md-8 ">
+                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
+                                    <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
+                                </div>
+                            </div>
+                            {{--说明--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">说明</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -189,7 +298,7 @@
                     {
                         'data': 'id',
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -198,7 +307,9 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
+//                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
+                                '<a class="btn btn-xs item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>'+
+                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
                             return html;
                         }
                     }
@@ -285,31 +396,80 @@
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
         });
 
         // 【数据分析】
         $("#item-main-body").on('click', ".item-statistics-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+            window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
+        });
+
+        // 【审核】显示
+        $("#item-main-body").on('click', ".item-review-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.review-site-id').html(that.attr('data-id'));
+            $('.review-site-name').html(that.attr('data-name'));
+            $('.review-website').html(that.attr('data-website'));
+            $('.review-keyword').html(that.attr('data-keyword'));
+            $('.review-price').val(that.attr('data-price'));
+            $('#modal-body').modal('show');
+        });
+
+        // 【审核】提交
+        $("#modal-body").on('click', "#item-review-submit", function() {
+            var that = $(this);
+            layer.msg('确定"审核"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    var options = {
+                        url: "{{ url('/admin/business/keyword-review') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+                                location.reload();
+                            }
+                        }
+                    };
+                    $("#form-edit-modal").ajaxSubmit(options);
+                }
+            });
+        });
+
+        // 【充值】取消
+        $("#modal-body").on('click', "#item-review-cancel", function() {
+            $('.review-user-id').html('');
+            $('.review-user-name').html('');
+            $('.review-website').html('');
+            $('.review-keyword').html('');
+            $('.review-price').val(0);
+            $('#modal-body').modal('hide');
         });
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要删除该"产品"么', {
+            layer.msg('确定要"删除"么？', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/item/delete') }}",
+                        "{{ url('/admin/business/keyword-delete-undo') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
                             id:that.attr('data-id')

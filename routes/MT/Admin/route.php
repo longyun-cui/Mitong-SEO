@@ -57,9 +57,16 @@ Route::group([], function () {
 
 
         Route::match(['get','post'], '/business/site-list', $controller.'@view_business_site_list');
+        Route::match(['get','post'], '/business/site-undo', $controller.'@view_business_site_undo_list');
         Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
         Route::match(['get','post'], '/business/keyword-today', $controller.'@view_business_keyword_today_list');
         Route::match(['get','post'], '/business/keyword-undo', $controller.'@view_business_keyword_undo_list');
+
+        Route::match(['get','post'], '/business/site-review', $controller.'@operate_business_site_review');
+        Route::match(['get','post'], '/business/keyword-review', $controller.'@operate_business_keyword_review');
+
+        Route::match(['get','post'], '/business/site-delete-undo', $controller.'@operate_business_site_delete_undo');
+        Route::match(['get','post'], '/business/keyword-delete-undo', $controller.'@operate_business_keyword_delete_undo');
 
 
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');

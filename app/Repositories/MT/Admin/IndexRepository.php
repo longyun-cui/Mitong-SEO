@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\MT\Admin;
 
+use App\Models\MT\SEOCart;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
@@ -611,6 +612,43 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+    // 返回【待审核站点】列表
+    public function get_business_site_undo_list_datatable($post_data)
+    {
+        $mine = Auth::guard("admin")->user();
+        $query = SEOSite::select('*')->with('creator')
+            ->where('sitestatus','待审核');
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
     // 返回【关键词】列表
     public function get_business_keyword_list_datatable($post_data)
     {
@@ -650,7 +688,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【今日新增关键词】列表
+    // 返回【今日关键词】列表
     public function get_business_keyword_today_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -696,7 +734,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【待审核】列表
+    // 返回【待审核关键词】列表
     public function get_business_keyword_undo_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -740,6 +778,200 @@ class IndexRepository {
         }
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
+    }
+
+
+
+
+    // 【站点】审核
+    public function operate_business_site_review($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
+
+        $current_time = date('Y-m-d H:i:s');
+        $site_status = $post_data["sitestatus"];
+        if(!in_array($site_status,['优化中','被拒绝'])) return response_error([],"审核参数有误！");
+
+
+        $site = SEOSite::find($id);
+        if($site)
+        {
+        }
+        else return response_error([],'账户不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $site_data["reviewuserid"] = $mine->id;
+            $site_data["reviewusername"] = $mine->username;
+            $site_data["reviewdate"] = $current_time;
+            $site_data["sitestatus"] = $site_status;
+
+            $bool = $site->fill($site_data)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 【关键词】审核
+    public function operate_business_keyword_review($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
+
+        $current_time = date('Y-m-d H:i:s');
+        $keyword_status = $post_data["keywordstatus"];
+        $keyword_price = $post_data["review-price"];
+        if(!in_array($keyword_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+
+        $keyword = SEOKeyword::find($id);
+        if($keyword)
+        {
+        }
+        else return response_error([],'账户不存在，刷新页面试试');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $keyword_data["reviewuserid"] = $mine->id;
+            $keyword_data["reviewusername"] = $mine->username;
+            $keyword_data["reviewdate"] = $current_time;
+            $keyword_data["keywordstatus"] = $keyword_status;
+            $keyword_data["price"] = $keyword_price;
+
+            $bool = $keyword->fill($keyword_data)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            $cart = SEOCart::find($keyword->cartid);
+            $cart->price = $keyword_price;
+            $cart->save();
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+
+
+
+    // 删除【待选站点】
+    public function operate_business_site_delete_undo($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $item = SEOSite::find($id);
+        if($item)
+        {
+        }
+        else return response_error([],'站点不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $mine->content;
+            $cover_pic = $mine->cover_pic;
+
+            // 删除【该条目】
+//            $item->pivot_menus()->detach(); // 删除相关目录
+            $bool = $item->delete();
+            if(!$bool) throw new Exception("delete--site--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 删除【待选关键词】
+    public function operate_business_keyword_delete_undo($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
+
+        $item = SEOKeyword::find($id);
+        if($item)
+        {
+        }
+        else return response_error([],'关键词不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $item->content;
+            $cover_pic = $item->cover_pic;
+
+            // 删除【Cart】
+            $deletedRows_1 = SEOCart::find($item->id)->delete();
+
+            // 删除【该条目】
+//            $item->pivot_menus()->detach(); // 删除相关目录
+            $bool = $item->delete();
+            if(!$bool) throw new Exception("delete--keyword--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
     }
 
 

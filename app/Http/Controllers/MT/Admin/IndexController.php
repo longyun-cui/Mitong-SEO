@@ -59,6 +59,8 @@ class IndexController extends Controller
     }
 
 
+
+
     // 新增【代理商】
     public function operate_user_agent_create()
     {
@@ -74,11 +76,15 @@ class IndexController extends Controller
     }
 
 
+
+
     // 【1级代理商】充值
     public function operate_user_agent_recharge()
     {
         return $this->repo->operate_user_agent_recharge(request()->all());
     }
+
+
 
 
     // 删除【代理商】
@@ -92,6 +98,8 @@ class IndexController extends Controller
     {
         return $this->repo->operate_user_client_delete(request()->all());
     }
+
+
 
 
     // 登录【代理商】
@@ -118,7 +126,7 @@ class IndexController extends Controller
     /*
      * 业务系统
      */
-    // 返回【财务概览】视图
+    // 返回【站点列表】视图
     public function view_business_site_list()
     {
         if(request()->isMethod('get'))
@@ -127,6 +135,17 @@ class IndexController extends Controller
                 ->with(['sidebar_business_site_active'=>'active','sidebar_business_site_list_active'=>'active']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_site_list_datatable(request()->all());
+    }
+
+    // 返回【待审核站点列表】视图
+    public function view_business_site_undo_list()
+    {
+        if(request()->isMethod('get'))
+        {
+            return view('mt.admin.entrance.business.site-undo-list')
+                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_site_undo_active'=>'active']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_business_site_undo_list_datatable(request()->all());
     }
 
     // 返回【关键词列表】视图
@@ -140,7 +159,7 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
     }
 
-    // 返回【关键词列表】视图
+    // 返回【今日关键词列表】视图
     public function view_business_keyword_today_list()
     {
         if(request()->isMethod('get'))
@@ -151,7 +170,7 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
 
-    // 返回【关键词列表】视图
+    // 返回【待审核关键词列表】视图
     public function view_business_keyword_undo_list()
     {
         if(request()->isMethod('get'))
@@ -160,6 +179,36 @@ class IndexController extends Controller
                 ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_undo_active'=>'active']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_undo_list_datatable(request()->all());
+    }
+
+
+
+
+    // 审核【站点】
+    public function operate_business_site_review()
+    {
+        return $this->repo->operate_business_site_review(request()->all());
+    }
+
+    // 审核【关键词】
+    public function operate_business_keyword_review()
+    {
+        return $this->repo->operate_business_keyword_review(request()->all());
+    }
+
+
+
+
+    // 删除【代理商】
+    public function operate_business_site_delete_undo()
+    {
+        return $this->repo->operate_business_site_delete_undo(request()->all());
+    }
+
+    // 删除【客户】
+    public function operate_business_keyword_delete_undo()
+    {
+        return $this->repo->operate_business_keyword_delete_undo(request()->all());
     }
 
 

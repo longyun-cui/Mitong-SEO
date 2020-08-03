@@ -1,0 +1,92 @@
+body, #content {
+	background-color: #fff;
+}
+
+.tuijian .btn {
+	margin-bottom: 10px;
+	border-radius: 0;
+}
+
+.checked {
+	position: relative;
+	left: 0;
+	top: 0;
+	border: 1px solid #48b56c !important;
+}
+
+.checked:after {
+	content: '';
+	display: block;
+	width: 30px;
+	height: 30px;
+	background:
+		url("../img/rapbox3_pbg.png")
+		right bottom no-repeat;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+table {
+	border-collapse: inherit;
+}
+
+.panel-heading {
+	padding-bottom: 20px;
+}
+
+.hidden1 {
+	display: none;
+}
+
+#tablelist tr td:nth-of-type(1) label {
+	display: inline-block;
+	width: 240px !important;
+	overflow: hidden;
+}
+
+.tip1 {
+	padding-left: 30px;
+}
+
+img.icon {
+	padding-right: 10px;
+}
+
+.tuijian_box {
+	background-color: #fff;
+	border: none;
+	border-top: 1px dashed #dadada;
+}
+
+.tuijian_box .panel-heading {
+	background-color: #fff;
+}
+
+.tuijian_box .panel-body {
+	background-color: #fff;
+}
+
+.tuijian_box .panel-body a {
+	color: #666666;
+	font-size: 14px;
+	display: inline-block;
+	padding: 10px 25px;
+	border: 1px solid #dadada;
+	border-radius: 6px;
+	margin: 5px;
+}
+
+.tuijian_box .panel-body a:hover, .tuijian_box .panel-body a.checked {
+	background-color: #48b56c !important;
+	color: #fff;
+	border: 1px solid #48b56c !important;
+}
+
+.tuijian_box .panel-body a:after {
+	background: none;
+}
+
+p.tip {
+	padding-top: 10px;
+}

@@ -58,9 +58,9 @@
                     <i class="fa fa-sitemap"></i><span>站点列表</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_business_site__active or '' }}">
-                <a href="{{ url('/admin/business/site') }}">
-                    <i class="fa fa-sitemap"></i><span>站点效果监控</span>
+            <li class="treeview {{ $sidebar_business_site_undo_active or '' }}">
+                <a href="{{ url('/admin/business/site-undo') }}">
+                    <i class="fa fa-sitemap"></i><span>待审核站点</span>
                 </a>
             </li>
 
@@ -112,7 +112,7 @@
             {{--工单管理--}}
             <li class="header">工单管理</li>
 
-            <li class="treeview {{ $sidebar_item_active or '' }}">
+            <li class="treeview {{ $sidebar_work_active or '' }}">
                 <a href="#">
                     <i class="fa fa-file"></i>
                     <span>工单管理</span>
@@ -121,14 +121,14 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site-list') }}"><i class="fa fa-circle-o"></i> <span>关键词列表</span></a>
+                    <li class="{{ $sidebar_work_active or '' }}">
+                        <a href="{{ url('/admin/work/work-list') }}"><i class="fa fa-circle-o"></i> <span>工单列表</span></a>
                     </li>
                     <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site') }}"><i class="fa fa-circle-o"></i> <span>关键词审核</span></a>
+                        <a href="{{ url('/admin/work/site') }}"><i class="fa fa-circle-o"></i> <span>关键词审核</span></a>
                     </li>
                     <li class="{{ $sidebar_site_active or '' }}">
-                        <a href="{{ url('/admin/business/site') }}"><i class="fa fa-circle-o"></i> <span>站点列表</span></a>
+                        <a href="{{ url('/admin/work/site') }}"><i class="fa fa-circle-o"></i> <span>站点列表</span></a>
                     </li>
                 </ul>
             </li>

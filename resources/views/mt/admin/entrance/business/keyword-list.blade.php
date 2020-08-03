@@ -262,7 +262,7 @@
                     {
                         'data': 'id',
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -270,8 +270,9 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-detail-show" data-id="'+value+'" >数据详情</a>';
+                                '<a class="btn btn-xs item-stop-submit" data-id="'+data+'" >合作停</a>'+
+                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                '<a class="btn btn-xs item-detail-show" data-id="'+data+'" >数据详情</a>';
                             return html;
                         }
                     }
