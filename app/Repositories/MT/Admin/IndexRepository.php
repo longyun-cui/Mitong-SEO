@@ -483,7 +483,7 @@ class IndexRepository {
 
                     // 删除【用户】
 //                    $mine->pivot_menus()->detach(); // 删除相关目录
-                    $bool = $sub_agent_client->delete();
+                    $bool = $sub_agents->delete();
                     if(!$bool) throw new Exception("delete--user--fail");
                 }
             }
