@@ -14,6 +14,31 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>今日概览</h4>
+                <div>
+                    <span>优化关键词数</span>
+                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_num'] or 0 }}</span>
+                    <span style="margin-right:12px;">个</span>
+
+                    <span>达标关键词数</span>
+                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_num'] or 0 }}</span>
+                    <span style="margin-right:12px;">个</span>
+
+                    <span>达标消费</span>
+                    <span class="text-red" style="font-size:24px;">￥{{ $data['keyword_standard_cost'] or 0 }}</span>
+                    <span style="margin-right:12px;">元</span>
+                </div>
+            </div>
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<div class="row">
+    <div class="col-md-12">
         <!-- BEGIN PORTLET-->
         <div class="box box-info">
 
@@ -39,8 +64,8 @@
                         <th>id</th>
                         <th>客户</th>
                         <th>关键词</th>
-                        <th>搜索引擎</th>
                         <th>站点</th>
+                        <th>搜索引擎</th>
                         <th>创建时间</th>
                         <th>单价</th>
                         <th>初始排名</th>
@@ -56,8 +81,17 @@
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
+                        <td>
+                            <select name="searchengine" class="form-control form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="baidu">百度PC</option>
+                                <option value ="baidu_mobile">百度移动</option>
+                                <option value ="sougou">搜狗</option>
+                                <option value ="360">360</option>
+                                <option value ="shenma">神马</option>
+                            </select>
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -67,7 +101,7 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <select name="keywordstatus" class="form-filter">
+                            <select name="keywordstatus" class="form-control form-filter">
                                 <option value ="0">全部</option>
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
@@ -126,6 +160,7 @@
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
                 "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                "bAutoWidth": false,
                 "processing": true,
                 "serverSide": true,
                 "searching": false,
@@ -137,6 +172,7 @@
                         d._token = $('meta[name="_token"]').attr('content');
                         d.keyword = $('input[name="keyword"]').val();
                         d.website = $('input[name="website"]').val();
+                        d.searchengine = $('select[name="searchengine"]').val();
                         d.keywordstatus = $('select[name="keywordstatus"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
@@ -164,6 +200,7 @@
                     {
                         "data": "createuserid",
                         'orderable': false,
+                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return row.creator == null ? '未知' : row.creator.username;
                         }
@@ -171,13 +208,7 @@
                     {
                         "data": "keyword",
                         'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
-                    {
-                        "data": "searchengine",
-                        'orderable': false,
+                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
@@ -185,8 +216,22 @@
                     {
                         "data": "website",
                         'orderable': false,
+                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
+                        }
+                    },
+                    {
+                        "data": "searchengine",
+                        'orderable': true,
+                        'width':"64px",
+                        render: function(data, type, row, meta) {
+                            if(data = "baidu") return '百度PC';
+                            else if(data = "baidu_mobile") return '百度移动';
+                            else if(data = "sougou") return '搜狗';
+                            else if(data = "360") return '360';
+                            else if(data = "shenma") return '神马';
+                            else return data;
                         }
                     },
                     {
@@ -194,8 +239,11 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return data;
-                            newDate = new Date(data);
-                            return newDate.toLocaleDateString('chinese',{hour12:false});
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate()+1)).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
@@ -214,7 +262,7 @@
                     },
                     {
                         "data": "latestranking",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
                             else return data;
@@ -222,37 +270,44 @@
                     },
                     {
                         "data": "detectiondate",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
 //                            return data;
-                            newDate = new Date(data);
-                            return newDate.toLocaleDateString('chinese',{hour12:false});
+//                            newDate = new Date(data);
+//                            return newDate.toLocaleDateString('chinese',{hour12:false});
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate()+1)).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
                         "data": "latestconsumption",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'元';
+                            return parseInt(data);
                         }
                     },
                     {
                         "data": "standarddays",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'天';
+                            return parseInt(data);
                         }
                     },
                     {
                         "data": "totalconsumption",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'元';
+                            return parseInt(data);
                         }
                     },
                     {
                         "data": "keywordstatus",
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
                             else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
@@ -272,7 +327,7 @@
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                 '<a class="btn btn-xs item-stop-submit" data-id="'+data+'" >合作停</a>'+
                                 '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                '<a class="btn btn-xs item-detail-show" data-id="'+data+'" >数据详情</a>';
+                                '<a class="btn btn-xs item-data-detail-link" data-id="'+data+'" >数据详情</a>';
                             return html;
                         }
                     }
@@ -361,37 +416,43 @@
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
         });
 
         // 【数据分析】
         $("#item-main-body").on('click', ".item-statistics-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+            window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
-        // 【编辑】
-        $("#item-main-body").on('click', ".item-detail-show", function() {
+        // 【数据详情】
+        $("#item-main-body").on('click', ".item-data-detail-link", function() {
             var that = $(this);
-            {{--$.post(--}}
-                {{--"{{ url('/item/delete') }}",--}}
-                {{--{--}}
-                    {{--_token: $('meta[name="_token"]').attr('content'),--}}
-                    {{--id:that.attr('data-id')--}}
-                {{--},--}}
-                {{--function(data){--}}
-                    {{--if(!data.success) layer.msg(data.msg);--}}
-                    {{--else location.reload();--}}
-                {{--},--}}
-                {{--'json'--}}
-            {{--);--}}
+            window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
+        });
+
+        // 【数据详情】
+        $("#item-main-body").on('click', ".item-data-detail-show", function() {
+            var that = $(this);
+            $.post(
+                "{{ url('/item/delete') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    id:that.attr('data-id')
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else location.reload();
+                },
+                'json'
+            );
             $('#modal-body').modal('show');
         });
 

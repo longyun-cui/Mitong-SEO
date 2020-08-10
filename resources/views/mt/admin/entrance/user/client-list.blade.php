@@ -28,7 +28,7 @@
 
             <div class="box-body datatable-body" id="item-main-body">
                 <!-- datatable start -->
-                <table class='table table-striped table-bordered' id='datatable_ajax'>
+                <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
                         <th>id</th>
@@ -41,6 +41,8 @@
                         <th>累计消费2(expense)</th>
                         <th>余额(差额)</th>
                         <th>资金余额</th>
+                        <th>初始冻结金额</th>
+                        <th>冻结余额</th>
                         <th>可用余额</th>
                         <th>创建时间</th>
                         <th>状态</th>
@@ -49,6 +51,8 @@
                     <tr>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="agentname" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -107,7 +111,7 @@
                 var dt = $('#datatable_ajax');
                 var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                    "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                    "aLengthMenu": [[20, 50, 200, 500], ["20", "50", "200", "500"]],
                     "processing": true,
                     "serverSide": true,
                     "searching": false,
@@ -118,6 +122,7 @@
                         "data": function (d) {
                             d._token = $('meta[name="_token"]').attr('content');
                             d.username = $('input[name="username"]').val();
+                            d.agentname = $('input[name="agentname"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -137,6 +142,7 @@
                         {
                             "data": "id",
                             'orderable': false,
+                            'width':"48px",
                             render: function(data, type, row, meta) {
                                 return data;
                             }
@@ -151,6 +157,7 @@
                         {
                             "data": "pid",
                             'orderable': false,
+                            'width':"96px",
                             render: function(data, type, row, meta) {
                                 if(row.parent) {
                                     return '<a target="_blank" href="/item/'+data+'">'+row.parent.username+'</a>';
@@ -163,6 +170,7 @@
                         {
                             "data": "id",
                             'orderable': false,
+                            'width':"48px",
                             render: function(data, type, row, meta) {
                                 return '<a target="_blank" href="/admin/user/client-site-list/'+data+'">'+row.sites_count+'</a>';
 
@@ -171,6 +179,7 @@
                         {
                             "data": "id",
                             'orderable': false,
+                            'width':"48px",
                             render: function(data, type, row, meta) {
                                 return '<a target="_blank" href="/admin/user/client-keyword-list/'+data+'">'+row.keywords_count+'</a>';
 
@@ -179,6 +188,7 @@
                         {
                             "data": "fund_total",
                             'orderable': false,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
                                 return data;
@@ -187,6 +197,7 @@
                         {
                             "data": "fund_expense",
                             'orderable': false,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 return data;
                             }
@@ -194,13 +205,16 @@
                         {
                             "data": "fund_expense_2",
                             'orderable': false,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 return data;
                             }
                         },
                         {
+                            "title": "差额",
                             "data": "id",
                             'orderable': false,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 var $balance = row.fund_total - row.fund_expense;
                                 if($balance < 0) return '<b class="text-red">'+$balance+'</b>';
@@ -208,16 +222,40 @@
                             }
                         },
                         {
+                            "title": "余额",
                             "data": "fund_balance",
-                            'orderable': false,
+                            'orderable': true,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
                                 return data;
                             }
                         },
                         {
+                            "title": "可用余额",
                             "data": "fund_available",
-                            'orderable': false,
+                            'orderable': true,
+                            'width':"64px",
+                            render: function(data, type, row, meta) {
+//                                return row.fund == null ? '未知' : row.fund.availablefunds;
+                                return data;
+                            }
+                        },
+                        {
+                            "title": "初始冻结金额",
+                            "data": "fund_frozen_init",
+                            'orderable': true,
+                            'width':"64px",
+                            render: function(data, type, row, meta) {
+//                                return row.fund == null ? '未知' : row.fund.availablefunds;
+                                return data;
+                            }
+                        },
+                        {
+                            "title": "冻结金额",
+                            "data": "fund_frozen",
+                            'orderable': true,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
                                 return data;
@@ -249,8 +287,14 @@
                         {
                             'data': 'createtime',
                             'orderable': true,
+                            'width':"80px",
                             render: function(data, type, row, meta) {
-                                return data;
+//                            return data;
+                                var $date = new Date(data);
+                                var $year = $date.getFullYear();
+                                var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                                var $day = ('00'+($date.getDate())).slice(-2);
+                                return $year+'-'+$month+'-'+$day;
                             }
                         },
 //                        {
@@ -266,6 +310,7 @@
                         {
                             'data': 'status',
                             'orderable': false,
+                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 if(data == 0) return '<small class="btn btn-xs">未启用</small>';
                                 else if(data == 1) return '<small class="btn btn-xs">正常</small>';

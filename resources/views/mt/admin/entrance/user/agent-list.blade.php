@@ -188,7 +188,7 @@
             var dt = $('#datatable_ajax');
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                "aLengthMenu": [[40, 50, 200], ["40", "50", "200"]],
                 "processing": true,
                 "serverSide": true,
                 "searching": false,
@@ -216,8 +216,10 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
+                        'width':"32px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
@@ -225,6 +227,7 @@
                     {
                         "data": "id",
                         'orderable': false,
+                        'width':"192px",
                         render: function(data, type, row, meta) {
                             return '<a target="_blank" href="/item/'+data+'">'+row.username+'</a>';
                         }
@@ -232,6 +235,7 @@
                     {
                         "data": "usergroup",
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(row.usergroup == "Agent") return '1级';
                             else if(row.usergroup == "Agent2") return '二级代理';
@@ -241,6 +245,7 @@
                     {
                         "data": "id",
                         'orderable': false,
+                        'width':"128px",
                         render: function(data, type, row, meta) {
                             if(row.usergroup == "Agent")
                             {
@@ -268,10 +273,11 @@
                     {
                         "data": "id",
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(row.clients_count && row.clients_count > 0)
                             {
-                                return '<a target="_blank" href="//admin/user/agent/client-list/'+data+'">'+row.clients_count+'</a>';
+                                return '<a target="_blank" href="/admin/user/agent/client-list/'+data+'">'+row.clients_count+'</a>';
                             }
                             else return '-';
 
@@ -280,6 +286,7 @@
                     {
                         "data": "fund_total",
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.totalfunds;
                             return data;
@@ -288,6 +295,7 @@
                     {
                         "data": "fund_balance",
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.balancefunds;
                             return data;
@@ -319,8 +327,14 @@
                     {
                         'data': 'createtime',
                         'orderable': true,
+                        'width':"96px",
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate()+1)).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
 //                    {
@@ -336,6 +350,7 @@
                     {
                         'data': 'userstatus',
                         'orderable': false,
+                        'width':"64px",
                         render: function(data, type, row, meta) {
                             return data;
 //                            if(data == 0) return '<small class="btn btn-xs">未启用</small>';

@@ -61,6 +61,8 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
         Route::match(['get','post'], '/business/keyword-today', $controller.'@view_business_keyword_today_list');
         Route::match(['get','post'], '/business/keyword-undo', $controller.'@view_business_keyword_undo_list');
+        Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
+        Route::match(['get','post'], '/business/keyword-detect-set-rank', $controller.'@operate_business_keyword_detect_set_rank');
 
         Route::match(['get','post'], '/business/site-review', $controller.'@operate_business_site_review');
         Route::match(['get','post'], '/business/keyword-review', $controller.'@operate_business_keyword_review');

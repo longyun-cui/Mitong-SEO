@@ -121,7 +121,8 @@ class IndexRepository {
             ->orderby("id","desc");
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
-//        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
         if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus']);
 
         $total = $query->count();
@@ -164,6 +165,53 @@ class IndexRepository {
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['cartstatus'])) $query->where('cartstatus', $post_data['cartstatus']);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+    // 返回【关键词检测】视图
+    public function show_business_keyword_detect_record($post_data)
+    {
+        $mine = Auth::guard("client")->user();
+        $id  = $post_data["id"];
+        $keyword_data = SEOKeyword::select('*')->with('creator')->where('id',$id)->first();
+        return view('mt.client.entrance.business.keyword-detect-record')
+            ->with(['data'=>$keyword_data]);
+    }
+    // 返回【关键词检测】列表
+    public function get_business_keyword_detect_record_datatable($post_data)
+    {
+        $mine = Auth::guard("client")->user();
+
+        $id  = $post_data["id"];
+        $query = SEOKeywordDetectRecord::select('*')->where('keywordid',$id);
 
         $total = $query->count();
 
@@ -456,8 +504,80 @@ class IndexRepository {
 
         $list = $this -> combKeywordSearchResults( $arr );
 
+
+        $mine = Auth::guard('client')->user();
+        $mine_id = $mine->id;
+        if($mine->usergroup != "Service") return response_error([],"你没有操作权限！");
+
+        foreach ($list as $k => $v)
+        {
+            $keyword = $v["keyword"];
+            $keywords = SEOKeyword::select('id','keyword','searchengine','price')->where(['createuserid'=>$mine_id,'keyword'=>$keyword])->get();
+            $keywords_data = $keywords->toArray();
+            if($keywords_data)
+            {
+                foreach ($keywords_data as $data_k => $data_v)
+                {
+                    $searchengine = $data_v["searchengine"];
+                    $price = (int)$data_v["price"];
+                    $difference = 0;
+                    if($searchengine == "baidu")
+                    {
+                        if($v["baidu"] < $price) $difference = $price - $v["baidu"];
+                        $list[$k]["baidu"] = $price;
+
+                        $list[$k]["baidu_mobile"] += $difference;
+                        $list[$k]["sougou"] += $difference;
+                        $list[$k]["360"] += $difference;
+                        $list[$k]["shenma"] += $difference;
+                    }
+                    else if($searchengine == "baidu_mobile")
+                    {
+                        if($v["baidu_mobile"] < $price) $difference = $price - $v["baidu_mobile"];
+                        $list[$k]["baidu_mobile"] = $price;
+
+                        $list[$k]["baidu"] += $difference;
+                        $list[$k]["sougou"] += $difference;
+                        $list[$k]["360"] += $difference;
+                        $list[$k]["shenma"] += $difference;
+                    }
+                    else if($searchengine == "sougou")
+                    {
+                        if($v["sougou"] < $price) $difference = $price - $v["sougou"];
+                        $list[$k]["sougou"] = $price;
+
+                        $list[$k]["baidu"] += $difference;
+                        $list[$k]["baidu_mobile"] += $difference;
+                        $list[$k]["360"] += $difference;
+                        $list[$k]["shenma"] += $difference;
+                    }
+                    else if($searchengine == "360")
+                    {
+                        if($v["360"] < $price) $difference = $price - $v["360"];
+                        $list[$k]["360"] = $price;
+
+                        $list[$k]["baidu"] += $difference;
+                        $list[$k]["baidu_mobile"] += $difference;
+                        $list[$k]["sougou"] += $difference;
+                        $list[$k]["shenma"] += $difference;
+                    }
+                    else if($searchengine == "shenma")
+                    {
+                        if($v["shenma"] < $price) $difference = $price - $v["shenma"];
+                        $list[$k]["shenma"] = $price;
+
+                        $list[$k]["baidu"] += $difference;
+                        $list[$k]["baidu_mobile"] += $difference;
+                        $list[$k]["sougou"] += $difference;
+                        $list[$k]["360"] += $difference;
+                    }
+                }
+            }
+        }
+
         $view_blade = 'mt.client.entrance.business.keyword-search-result';
         $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
+
 //        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
 //        $html = response($html)->getContent();
 

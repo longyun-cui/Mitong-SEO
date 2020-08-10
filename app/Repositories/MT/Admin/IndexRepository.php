@@ -1,13 +1,13 @@
 <?php
 namespace App\Repositories\MT\Admin;
 
-use App\Models\MT\SEOCart;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
 use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\SEOSite;
 use App\Models\MT\SEOKeyword;
+use App\Models\MT\SEOCart;
 
 use App\Repositories\Common\CommonRepository;
 
@@ -61,7 +61,7 @@ class IndexRepository {
         $index_data['client_fund_balance_sum'] = number_format((int)$agent_client_total_sum - (int)$client_fund_expense_sum);
 
 
-        $keyword_num = SEOKeyword::where(['keywordstatus'=>'优化中'])->count();
+        $keyword_num = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->count();
         $index_data['keyword_num'] = $keyword_num;
 
         $keyword_standard_num = SEOKeyword::where(['keywordstatus'=>'优化中','standardstatus'=>'已达标'])
@@ -116,7 +116,7 @@ class IndexRepository {
                 'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
                 'clients'
             ])
-            ->where('userstatus','正常')->where('status',1)->whereIn('usergroup',['Agent','Agent2'])
+            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2'])
             ->orderby("id","desc");
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
@@ -125,7 +125,7 @@ class IndexRepository {
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
         $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
-        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 40;
 
         if(isset($post_data['order']))
         {
@@ -159,7 +159,7 @@ class IndexRepository {
 //            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('parent','ep','fund')
             ->withCount(['sites','keywords'])
-            ->where('userstatus','正常')->where('status',1)->whereIn('usergroup',['Service'])
+            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Service'])
             ->orderby("id","desc");
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
@@ -415,22 +415,22 @@ class IndexRepository {
     // 删除【代理商】
     public function operate_user_agent_delete($post_data)
     {
-        $admin = Auth::guard('admin')->user();
-        if($admin->usergroup != "Manage") return response_error([],"你没有操作权限");
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限");
 
         $id = $post_data["id"];
         if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试");
 
-        $mine = User::find($id);
-        if(!in_array($mine->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商");
-        if($mine->fund_balance > 0) return response_error([],"该用户还有余额");
+        $agent = User::find($id);
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商");
+        if($agent->fund_balance > 0) return response_error([],"该用户还有余额");
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $content = $mine->content;
-            $cover_pic = $mine->cover_pic;
+            $content = $agent->content;
+            $cover_pic = $agent->cover_pic;
 
             // 删除名下客户
             $clients = User::where(['pid'=>$id,'usergroup'=>'Service'])->get();
@@ -440,21 +440,29 @@ class IndexRepository {
                 $client  = User::find($client_id);
 
                 // 删除【站点】
-                $deletedRows_1 = SEOSite::where('owner_id', $client_id)->delete();
+//                $deletedRows_1 = SEOSite::where('owner_id', $client_id)->delete();
+                $deletedRows_1 = SEOSite::where('createuserid', $client_id)->delete();
 
                 // 删除【关键词】
-                $deletedRows_2 = SEOKeyword::where('owner_id', $client_id)->delete();
+//                $deletedRows_2 = SEOKeyword::where('owner_id', $client_id)->delete();
+                $deletedRows_2 = SEOKeyword::where('createuserid', $client_id)->delete();
+
+                // 删除【待选关键词】
+//                $deletedRows_3 = SEOCart::where('owner_id', $client_id)->delete();
+                $deletedRows_3 = SEOCart::where('createuserid', $client_id)->delete();
 
                 // 删除【关键词检测记录】
-                $deletedRows_3 = SEOKeywordDetectRecord::where('owner_id', $client_id)->delete();
+//                $deletedRows_4 = SEOKeywordDetectRecord::where('owner_id', $client_id)->delete();
+                $deletedRows_4 = SEOKeywordDetectRecord::where('ownuserid', $client_id)->delete();
 
                 // 删除【扣费记录】
-                $deletedRows_4 = ExpenseRecord::where('owner_id', $client_id)->delete();
+//                $deletedRows_5 = ExpenseRecord::where('owner_id', $client_id)->delete();
+                $deletedRows_5 = ExpenseRecord::where('ownuserid', $client_id)->delete();
 
                 // 删除【用户】
-//                $mine->pivot_menus()->detach(); // 删除相关目录
+//                $client->pivot_menus()->detach(); // 删除相关目录
                 $bool = $client->delete();
-                if(!$bool) throw new Exception("delete--user--fail");
+                if(!$bool) throw new Exception("delete--user-client--fail");
             }
 
             // 删除名下子代理
@@ -470,28 +478,41 @@ class IndexRepository {
                     $sub_agent_client = User::find($sub_agent_client_id);
 
                     // 删除【站点】
-                    $deletedRows_1 = SEOSite::where('owner_id', $sub_agent_client)->delete();
+//                    $deletedRows_1 = SEOSite::where('owner_id', $sub_agent_client_id)->delete();
+                    $deletedRows_1 = SEOSite::where('createuserid', $sub_agent_client_id)->delete();
 
                     // 删除【关键词】
-                    $deletedRows_2 = SEOKeyword::where('owner_id', $sub_agent_client)->delete();
+//                    $deletedRows_2 = SEOKeyword::where('owner_id', $sub_agent_client_id)->delete();
+                    $deletedRows_2 = SEOKeyword::where('createuserid', $sub_agent_client_id)->delete();
+
+                    // 删除【待选关键词】
+//                    $deletedRows_3 = SEOCart::where('owner_id', $sub_agent_client_id)->delete();
+                    $deletedRows_3 = SEOCart::where('createuserid', $sub_agent_client_id)->delete();
 
                     // 删除【关键词检测记录】
-                    $deletedRows_3 = SEOKeywordDetectRecord::where('owner_id', $sub_agent_client)->delete();
+//                    $deletedRows_4 = SEOKeywordDetectRecord::where('owner_id', $sub_agent_client_id)->delete();
+                    $deletedRows_4 = SEOKeywordDetectRecord::where('ownuserid', $sub_agent_client_id)->delete();
 
                     // 删除【扣费记录】
-                    $deletedRows_4 = ExpenseRecord::where('owner_id', $sub_agent_client)->delete();
+//                    $deletedRows_5 = ExpenseRecord::where('owner_id', $sub_agent_client_id)->delete();
+                    $deletedRows_5 = ExpenseRecord::where('ownuserid', $sub_agent_client_id)->delete();
 
                     // 删除【用户】
-//                    $mine->pivot_menus()->detach(); // 删除相关目录
-                    $bool = $sub_a->delete();
-                    if(!$bool) throw new Exception("delete--user--fail");
+//                    $sub_agent_c->pivot_menus()->detach(); // 删除相关目录
+                    $bool = $sub_agent_c->delete();
+                    if(!$bool) throw new Exception("delete--user-sub-client--fail");
                 }
+
+                // 删除【用户】
+//                $sub_a->pivot_menus()->detach(); // 删除相关目录
+                $bool = $sub_a->delete();
+                if(!$bool) throw new Exception("delete--user-sub--fail");
             }
 
             // 删除【用户】
-//            $mine->pivot_menus()->detach(); // 删除相关目录
-            $bool = $mine->delete();
-            if(!$bool) throw new Exception("delete--user--fail");
+//            $agent->pivot_menus()->detach(); // 删除相关目录
+            $bool = $agent->delete();
+            if(!$bool) throw new Exception("delete--user-agent--fail");
 
             DB::commit();
 
@@ -501,7 +522,7 @@ class IndexRepository {
         {
             DB::rollback();
             $msg = '删除失败，请重试';
-//            $msg = $e->getMessage();
+            $msg = $e->getMessage();
 //            exit($e->getMessage());
             return response_fail([],$msg);
         }
@@ -649,12 +670,46 @@ class IndexRepository {
     }
 
 
+    // 返回【关键词】视图
+    public function show_business_keyword_list()
+    {
+        $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1]);
+
+        $keyword_count = $query->count('*');
+        $data['keyword_count'] = $keyword_count;
+
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('latestranking','>',0)->where('latestranking','<=',10);
+
+        $keyword_standard_count = $query_1->count("*");
+        $data['keyword_standard_count'] = $keyword_standard_count;
+
+        $keyword_standard_fund_sum = $query_1->sum('latestconsumption');
+        $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
+
+
+        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
+        $keyword_standard_fund_sum_1 = $query_detect->count('*');
+        $data['keyword_standard_fund_sum_1'] = $keyword_standard_fund_sum_1;
+
+
+        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
+        $keyword_standard_fund_sum_2 = $query_detect->count('*');
+        $data['keyword_standard_fund_sum_2'] = $keyword_standard_fund_sum_2;
+
+        return view('mt.admin.entrance.business.keyword-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_keyword_active'=>'active',
+                'sidebar_business_keyword_list_active'=>'active'
+            ]);
+    }
     // 返回【关键词】列表
     public function get_business_keyword_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = SEOKeyword::select('*')->with('creator');
 
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
         if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus']);
@@ -688,12 +743,96 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+
+    // 返回【今日关键词】视图
+    public function show_business_keyword_today_list()
+    {
+        $data = [];
+
+        $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1]);
+
+        $keyword_count = $query->count('*');
+        $data['keyword_count'] = $keyword_count;
+
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('latestranking','>',0)->where('latestranking','<=',10);
+
+        $keyword_standard_count = $query_1->count("*");
+        $data['keyword_standard_count'] = $keyword_standard_count;
+
+        $keyword_standard_fund_sum = $query_1->sum('latestconsumption');
+        $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
+
+
+        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
+        $keyword_standard_fund_sum_1 = $query_detect->count('*');
+        $data['keyword_standard_fund_sum_1'] = $keyword_standard_fund_sum_1;
+
+
+        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
+        $keyword_standard_fund_sum_2 = $query_detect->count('*');
+        $data['keyword_standard_fund_sum_2'] = $keyword_standard_fund_sum_2;
+
+        return view('mt.admin.entrance.business.keyword-today-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_keyword_active'=>'active',
+                'sidebar_business_keyword_today_active'=>'active'
+            ]);
+    }
     // 返回【今日关键词】列表
     public function get_business_keyword_today_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = SEOKeyword::select('*')->with('creator')
-            ->where('keywordstatus','优化中');
+            ->where(['keywordstatus'=>'优化中','status'=>1]);
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+        if(!empty($post_data['latest_ranking']))
+        {
+            if($post_data['latest_ranking'] = 1)
+            {
+                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
+            }
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+    // 返回【待审核关键词】列表
+    public function get_business_keyword_undo_list_datatable($post_data)
+    {
+        $admin_id = Auth::guard("admin")->user()->id;
+        $query = SEOKeyword::select('*')->with('creator')
+            ->where('keywordstatus','待审核');
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
@@ -734,22 +873,22 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【待审核关键词】列表
-    public function get_business_keyword_undo_list_datatable($post_data)
-    {
-        $admin_id = Auth::guard("admin")->user()->id;
-        $query = SEOKeyword::select('*')->with('creator')
-            ->where('keywordstatus','待审核');
 
-        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
-        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
-        if(!empty($post_data['latest_ranking']))
-        {
-            if($post_data['latest_ranking'] = 1)
-            {
-                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
-            }
-        }
+    // 返回【关键词检测】视图
+    public function show_business_keyword_detect_record($post_data)
+    {
+        $id  = $post_data["id"];
+        $keyword_data = SEOKeyword::select('*')->with('creator')->where('id',$id)->first();
+        return view('mt.admin.entrance.business.keyword-detect-record')
+            ->with(['data'=>$keyword_data]);
+    }
+    // 返回【关键词检测】列表
+    public function get_business_keyword_detect_record_datatable($post_data)
+    {
+        $mine = Auth::guard("admin")->user();
+
+        $id  = $post_data["id"];
+        $query = SEOKeywordDetectRecord::select('*')->where('keywordid',$id);
 
         $total = $query->count();
 
@@ -1083,7 +1222,6 @@ class IndexRepository {
 
 
         $total = $query->count();
-        $fund_total = $query->sum('price');
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
         $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;

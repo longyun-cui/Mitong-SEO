@@ -402,6 +402,7 @@ class IndexController extends Controller
             $keyword->reviewopinion = $xParam;
 
             $keyword->latestranking = $rank;
+
             if(!$keyword->detectiondate)
             {
                 $keyword->initialranking = $rank + rand(10,15);
@@ -452,9 +453,21 @@ class IndexController extends Controller
                 $detect_data['keyword'] = $keyword->keyword;
                 $detect_data['website'] = $keyword->website;
                 $detect_data['searchengine'] = $keyword->searchengine;
+                $detect_data['rank'] = $rank;
+                $detect_data['rank_original'] = $rank;
+                $detect_data['rank_real'] = $rank;
 
                 $bool1 = $seo_detect_record->fill($detect_data)->save();
                 if(!$bool1) throw new Exception("insert-detect-record-fail");
+            }
+            else
+            {
+                $seo_detect_record_rank = $seo_detect_record->rank;
+                if($rank < $seo_detect_record_rank)
+                {
+                    $seo_detect_record->rank = $rank;
+                    $seo_detect_record->save();
+                }
             }
 
 

@@ -29,26 +29,14 @@ class SEOKeywordDetectRecord extends Model
 
 
 
-    function org()
+    function creator()
     {
-        return $this->belongsTo('App\Models\Org\OrgOrganization','org_id','id');
+        return $this->belongsTo('App\Models\MT\User','createuserid','id');
     }
 
-    function admin()
+    function site()
     {
-        return $this->belongsTo('App\Models\Org\OrgAdministrator','admin_id','id');
-    }
-
-    // 一对多 关联的目录
-    function menu()
-    {
-        return $this->belongsTo('App\Models\Org\OrgMenu','menu_id','id');
-    }
-
-    // 多对多 关联的目录
-    function menus()
-    {
-        return $this->belongsToMany('App\Models\Org\OrgMenu','softorg_org_pivot_menu_item','item_id','menu_id');
+        return $this->belongsTo('App\Models\MT\SEOSite','siteid','id');
     }
 
 

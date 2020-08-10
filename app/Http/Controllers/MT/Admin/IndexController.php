@@ -153,20 +153,15 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.business.keyword-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_list_active'=>'active']);
         }
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
     }
 
     // 返回【今日关键词列表】视图
     public function view_business_keyword_today_list()
     {
-        if(request()->isMethod('get'))
-        {
-            return view('mt.admin.entrance.business.keyword-today-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_today_active'=>'active']);
-        }
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_today_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
 
@@ -180,6 +175,22 @@ class IndexController extends Controller
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_undo_list_datatable(request()->all());
     }
+
+    // 返回【关键词检测记录】视图
+    public function view_business_keyword_detect_record()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+    }
+
+    // 返回【关键词检测记录】视图
+    public function operate_business_keyword_detect_set_rank()
+    {
+        dd(request()->all());
+//        if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
+//        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+    }
+
 
 
 
@@ -199,13 +210,13 @@ class IndexController extends Controller
 
 
 
-    // 删除【代理商】
+    // 删除【待选站点】
     public function operate_business_site_delete_undo()
     {
         return $this->repo->operate_business_site_delete_undo(request()->all());
     }
 
-    // 删除【客户】
+    // 删除【待选关坚持】
     public function operate_business_keyword_delete_undo()
     {
         return $this->repo->operate_business_keyword_delete_undo(request()->all());

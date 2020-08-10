@@ -69,6 +69,13 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_my_keyword_undo_list_datatable(request()->all());
     }
 
+    // 返回【关键词检测记录】视图
+    public function view_business_keyword_detect_record()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+    }
+
 
 
 

@@ -31,6 +31,7 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/my-keyword-list', $controller.'@view_my_keyword_list');
         Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
         Route::match(['get','post'], '/business/my-keyword-undo-list', $controller.'@view_my_keyword_undo_list');
+        Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
 
         Route::match(['get','post'], '/business/site-create', $controller.'@operate_business_site_create');
         Route::match(['get','post'], '/business/site-edit', $controller.'@operate_business_site_edit');
