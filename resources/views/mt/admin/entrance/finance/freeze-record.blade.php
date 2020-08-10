@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','每日消费  - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','资金冻结记录  - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','每日消费')
+@section('header','资金冻结记录')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 @section('breadcrumb')
@@ -49,33 +49,25 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="createtime" /></td>
+                        <td></td>
                         <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
-                            {{--<div class="btn-group">--}}
-                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
-                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
-                                    {{--<span class="caret"></span>--}}
-                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
-                                {{--</button>--}}
-                                {{--<ul class="dropdown-menu" role="menu">--}}
-                                    {{--<li><a href="#">重置</a></li>--}}
-                                    {{--<li class="divider"></li>--}}
-                                    {{--<li><a href="#">Separated link</a></li>--}}
-                                {{--</ul>--}}
-                            {{--</div>--}}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-success">搜索</button>
+                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">重置</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
-                    <tfoot>
-                    <tr>
-                        <th>Total:</th>
-                        <th></th>
-                    </tr>
-                    </tfoot>
                 </table>
                 <!-- datatable end -->
             </div>
@@ -108,12 +100,11 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/finance/expense-record-daily') }}",
+                    'url': "{{ url('/admin/finance/freeze-record') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
-                        d.createtime = $('input[name="createtime"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -259,13 +250,6 @@
 <script>
     $(function() {
 
-        $(".form_datetime").datepicker({
-            language: 'zh-CN',
-            format: 'yyyy-mm-dd',
-            todayHighlight: true,
-            autoclose: true
-        });
-
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
@@ -288,7 +272,7 @@
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要"删除"么？', {
+            layer.msg('确定要删除该"产品"么', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){

@@ -151,9 +151,6 @@ class IndexController extends Controller
     // 返回【关键词列表】视图
     public function view_business_keyword_list()
     {
-        if(request()->isMethod('get'))
-        {
-        }
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
     }
@@ -184,11 +181,15 @@ class IndexController extends Controller
     }
 
     // 返回【关键词检测记录】视图
+    public function operate_business_keyword_detect_create_rank()
+    {
+        return $this->repo->operate_business_keyword_detect_create_rank(request()->all());
+    }
+
+    // 返回【关键词检测记录】视图
     public function operate_business_keyword_detect_set_rank()
     {
-        dd(request()->all());
-//        if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
-//        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+        return $this->repo->operate_business_keyword_detect_set_rank(request()->all());
     }
 
 
@@ -268,6 +269,20 @@ class IndexController extends Controller
                 ->with(['sidebar_finance_active'=>'active','sidebar_finance_expense_daily_active'=>'active']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_finance_expense_record_daily_datatable(request()->all());
+    }
+
+    // 返回【冻结最近】视图
+    public function view_finance_freeze_record()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_finance_freeze_record(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_finance_freeze_record_datatable(request()->all());
+
+        if(request()->isMethod('get'))
+        {
+            return view('mt.admin.entrance.finance.freeze-record')
+                ->with(['sidebar_finance_active'=>'active','sidebar_finance_expense_active'=>'active']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_finance_freeze_record_datatable(request()->all());
     }
 
 

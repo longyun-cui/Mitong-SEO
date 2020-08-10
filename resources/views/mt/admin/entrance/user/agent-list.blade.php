@@ -147,8 +147,8 @@
                         <div class="form-group">
                             <label class="control-label col-md-2">备注</label>
                             <div class="col-md-8 ">
-                                {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
-                                <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
+                                {{--<input type="text" class="form-control" name="description" placeholder="描述" value="">--}}
+                                <textarea class="form-control" name="description" rows="3" cols="100%"></textarea>
                             </div>
                         </div>
                         {{--说明--}}
@@ -467,7 +467,10 @@
                 window.location.href = "/admin/user/agent-edit?id="+that.attr('data-id');
         });
 
-        // 【充值】
+
+
+
+        // 显示【充值】
         $("#item-main-body").on('click', ".item-recharge-show", function() {
             var that = $(this);
             $('input[name=id]').val(that.attr('data-id'));
@@ -475,7 +478,6 @@
             $('.recharge-username').html(that.attr('data-name'));
             $('#modal-body').modal('show');
         });
-
         // 【充值】提交
         $("#modal-body").on('click', "#item-recharge-submit", function() {
             var that = $(this);
@@ -483,7 +485,6 @@
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
-
                     var options = {
                         url: "{{ url('/admin/user/agent-recharge') }}",
                         type: "post",
@@ -502,13 +503,14 @@
                 }
             });
         });
-
         // 【充值】取消
         $("#modal-body").on('click', "#item-recharge-cancel", function() {
             $('.recharge-user-id').html('');
             $('.recharge-username').html('');
             $('#modal-body').modal('hide');
         });
+
+
 
 
         // 【登录】

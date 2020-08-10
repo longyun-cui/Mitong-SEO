@@ -45,10 +45,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     {{--<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/css/fileinput.min.css">--}}
     <link rel="stylesheet" href="{{ asset('/lib/css/bootstrap-fileinput-4.4.8.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/common/css/component/fileinput.css') }}" media="all" />
+    <link rel="stylesheet" href="{{ asset('/lib/css/fileinput-only.css') }}">
 
     {{--<link href="https://cdn.bootcss.com/iCheck/1.0.2/skins/all.css" rel="stylesheet">--}}
-    <link rel="stylesheet" href="{{ asset('/lib/css/iCheck-1.0.2-skins-all.css') }}">
+    {{--<link rel="stylesheet" href="{{ asset('/lib/css/iCheck-1.0.2-skins-all.css') }}">--}}
     <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
 
     {{--<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">--}}
@@ -135,7 +135,7 @@ desired effect
 
 {{--<script src="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/js/fileinput.min.js"></script>--}}
 <script src="{{ asset('/lib/js/fileinput-4.4.8.min.js') }}"></script>
-<script src="{{ asset('/common/js/component/fileinput-only.js') }}"></script>
+<script src="{{ asset('/lib/js/fileinput-only.js') }}"></script>
 
 {{--<script src="https://cdn.bootcss.com/jquery.form/4.2.2/jquery.form.min.js"></script>--}}
 <script src="{{ asset('/lib/js/jquery.form-4.2.2.min.js') }}"></script>
@@ -154,6 +154,7 @@ desired effect
 {{--<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>--}}
 <script src="{{ asset('/lib/js/bootstrap-datetimepicker-4.17.47.min.js') }}"></script>
 <script src="{{ asset('/lib/js/bootstrap-datepicker-1.9.0.min.js') }}"></script>
+<script src="{{ asset('/lib/js/bootstrap-datepicker-1.9.0.zh-CN.min.js') }}"></script>
 
 {{--<script src="https://cdn.bootcss.com/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>--}}
 <script src="{{ asset('/lib/js/bootstrap-switch-3.3.4.min.js') }}"></script>

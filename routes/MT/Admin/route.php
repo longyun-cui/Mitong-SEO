@@ -62,6 +62,8 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/keyword-today', $controller.'@view_business_keyword_today_list');
         Route::match(['get','post'], '/business/keyword-undo', $controller.'@view_business_keyword_undo_list');
         Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
+
+        Route::match(['get','post'], '/business/keyword-detect-create-rank', $controller.'@operate_business_keyword_detect_create_rank');
         Route::match(['get','post'], '/business/keyword-detect-set-rank', $controller.'@operate_business_keyword_detect_set_rank');
 
         Route::match(['get','post'], '/business/site-review', $controller.'@operate_business_site_review');
@@ -75,6 +77,7 @@ Route::group([], function () {
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');
         Route::match(['get','post'], '/finance/expense-record', $controller.'@view_finance_expense_record');
         Route::match(['get','post'], '/finance/expense-record-daily', $controller.'@view_finance_expense_record_daily');
+        Route::match(['get','post'], '/finance/freeze-record', $controller.'@view_finance_freeze_record');
 
 
     });

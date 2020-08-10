@@ -11,6 +11,7 @@ class SEOKeywordDetectRecord extends Model
         'owner_id', 'ownuserid', 'createuserid', 'createusername', 'createtime',
         'expense_id', 'type', 'active', 'user_id', 'org_id', 'admin_id', 'menu_id',
         'keywordid', 'keyword', 'siteid', 'website', 'searchengine',
+        'detect_time',
         'rank', 'rank_original', 'rank_real',
         'rankbaidumobile', 'rank360', 'ranksougou', 'rankshenma',
         'token', 'postdata',

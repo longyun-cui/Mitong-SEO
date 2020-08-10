@@ -19,7 +19,7 @@
                 {{--<h4>关键词概览</h4>--}}
                 <div>
                     <span>关键词</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword'] or '' }}</span>
+                    <span class="text-red" style="font-size:20px;">{{ $data['keyword'] or '' }}</span>
                     <span style="margin-right:12px;"></span>
 
                     <span>达标</span>
@@ -29,6 +29,9 @@
                     <span>累计消费</span>
                     <span class="text-red" style="font-size:24px;">￥{{ intval($data['totalconsumption']) }}</span>
                     <span style="margin-right:12px;">元</span>
+
+                    <span>首次达标时间</span>
+                    <span class="text-red" style="font-size:20px;">{{ $data['firststandarddate'] or '' }}</span>
                 </div>
             </div>
         </div>
@@ -47,6 +50,13 @@
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
+                </div>
+                <div class="caption">
+                    <i class="icon-pin font-blue"></i>
+                    <span class="caption-subject font-blue sbold uppercase"></span>
+                    <a href="javascript:void(0);">
+                        <button type="button" class="btn btn-success pull-right item-create-rank-show"><i class="fa fa-plus"></i> 添加记录</button>
+                    </a>
                 </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
@@ -122,8 +132,166 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-body">
-    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;"></div>
+
+<div class="modal fade" id="modal-create-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">添加记录</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="modal-detect-create-form">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="detect-create-operate" value="detect-create-rank" readonly>
+                            <input type="hidden" name="detect-create-keyword-id" value="{{ $data['id'] or '' }}" readonly>
+
+
+
+                            {{--关键词--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="detect-create-keyword">{{ $data['keyword'] or '' }}</span>
+                                </div>
+                            </div>
+                            {{--指定排名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">选择日期</label>
+                                <div class="col-md-8 ">
+                                    <input type="text" class="form-control form-filter form_datetime" name="detect-create-date" />
+                                </div>
+                            </div>
+                            {{--指定排名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">指定排名</label>
+                                <div class="col-md-8 ">
+                                    <input type="text" class="form-control" name="detect-create-rank" placeholder="指定排名" value="">
+                                </div>
+                            </div>
+                            {{--备注--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">备注</label>
+                                <div class="col-md-8 ">
+                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="">--}}
+                                    <textarea class="form-control" name="detect-create-description" rows="3" cols="100%"></textarea>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-detect-create-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-detect-create-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-set-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">指定排名</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="modal-detect-set-form">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="detect-set-operate" value="detect-set-rank" readonly>
+                            <input type="hidden" name="detect-set-id" value="0" readonly>
+                            <input type="hidden" name="detect-set-date" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--关键词--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="detect-set-keyword"></span>
+                                </div>
+                            </div>
+                            {{--检测ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">检测ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="detect-set-id"></span>
+                                </div>
+                            </div>
+                            {{--指定日期--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">指定日期</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="detect-set-date"></span>
+                                </div>
+                            </div>
+                            {{--原排名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">原排名</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="detect-set-original-rank"></span>
+                                </div>
+                            </div>
+                            {{--指定排名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">指定排名</label>
+                                <div class="col-md-8 ">
+                                    <input type="text" class="form-control" name="detect-set-rank" placeholder="指定排名" value="">
+                                </div>
+                            </div>
+                            {{--备注--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">备注</label>
+                                <div class="col-md-8 ">
+                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="">--}}
+                                    <textarea class="form-control" name="detect-set-description" rows="3" cols="100%"></textarea>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-detect-set-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-detect-set-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -216,18 +384,22 @@
                         }
                     },
                     {
-                        "data": "createtime",
+                        "data": "detect_time",
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return data;
-                            newDate = new Date(data);
-                            return newDate.toLocaleDateString('chinese',{hour12:false});
+//                            newDate = new Date(data);
+//                            return newDate.toLocaleDateString('chinese',{hour12:false});
+//                            var $date = row.createtime.trim().split(" ")[0];
+                            var $date = row.detect_time.trim().split(/\s+/)[0];
+                            return $date;
                         }
                     },
                     {
                         'data': 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            var $date = row.createtime.trim().split(" ")[0];
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -235,7 +407,9 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-set-rank-show" data-id="'+data+'" >指定排名</a>';
+                                '<a class="btn btn-xs item-set-rank-show" data-id="'+data+
+                                    '" data-name="'+row.keyword+'" data-rank="'+row.rank+'" data-date="'+$date+
+                                '">指定排名</a>';
                             return html;
                         }
                     }
@@ -326,6 +500,13 @@
 <script>
     $(function() {
 
+        $(".form_datetime").datepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            todayHighlight: true,
+            autoclose: true
+        });
+
         // 表格【查询】
         $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
             if(event.keyCode ==13)
@@ -353,32 +534,16 @@
                 window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
-        // 【编辑】
-        $("#item-main-body").on('click', ".item-detail-show", function() {
-            var that = $(this);
-            {{--$.post(--}}
-                {{--"{{ url('/item/delete') }}",--}}
-                {{--{--}}
-                    {{--_token: $('meta[name="_token"]').attr('content'),--}}
-                    {{--id:that.attr('data-id')--}}
-                {{--},--}}
-                {{--function(data){--}}
-                    {{--if(!data.success) layer.msg(data.msg);--}}
-                    {{--else location.reload();--}}
-                {{--},--}}
-                {{--'json'--}}
-            {{--);--}}
-            $('#modal-body').modal('show');
-        });
 
+
+
+        // 全选or反选
         $("#item-content-body").on('click', '#check-all', function () {
-//                layer.msg(this.checked);
             $('input[name="detect-record"]').prop('checked',this.checked);//checked为true时为默认显示的状态
         });
 
-        //
+        // 批量修改排名
         $("#item-content-body").on('click', '#set-rank-submit', function() {
-            layer.msg(90);
             var $checked = [];
             $('input[name="detect-record"]:checked').each(function() {
                 $checked.push($(this).val());
@@ -399,6 +564,93 @@
                 'json'
             );
         });
+
+
+        // 显示【添加排名】
+        $("#item-content-body").on('click', ".item-create-rank-show", function() {
+            var that = $(this);
+            $('#modal-create-body').modal('show');
+        });
+        // 【添加排名】提交
+        $("#modal-create-body").on('click', "#item-detect-create-submit", function() {
+            var that = $(this);
+            layer.msg('确定"添加"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-detect-create-rank') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:$('input[name="detect-create-operate"]').val(),
+                            keyword_id:$('input[name="detect-create-keyword-id"]').val(),
+                            detect_date:$('input[name="detect-create-date"]').val(),
+                            detect_rank:$('input[name="detect-create-rank"]').val(),
+                            detect_description:$('input[name="detect-create-description"]').val()
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
+
+        // 显示【修改排名】
+        $("#item-main-body").on('click', ".item-set-rank-show", function() {
+            var that = $(this);
+            $('input[name=detect-set-id]').val(that.attr('data-id'));
+            $('input[name=detect-set-date]').val(that.attr('data-date'));
+            $('.detect-set-keyword').html(that.attr('data-name'));
+            $('.detect-set-id').html(that.attr('data-id'));
+            $('.detect-set-date').html(that.attr('data-date'));
+            $('.detect-set-original-rank').html(that.attr('data-rank'));
+            $('#modal-set-body').modal('show');
+        });
+        // 【修改排名】提交
+        $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
+            var that = $(this);
+            layer.msg('确定"提交"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:$('input[name="detect-set-operate"]').val(),
+                            detect_id:$('input[name="detect-set-id"]').val(),
+                            detect_date:$('input[name="detect-set-date"]').val(),
+                            detect_rank:$('input[name="detect-set-rank"]').val(),
+                            detect_description:$('input[name="detect-set-description"]').val()
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+        // 【修改排名】取消
+        $("#modal-set-body").on('click', "#item-detect-set-cancel", function() {
+            var that = $(this);
+            $('input[name=detect-set-id]').val(0);
+            $('.detect-set-keyword').html('');
+            $('.detect-set-id').html(0);
+            $('.detect-set-date').html('');
+            $('.detect-set-original-rank').html('');
+            $('#modal-set-body').modal('hide');
+        });
+
+
+
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
