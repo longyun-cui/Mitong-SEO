@@ -1059,6 +1059,7 @@ class IndexRepository {
                                 }
                                 else
                                 {
+                                    $keyword_owner->fund_frozen = 0;
                                     $keyword_owner->fund_available = $keyword_owner->fund_available - $keyword->price;
                                 }
                                 $keyword_owner->save();
