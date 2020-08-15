@@ -510,7 +510,6 @@ class IndexController extends Controller
         {
             $keyword_id = $keyword->id;
 
-            $keyword->detectdata = $xParam;
             $keyword->latestranking = $rank;
 
             // 第一次检测，初始排名+随机10-15
@@ -572,6 +571,7 @@ class IndexController extends Controller
                 $DetectRecord_data['rank'] = $rank;
                 $DetectRecord_data['rank_original'] = $rank;
                 $DetectRecord_data['rank_real'] = $rank;
+                $DetectRecord_data['detectdata'] = $xParam;
 
                 $bool_1 = $DetectRecord->fill($DetectRecord_data)->save();
                 if(!$bool_1) throw new Exception("insert--detect-record--fail");
