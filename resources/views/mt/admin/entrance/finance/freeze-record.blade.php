@@ -40,6 +40,7 @@
                         <th>站点</th>
                         <th>关键词</th>
                         <th>价格</th>
+                        <th>冻结金额</th>
                         <th>记录时间</th>
                         <th>操作</th>
                     </tr>
@@ -50,19 +51,22 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -129,13 +133,15 @@
                         }
                     },
                     {
+                        "title": "客户",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.user == null ? '未知' : row.user.username;
+                            return row.keyword == null ? '未知' : row.keyword.createusername;
                         }
                     },
                     {
+                        "title": "站点",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -143,6 +149,7 @@
                         }
                     },
                     {
+                        "title": "关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -150,17 +157,33 @@
                         }
                     },
                     {
-                        "data": "price",
+                        "title": "单价",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return row.keyword == null ? '未知' : row.keyword.price;
+                        }
+                    },
+                    {
+                        "title": "冻结金额",
+                        "data": "freezefunds",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "data": "createtime",
+                        "data": "regtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+//                            newDate = new Date(data*1000);
+//                            return newDate.toLocaleDateString('chinese',{hour12:false});
+                            var $date = new Date(data*1000);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {

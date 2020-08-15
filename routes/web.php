@@ -37,6 +37,14 @@ Route::group(['prefix' => 'common'], function () {
 
 
 /*
+ * TEST
+ */
+Route::group(['prefix' => 'test', 'namespace' => 'MT\TEST'], function () {
+    require(__DIR__ . '/MT/TEST/route.php');
+});
+
+
+/*
  * API
  */
 Route::group(['prefix' => 'api', 'namespace' => 'MT\API'], function () {

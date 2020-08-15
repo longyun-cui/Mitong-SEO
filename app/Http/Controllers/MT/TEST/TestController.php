@@ -1,15 +1,20 @@
 <?php
-namespace App\Http\Controllers\MT\Admin;
+namespace App\Http\Controllers\MT\TEST;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Models\MT\User;
+use App\Models\MT\ExpenseRecord;
+use App\Models\MT\FundRechargeRecord;
+use App\Models\MT\FundFreezeRecord;
 use App\Models\MT\SEOSite;
+use App\Models\MT\SEOCart;
 use App\Models\MT\SEOKeyword;
+use App\Models\MT\SEOKeywordDetectRecord;
 
-use App\Repositories\MT\Admin\TestRepository;
+use App\Repositories\MT\TEST\TestRepository;
 
 use Response, Auth, Validator, DB, Exception;
 use QrCode;
@@ -32,18 +37,50 @@ class TestController extends Controller
 
 
     // 返回主页视图
+    public function statistics()
+    {
+        $query1 = ExpenseRecord::select('id','price','createtime')->whereYear('createtime','2020')->whereMonth('createtime','01');
+        $query = ExpenseRecord::select('id','price','createtime');
+        $count = $query->count("*");
+        $sum = $query->sum("price");
+        $data = $query->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m')"))
+            ->select(
+                DB::raw("
+                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%Y-%m') as month,
+                    DATE_FORMAT(createtime,'%d') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))
+            ->get();
+//        dd($data->keyBy('month')->toArray());
+//        $data = $query->get();
+
+//        $grouped = $data->groupBy(function ($item, $key) {
+//            return date("Y-m-d",strtotime($item['createtime']));
+//        });
+//        dd($grouped->toArray());
+
+
+        $index_data = [];
+        return view('mt.admin.index')->with('index_data',$index_data);
+
+        dd($count."--".$sum);
+        dd($data->toArray());
+    }
+
+
+    // 返回主页视图
     public function temp()
     {
-
         $users = User::all();
-        foreach ($users as $u)
+        foreach ($users as $user)
         {
-            $userpass = $u->userpass;
+            $userpass = $user->userpass;
             $pass_decrypt = basic_decrypt($user->userpass);
             $user->password = password_encode($pass_decrypt);
             $user->save();
         }
-
     }
 
 

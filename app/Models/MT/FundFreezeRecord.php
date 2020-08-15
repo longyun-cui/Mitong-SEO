@@ -39,5 +39,15 @@ class FundFreezeRecord extends Model
         return $this->belongsTo('App\Models\MT\User','createuserid','id');
     }
 
+    function site()
+    {
+        return $this->belongsTo('App\Models\MT\SEOSite','siteid','id');
+    }
+
+    function keyword()
+    {
+        return $this->belongsTo('App\Models\MT\SEOKeyword','keywordid','id');
+    }
+
 
 }

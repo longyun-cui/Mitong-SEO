@@ -4,10 +4,11 @@ namespace App\Repositories\MT\Admin;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
-use App\Models\MT\SEOKeywordDetectRecord;
+use App\Models\MT\FundFreezeRecord;
 use App\Models\MT\SEOSite;
-use App\Models\MT\SEOKeyword;
 use App\Models\MT\SEOCart;
+use App\Models\MT\SEOKeyword;
+use App\Models\MT\SEOKeywordDetectRecord;
 
 use App\Repositories\Common\CommonRepository;
 
@@ -1028,26 +1029,42 @@ class IndexRepository {
                 $bool_1 = $keyword->save();
                 if($bool_1)
                 {
-                    $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
-                    if(!$ExpenseRecord)
+                    if($detect_rank > 0 and $detect_rank <= 10)
                     {
-                        $ExpenseRecord = new ExpenseRecord;
-                        $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
-                        $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
-                        $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
-                        $ExpenseRecord_data['standarddate'] = $detect_date;
-                        $ExpenseRecord_data['createtime'] = $time;
-                        $ExpenseRecord_data['siteid'] = $keyword->siteid;
-                        $ExpenseRecord_data['keywordid'] = $keyword->id;
-                        $ExpenseRecord_data['keyword'] = $keyword->keyword;
-                        $ExpenseRecord_data['price'] = (int)$keyword->price;
-                        $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
-                        if($bool_2)
+                        $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
+                        if(!$ExpenseRecord)
                         {
-                            $DetectRecord->expense_id = $ExpenseRecord->id;
-                            $DetectRecord->save();
+                            $ExpenseRecord = new ExpenseRecord;
+                            $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
+                            $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
+                            $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
+                            $ExpenseRecord_data['standarddate'] = $detect_date;
+                            $ExpenseRecord_data['createtime'] = $time;
+                            $ExpenseRecord_data['siteid'] = $keyword->siteid;
+                            $ExpenseRecord_data['keywordid'] = $keyword->id;
+                            $ExpenseRecord_data['keyword'] = $keyword->keyword;
+                            $ExpenseRecord_data['price'] = (int)$keyword->price;
+                            $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+                            if($bool_2)
+                            {
+                                $DetectRecord->expense_id = $ExpenseRecord->id;
+                                $DetectRecord->save();
+
+                                $keyword_owner = User::find($keyword->createuserid);
+                                $keyword_owner->fund_expense = $keyword_owner->fund_expense + $keyword->price;
+                                $keyword_owner->fund_balance = $keyword_owner->fund_balance - $keyword->price;
+                                if($keyword_owner->fund_frozen >= $keyword->price)
+                                {
+                                    $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $keyword->price;
+                                }
+                                else
+                                {
+                                    $keyword_owner->fund_available = $keyword_owner->fund_available - $keyword->price;
+                                }
+                                $keyword_owner->save();
+                            }
+                            else throw new Exception("update--expense-record--fail");
                         }
-                        else throw new Exception("update--expense-record--fail");
                     }
                 }
                 else throw new Exception("update--detect-record--fail");
@@ -1163,29 +1180,37 @@ class IndexRepository {
                 $bool_1 = $keyword->save();
                 if($bool_1)
                 {
-                    $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
-                    if(!$ExpenseRecord)
+                    if($detect_rank > 0 and $detect_rank <= 10)
                     {
-                        $ExpenseRecord = new ExpenseRecord;
-                        $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
-                        $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
-                        $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
-                        $ExpenseRecord_data['standarddate'] = $detect_date;
-                        $ExpenseRecord_data['createtime'] = $time;
-                        $ExpenseRecord_data['siteid'] = $keyword->siteid;
-                        $ExpenseRecord_data['keywordid'] = $keyword->id;
-                        $ExpenseRecord_data['keyword'] = $keyword->keyword;
-                        $ExpenseRecord_data['price'] = (int)$keyword->price;
-                        $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
-                        if($bool_2)
+                        $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
+                        if(!$ExpenseRecord)
                         {
-                            $DetectRecord->expense_id = $ExpenseRecord->id;
-                            $DetectRecord->save();
+                            $ExpenseRecord = new ExpenseRecord;
+                            $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
+                            $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
+                            $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
+                            $ExpenseRecord_data['standarddate'] = $detect_date;
+                            $ExpenseRecord_data['createtime'] = $time;
+                            $ExpenseRecord_data['siteid'] = $keyword->siteid;
+                            $ExpenseRecord_data['keywordid'] = $keyword->id;
+                            $ExpenseRecord_data['keyword'] = $keyword->keyword;
+                            $ExpenseRecord_data['price'] = (int)$keyword->price;
+                            $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+                            if($bool_2)
+                            {
+                                $DetectRecord->expense_id = $ExpenseRecord->id;
+                                $DetectRecord->save();
+                            }
+                            else throw new Exception("update--expense-record--fail");
                         }
-                        else throw new Exception("update--expense-record--fail");
+                        else
+                        {
+                            $ExpenseRecord->detect_id = $DetectRecord->id;
+                            $ExpenseRecord->save();
+                        }
                     }
                 }
-                else throw new Exception("update--detect-record--fail");
+                else throw new Exception("update--keyword--fail");
             }
             else throw new Exception("insert--detect-record--fail");
 
@@ -1403,6 +1428,44 @@ class IndexRepository {
     /*
      * 财务系统
      */
+    public function show_finance_overview()
+    {
+        $query1 = ExpenseRecord::select('id','price','createtime')->whereYear('createtime','2020')->whereMonth('createtime','02');
+        $count1 = $query1->count("*");
+        $sum1 = $query1->sum("price");
+        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $query2 = ExpenseRecord::select('id','price','createtime')->whereYear('createtime','2020')->whereMonth('createtime','06');
+        $count2 = $query2->count("*");
+        $sum2 = $query2->sum("price");
+        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $data[0]['month'] = "2020-06";
+        $data[0]['data'] = $data1->keyBy('day');
+        $data[1]['month'] = "2020-01";
+        $data[1]['data'] = $data2->keyBy('day');
+//        dd($data1->keyBy('day')->toArray());
+
+
+        return view('mt.admin.entrance.finance.overview')
+            ->with([
+                'data'=>$data,
+                'sidebar_finance_active'=>'active',
+                'sidebar_finance_overview_active'=>'active'
+            ]);
+    }
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)
     {
@@ -1536,24 +1599,22 @@ class IndexRepository {
     }
 
     // 返回【关键词检测】视图
-    public function show_finance_freeze_record($post_data)
+    public function show_finance_freeze_record()
     {
-        $id = $post_data["id"];
         $freeze_data = [];
         return view('mt.admin.entrance.finance.freeze-record')
             ->with([
                 'freeze_data'=>$freeze_data,
                 'sidebar_finance_active'=>'active',
-                'sidebar_finance_expense_active'=>'active'
+                'sidebar_finance_freeze_active'=>'active'
             ]);
     }
     // 返回【冻结资金】数据
     public function get_finance_freeze_record_datatable($post_data)
     {
-        $admin_id = Auth::guard("admin")->user()->id;
-        $query = ExpenseRecord::select('*')
-//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
-            ->with('user','site','keyword')
+        $admin = Auth::guard("admin")->user();
+        $query = FundFreezeRecord::select('*')
+            ->with('creator','site','keyword')
             ->orderby("id","desc");
 
         $total = $query->count();

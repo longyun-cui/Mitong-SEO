@@ -110,6 +110,11 @@
                     <i class="fa fa-cny text-red"></i><span>每日消费</span>
                 </a>
             </li>
+            <li class="treeview {{ $sidebar_finance_freeze_active or '' }}">
+                <a href="{{ url('/admin/finance/freeze-record') }}">
+                    <i class="fa fa-cny text-red"></i><span>资金冻结记录</span>
+                </a>
+            </li>
 
 
 

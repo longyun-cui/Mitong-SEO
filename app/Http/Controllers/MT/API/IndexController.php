@@ -23,7 +23,7 @@ class IndexController extends Controller
     private $repo;
     public function __construct()
     {
-        $this->repo = new TestRepository;
+//        $this->repo = new TestRepository;
     }
 
 
@@ -85,36 +85,17 @@ class IndexController extends Controller
     public function morning_send()
     {
 
-        $type = empty($_GET['type']) ? 'default' : $_GET['type'];
-
         $date = date('Y-m-d');
-
-//        if($type == "all") {
-//
-//
-//            $Dao = M('keyword');
-//            $data = $Dao->query("SELECT id,keyword,website,searchengine FROM `ts_keyword` WHERE keywordstatus = '优化中' and status = 1 and detectiondate < '{$date}' order by id desc");
-//        }
-//        else if($type == "test") {
-//            $Dao = M('testkeyword');
-//            $data = $Dao->query("SELECT id,keyword,website,searchengine FROM `ts_keyword` WHERE keywordstatus = '优化中' and status = 1 and detectiondate < '{$date}' order by id desc limit 2");
-//        }
-//        else {
-//            $Dao = M('keyword');
-//            $data = $Dao->query("SELECT id,keyword,website,searchengine FROM `ts_keyword` WHERE keywordstatus = '优化中' and status = 1 and detectiondate < '{$date}' order by id desc");
-//        }
-
-
         $data = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate','<',$date)
-            ->orderby('id','desc')->limit(5)
-            ->get()->toArray();
-
+            ->orderby('id','desc')->limit(100)
+            ->get()
+            ->toArray();
 //        dd($data);
 
-        foreach ($data as $value) {
-
+        foreach ($data as $value)
+        {
             // 组合url
             $url = str_ireplace(array('http://','https://'),'',$value['website']);
             // 需要替换的前缀
@@ -179,16 +160,16 @@ class IndexController extends Controller
         }
 
 
-        echo '<pre>';
-        var_dump($baidu_url);
-        if(isset($baidu_keyword)) echo 'baidu => '.count($baidu_keyword).'<br>';
-        if(isset($baidu_mobile_keyword)) echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
-        if(isset($abc_keyword)) echo 'abc => '.count($abc_keyword).'<br>';
-        if(isset($abc_mobile_keyword)) echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
-        if(isset($sougou_keyword)) echo 'sougou => '.count($sougou_keyword).'<br>';
-        if(isset($sougou_mobile_keyword)) echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
-        if(isset($shenma_keyword)) echo 'shenma => '.count($shenma_keyword).'<br>';
-        echo '</pre>';
+//        echo '<pre>';
+//        var_dump($baidu_url);
+//        if(isset($baidu_keyword)) echo 'baidu => '.count($baidu_keyword).'<br>';
+//        if(isset($baidu_mobile_keyword)) echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
+//        if(isset($abc_keyword)) echo 'abc => '.count($abc_keyword).'<br>';
+//        if(isset($abc_mobile_keyword)) echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
+//        if(isset($sougou_keyword)) echo 'sougou => '.count($sougou_keyword).'<br>';
+//        if(isset($sougou_mobile_keyword)) echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
+//        if(isset($shenma_keyword)) echo 'shenma => '.count($shenma_keyword).'<br>';
+//        echo '</pre>';
 //        die();
 
         $time = time();
@@ -364,6 +345,137 @@ class IndexController extends Controller
     }
 
 
+    public function add_keyword_detect_rank($creator_id,$creator_name,$keyword_id,$rank)
+    {
+        if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"该关键词不存在，刷新页面试试！");
+        if($rank <= 0 or $rank > 101) return response_error([],"指定排名必须在1-100之间！");
+
+        $time = date('Y-m-d H:i:s');
+
+        $detect_date = date('Y-m-d H:i:s');
+        if(strtotime($detect_date) > time('Y-m-d')) return response_error([],"指定日期不能大于今天！");
+
+        $keyword = SEOKeyword::find($keyword_id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
+
+
+        $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('detect_time',$detect_date)->first();
+        if($DetectRecord) return response_error([],"该日期已存在，不能重复添加！");
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $DetectRecord = New SEOKeywordDetectRecord;
+            $DetectRecord_data['owner_id'] = $keyword->createuserid;
+            $DetectRecord_data['ownuserid'] = $keyword->createuserid;
+            $DetectRecord_data['createuserid'] = $creator_id;
+            $DetectRecord_data['createusername'] = $creator_name;
+            $DetectRecord_data['createtime'] = $time;
+            $DetectRecord_data['keywordid'] = $keyword->id;
+            $DetectRecord_data['keyword'] = $keyword->keyword;
+            $DetectRecord_data['website'] = $keyword->website;
+            $DetectRecord_data['searchengine'] = $keyword->searchengine;
+            $DetectRecord_data['detect_time'] = $detect_date;
+            $DetectRecord_data['rank'] = $rank;
+            $DetectRecord_data['rank_original'] = $rank;
+            $DetectRecord_data['rank_real'] = $rank;
+
+            $bool = $DetectRecord->fill($DetectRecord_data)->save();
+            if($bool)
+            {
+                $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+                $detect_standard_count = $query_detect->count('*');
+                $detect_standard_price_sum = $detect_standard_count * $keyword->price;
+
+                if(strtotime($detect_date) >= strtotime($keyword->detectiondate))
+                {
+                    $keyword->detectiondate = $detect_date;
+                    $keyword->latestranking = $rank;
+
+                    if($rank > 0 and $rank <= 10)
+                    {
+                        $keyword->standardstatus = "已达标";
+                        $keyword->standarddate = $detect_date;
+                        $keyword->latestconsumption = (int)$keyword->price;
+                    }
+                    else
+                    {
+                        $keyword->standardstatus = "未达标";
+                        $keyword->latestconsumption = 0;
+                    }
+                }
+
+                if(strtotime($detect_date) <= strtotime($keyword->firststandarddate))
+                {
+                    if($rank > 0 and $rank <= 10)
+                    {
+                        $keyword->firststandarddate = $detect_date;
+                    }
+                }
+
+                $keyword->standarddays = $detect_standard_count;
+                $keyword->totalconsumption = $detect_standard_price_sum;
+
+                $bool_1 = $keyword->save();
+                if($bool_1)
+                {
+                    if($rank > 0 and $rank <= 10)
+                    {
+                        $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
+                        if(!$ExpenseRecord)
+                        {
+                            $ExpenseRecord = new ExpenseRecord;
+                            $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
+                            $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
+                            $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
+                            $ExpenseRecord_data['standarddate'] = $detect_date;
+                            $ExpenseRecord_data['createtime'] = $time;
+                            $ExpenseRecord_data['siteid'] = $keyword->siteid;
+                            $ExpenseRecord_data['keywordid'] = $keyword->id;
+                            $ExpenseRecord_data['keyword'] = $keyword->keyword;
+                            $ExpenseRecord_data['price'] = (int)$keyword->price;
+                            $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+                            if($bool_2)
+                            {
+                                $DetectRecord->expense_id = $ExpenseRecord->id;
+                                $DetectRecord->save();
+
+                                $keyword_owner = User::find($keyword->createuserid);
+                                $keyword_owner->fund_expense = $keyword_owner->fund_expense + $keyword->price;
+                                $keyword_owner->fund_balance = $keyword_owner->fund_balance - $keyword->price;
+                                if($keyword_owner->fund_frozen >= $keyword->price)
+                                {
+                                    $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $keyword->price;
+                                }
+                                else
+                                {
+                                    $keyword_owner->fund_available = $keyword_owner->fund_available - $keyword->price;
+                                }
+                                $keyword_owner->save();
+                            }
+                            else throw new Exception("update--expense-record--fail");
+                        }
+                    }
+                }
+                else throw new Exception("update--detect-record--fail");
+            }
+            else throw new Exception("insert--detect-record--fail");
+
+            DB::commit();
+            return response_success(['id'=>$keyword->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
 
     //接受通知 更新关键词排行
     public function receive_from_youbangyun()
@@ -377,36 +489,37 @@ class IndexController extends Controller
 
 
         $xParam_decode = json_decode($xParam,true);
-        if(isset($xParam_decode["Value"])) $task_id = $xParam_decode["Value"]["TaskId"]."Value";
-        elseif(isset($xParam_decode["value"])) $task_id = $xParam_decode["value"]["TaskId"]."v";
-        else $task_id = 0;
-//        dd($xParam_decode);
 
+        $dataTaskId = $xParam_decode["Value"]["TaskId"];
+        $dataRankFirst = $xParam_decode["Value"]["RankFirst"];
+        $dataRankLast = $xParam_decode["Value"]["RankLast"];
+        $dataRankLastChange = $xParam_decode["Value"]["RankLastChange"];
+        $dataUpdateTime = $xParam_decode["Value"]["UpdateTime"];
+
+        $rank = $dataRankLast;
+
+        $time = date('Y-m-d H:i:s');
+        $current_time = date('Y-m-d H:i:s');
+        $current_date = date('Y-m-d');
 
         $keyword = SEOKeyword::where('taskId',$xParam_decode["Value"]["TaskId"])->first();
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
 
         DB::beginTransaction();
         try
         {
-            $dataTaskId = $xParam_decode["Value"]["TaskId"];
-            $dataRankFirst = $xParam_decode["Value"]["RankFirst"];
-            $dataRankLast = $xParam_decode["Value"]["RankLast"];
-            $dataRankLastChange = $xParam_decode["Value"]["RankLastChange"];
-            $dataUpdateTime = $xParam_decode["Value"]["UpdateTime"];
-
             $keyword_id = $keyword->id;
-            $current_time = date('Y-m-d H:i:s');
 
-            $rank = $dataRankLast;
-
-            $keyword->reviewopinion = $xParam;
-
+            $keyword->detectdata = $xParam;
             $keyword->latestranking = $rank;
 
+            // 第一次检测，初始排名+随机10-15
             if(!$keyword->detectiondate)
             {
                 $keyword->initialranking = $rank + rand(10,15);
             }
+
+            $keyword->detectiondate = $current_time; // 检测时间
 
             if($rank > 0 and $rank <= 10)
             {
@@ -418,15 +531,16 @@ class IndexController extends Controller
 
                 if(!$keyword->firststandarddate)
                 {
-                    // 如果关键词是首次达标，则需要冻结该关键词90天，90天内部能解冻，并且冻结30天的费用
-                    // 冻结费用
-                    // $freezefunds = $data_kw['price'] * 30;
-                    // 90天之后的日期:允许解冻日期
-                    $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
-                    $keyword->unfreezedate = $unfreeze_date;// 解冻日期
-
-                    //冻结关键词90天 ====================================>
+                    // 如果关键词是首次达标，则需要冻结该关键词90天，90天内不能解冻，并且冻结30天的费用
                     $keyword->firststandarddate = $current_time;// 首次达标时间
+
+                    // 冻结费用
+                    $freeze_funds = $keyword->price * 30;
+                    $keyword->freezefunds = $freeze_funds;
+
+                    // 冻结关键词90天，90天之后的日期:允许解冻日期
+                    $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
+                    $keyword->unfreezedate = $unfreeze_date;
                 }
             }
             else
@@ -435,71 +549,98 @@ class IndexController extends Controller
                 $keyword->latestconsumption = 0; // 最新消费
             }
 
-            $keyword->save();
+            $bool = $keyword->save();
+            if(!$bool) throw new Exception("update--keyword--fail");
 
 
             // 添加检测记录
-            $seo_detect_record = SEOKeywordDetectRecord::where(['keywordid',$keyword])
-                ->whereDate('createtime',date("Y-m-d"))
-                ->first();
-            if(!$seo_detect_record)
+            $DetectRecord = SEOKeywordDetectRecord::where(['keywordid',$keyword])->whereDate('createtime',$current_date)->first();
+            if(!$DetectRecord)
             {
-                $seo_detect_record = new SEOKeywordDetectRecord;
+                $DetectRecord = new SEOKeywordDetectRecord;
 
-                $detect_data['keywordid'] = $keyword_id;
-                $detect_data['ownuserid'] = $keyword->userid;
-                $detect_data['createtime'] = $current_time;
-                $detect_data['detecttime'] = $current_time;
-                $detect_data['keyword'] = $keyword->keyword;
-                $detect_data['website'] = $keyword->website;
-                $detect_data['searchengine'] = $keyword->searchengine;
-                $detect_data['rank'] = $rank;
-                $detect_data['rank_original'] = $rank;
-                $detect_data['rank_real'] = $rank;
+                $DetectRecord_data['owner_id'] = $keyword->createuserid;
+                $DetectRecord_data['ownuserid'] = $keyword->createuserid;
+                $DetectRecord_data['createuserid'] = $keyword->createuserid;
+                $DetectRecord_data['createusername'] = $keyword->createusername;
+                $DetectRecord_data['createtime'] = $current_time;
+                $DetectRecord_data['keywordid'] = $keyword->id;
+                $DetectRecord_data['keyword'] = $keyword->keyword;
+                $DetectRecord_data['website'] = $keyword->website;
+                $DetectRecord_data['searchengine'] = $keyword->searchengine;
+                $DetectRecord_data['detect_time'] = $current_time;
+                $DetectRecord_data['rank'] = $rank;
+                $DetectRecord_data['rank_original'] = $rank;
+                $DetectRecord_data['rank_real'] = $rank;
 
-                $bool1 = $seo_detect_record->fill($detect_data)->save();
-                if(!$bool1) throw new Exception("insert-detect-record-fail");
+                $bool_1 = $DetectRecord->fill($DetectRecord_data)->save();
+                if(!$bool_1) throw new Exception("insert--detect-record--fail");
             }
             else
             {
-                $seo_detect_record_rank = $seo_detect_record->rank;
-                if($rank < $seo_detect_record_rank)
+                $DetectRecord_rank = $DetectRecord->rank;
+                if($rank < $DetectRecord_rank)
                 {
-                    $seo_detect_record->rank = $rank;
-                    $seo_detect_record->save();
+                    $DetectRecord->rank = $rank;
+                    $DetectRecord->save();
                 }
             }
 
 
-            // 添加扣费记录
-            $expense_record = ExpenseRecord::where(['keywordid',$keyword])
-                ->whereDate('createtime',date("Y-m-d"))
-                ->first();
-            if(!$expense_record)
+            // 添加扣费记录 & 更新用户表资产数据
+            if($rank > 0 and $rank <= 10)
             {
-                $expense_record = new SEOKeywordDetectRecord;
+                $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$current_date)->first();
+                if(!$ExpenseRecord)
+                {
+                    $ExpenseRecord = new ExpenseRecord;
+                    $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
+                    $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
+                    $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
+                    $ExpenseRecord_data['standarddate'] = $current_time;
+                    $ExpenseRecord_data['createtime'] = $time;
+                    $ExpenseRecord_data['siteid'] = $keyword->siteid;
+                    $ExpenseRecord_data['keywordid'] = $keyword->id;
+                    $ExpenseRecord_data['keyword'] = $keyword->keyword;
+                    $ExpenseRecord_data['price'] = (int)$keyword->price;
+                    $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+                    if($bool_2)
+                    {
+                        $DetectRecord->expense_id = $ExpenseRecord->id;
+                        $DetectRecord->save();
 
-                $expense_data['keywordid'] = $keyword_id;
-                $expense_data['ownuserid'] = $keyword->userid;
-                $expense_data['createtime'] = $current_time;
-                $expense_data['keyword'] = $keyword->keyword;
-                $expense_data['siteid'] = $keyword->siteid;
-                $expense_data['price'] = $keyword->price;
-                $expense_data['detect_id'] = $seo_detect_record->id;
-
-                $bool1 = $expense_record->fill($expense_data)->save();
-                if(!$bool1) throw new Exception("insert-expense-record-fail");
+                        $keyword_owner = User::find($keyword->createuserid);
+                        $keyword_owner->fund_expense = $keyword_owner->fund_expense + $keyword->price;
+                        $keyword_owner->fund_balance = $keyword_owner->fund_balance - $keyword->price;
+                        if($keyword_owner->fund_frozen >= $keyword->price)
+                        {
+                            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $keyword->price;
+                        }
+                        else
+                        {
+                            $keyword_owner->fund_available = $keyword_owner->fund_available - $keyword->price;
+                        }
+                        $keyword_owner->save();
+                    }
+                    else throw new Exception("update--expense-record--fail");
+                }
+                else
+                {
+                    $ExpenseRecord->detect_id = $DetectRecord->id;
+                    $ExpenseRecord->save();
+                }
             }
 
             DB::commit();
             echo 1;
-//            return response_success([]);
+            return response_success([]);
         }
         catch (Exception $e)
         {
             DB::rollback();
             $msg = $e->getMessage();
 //            exit($e->getMessage());
+            echo 2;
             return response_fail([],'操作失败，请重试！');
         }
 

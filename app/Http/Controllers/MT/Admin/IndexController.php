@@ -232,8 +232,8 @@ class IndexController extends Controller
     // 返回【财务概览】视图
     public function view_finance_overview()
     {
-        return view('mt.admin.entrance.finance.overview')
-            ->with(['sidebar_finance_active'=>'active','sidebar_finance_overview_active'=>'active']);
+        if(request()->isMethod('get')) return $this->repo->show_finance_overview();
+        else if(request()->isMethod('post')) return $this->repo->get_finance_overview_datatable(request()->all());
     }
 
     // 返回【财务概览】视图
@@ -274,7 +274,7 @@ class IndexController extends Controller
     // 返回【冻结最近】视图
     public function view_finance_freeze_record()
     {
-        if(request()->isMethod('get')) return $this->repo->show_finance_freeze_record(request()->all());
+        if(request()->isMethod('get')) return $this->repo->show_finance_freeze_record();
         else if(request()->isMethod('post')) return $this->repo->get_finance_freeze_record_datatable(request()->all());
 
         if(request()->isMethod('get'))
