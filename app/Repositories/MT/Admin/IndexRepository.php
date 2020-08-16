@@ -755,7 +755,8 @@ class IndexRepository {
         $keyword_count = $query->count('*');
         $data['keyword_count'] = $keyword_count;
 
-        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('latestranking','>',0)->where('latestranking','<=',10);
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('standardstatus','已达标')
+            ->where('latestranking','>',0)->where('latestranking','<=',10);
 
         $keyword_standard_count = $query_1->count("*");
         $data['keyword_standard_count'] = $keyword_standard_count;

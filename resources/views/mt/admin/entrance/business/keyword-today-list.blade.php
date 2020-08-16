@@ -18,7 +18,7 @@
             <div class="callout callout-green">
                 <h4>今日概览</h4>
                 <div>
-                    <span>
+                    <span style="margin-right:12px;">
                         优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
                     </span>
 
