@@ -43,7 +43,7 @@ class IndexController extends Controller
 //            ->limit(50)
             ->get()
             ->toArray();
-        dd($data);
+//        dd($data);
 
         foreach ($data as $value)
         {
@@ -111,16 +111,16 @@ class IndexController extends Controller
         }
 
 
-//        echo '<pre>';
-//        var_dump($baidu_url);
-//        if(isset($baidu_keyword)) echo 'baidu => '.count($baidu_keyword).'<br>';
-//        if(isset($baidu_mobile_keyword)) echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
-//        if(isset($abc_keyword)) echo 'abc => '.count($abc_keyword).'<br>';
-//        if(isset($abc_mobile_keyword)) echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
-//        if(isset($sougou_keyword)) echo 'sougou => '.count($sougou_keyword).'<br>';
-//        if(isset($sougou_mobile_keyword)) echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
-//        if(isset($shenma_keyword)) echo 'shenma => '.count($shenma_keyword).'<br>';
-//        echo '</pre>';
+        echo '<pre>';
+        var_dump($baidu_url);
+        if(isset($baidu_keyword)) echo 'baidu => '.count($baidu_keyword).'<br>';
+        if(isset($baidu_mobile_keyword)) echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
+        if(isset($abc_keyword)) echo 'abc => '.count($abc_keyword).'<br>';
+        if(isset($abc_mobile_keyword)) echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
+        if(isset($sougou_keyword)) echo 'sougou => '.count($sougou_keyword).'<br>';
+        if(isset($sougou_mobile_keyword)) echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
+        if(isset($shenma_keyword)) echo 'shenma => '.count($shenma_keyword).'<br>';
+        echo '</pre>';
 //        die();
 
         $time = time();
@@ -281,14 +281,14 @@ class IndexController extends Controller
         }
         $sql .= "END WHERE id IN ($ids)";
 
-        echo '<pre>';
-        print_r($output);
-        echo 'count : ',count($display_order).'<br>';
+//        echo '<pre>';
+//        print_r($output);
+//        echo 'count : ',count($display_order).'<br>';
 //        print_r($display_order);
 //        echo '<br>';
-        print_r($sql);
-        echo '<br>';
-        echo '</pre>';
+//        print_r($sql);
+//        echo '<br>';
+//        echo '</pre>';
 
         if(count($display_order))
         {
