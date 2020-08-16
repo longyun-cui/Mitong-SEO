@@ -39,7 +39,8 @@ class IndexController extends Controller
         $data = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate','<',$date)
-            ->orderby('id','desc')->limit(50)
+            ->orderby('id','desc')
+//            ->limit(50)
             ->get()
             ->toArray();
 //        dd($data);
