@@ -18,23 +18,25 @@
             <div class="callout callout-green">
                 <h4>今日概览</h4>
                 <div>
-                    <span>优化关键词数</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span>
-                    <span style="margin-right:12px;">个</span>
+                    <span>
+                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
+                    </span>
 
-                    <span>达标关键词数</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_count'] or 0 }}</span>
-                    <span style="margin-right:12px;">个</span>
+                    <span style="margin-right:12px;">
+                        检测 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_1'] or 0 }}</span> 个
+                    </span>
 
-                    <span>达标消费：</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_fund_sum'] or 0 }}</span>
-                    <span style="margin-right:12px;">元</span>
+                    <span style="margin-right:12px;">
+                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
+                    </span>
 
-                    关键词检测：
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_fund_sum_1'] or 0 }}</span>个
+                    <span style="margin-right:12px;">
+                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                    </span>
 
-                    消费记录：
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_fund_sum_2'] or 0 }}</span>个
+                    <span style="margin-right:12px;">
+                        消费记录 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_2'] or 0 }}</span> 个
+                    </span>
                 </div>
             </div>
         </div>
