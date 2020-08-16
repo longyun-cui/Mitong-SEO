@@ -310,14 +310,9 @@ class IndexController extends Controller
         $xParam = request("xParam",'');
         $xSign = request("xSign",'');
 
-//        dd($xParam);
-
-        $temp = new Temp;
-        $temp_data['content'] = $xParam;
-        $bool_1 = $temp->fill($temp_data)->save();
-        echo 2;
-        return "1";
-
+//        $temp = new Temp;
+//        $temp_data['content'] = $xParam;
+//        $bool_0 = $temp->fill($temp_data)->save();
 
 
         $xParam_decode = json_decode($xParam,true);
@@ -334,7 +329,9 @@ class IndexController extends Controller
         $current_time = date('Y-m-d H:i:s');
         $current_date = date('Y-m-d');
 
-        $keyword = SEOKeyword::where('taskId',$xParam_decode["Value"]["TaskId"])->first();
+//        dd($dataTaskId);
+
+        $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
 
         DB::beginTransaction();
@@ -385,7 +382,7 @@ class IndexController extends Controller
 
 
             // 添加检测记录
-            $DetectRecord = SEOKeywordDetectRecord::where(['keywordid',$keyword])->whereDate('createtime',$current_date)->first();
+            $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('createtime',$current_date)->first();
             if(!$DetectRecord)
             {
                 $DetectRecord = new SEOKeywordDetectRecord;
@@ -471,10 +468,11 @@ class IndexController extends Controller
         catch (Exception $e)
         {
             DB::rollback();
+            $msg = '操作失败，请重试！';
             $msg = $e->getMessage();
 //            exit($e->getMessage());
             echo 2;
-            return response_fail([],'操作失败，请重试！');
+            return response_fail([],$msg);
         }
 
 
