@@ -23,7 +23,7 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        检测 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_1'] or 0 }}</span> 个
+                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -34,9 +34,17 @@
                         达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
                     </span>
 
-                    <span style="margin-right:12px;">
-                        消费记录 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_2'] or 0 }}</span> 个
-                    </span>
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--检测达标记录 <span class="text-red font-24px">{{ $data['keyword_standard_count_by_detect'] or 0 }}</span> 个--}}
+                    {{--</span>--}}
+
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--消费记录 <span class="text-red font-24px">{{ $data['keyword_standard_count_by_expense'] or 0 }}</span> 个--}}
+                    {{--</span>--}}
+
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--消费统计 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_by_expense'] or 0 }}</span> 元--}}
+                    {{--</span>--}}
                 </div>
             </div>
         </div>

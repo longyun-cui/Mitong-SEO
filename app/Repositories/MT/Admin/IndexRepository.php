@@ -755,9 +755,11 @@ class IndexRepository {
         $keyword_count = $query->count('*');
         $data['keyword_count'] = $keyword_count;
 
-        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('standardstatus','已达标')
-            ->where('latestranking','>',0)->where('latestranking','<=',10);
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"));
+        $keyword_detect_count = $query_1->count("*");
+        $data['keyword_detect_count'] = $keyword_detect_count;
 
+        $query_2 = $query->whereDate('standarddate',date("Y-m-d"))->where('standardstatus','已达标');
         $keyword_standard_count = $query_1->count("*");
         $data['keyword_standard_count'] = $keyword_standard_count;
 
@@ -765,14 +767,19 @@ class IndexRepository {
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
 
 
-        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
-        $keyword_standard_fund_sum_1 = $query_detect->count('*');
-        $data['keyword_standard_fund_sum_1'] = $keyword_standard_fund_sum_1;
+//        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
+//        $keyword_standard_count_by_detect = $query_detect->count('*');
+//        $data['keyword_standard_count_by_detect'] = $keyword_standard_count_by_detect;
+//
+//
+//        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
+//        $keyword_standard_count_by_expense = $query_expense->count('*');
+//        $data['keyword_standard_count_by_expense'] = $keyword_standard_count_by_expense;
+//
+//        $keyword_standard_fund_sum_by_expense = $query_expense->sum('price');
+//        $data['keyword_standard_fund_sum_by_expense'] = $keyword_standard_fund_sum_by_expense;
 
-
-        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
-        $keyword_standard_fund_sum_2 = $query_detect->count('*');
-        $data['keyword_standard_fund_sum_2'] = $keyword_standard_fund_sum_2;
+//        dd($data);
 
         return view('mt.admin.entrance.business.keyword-today-list')
             ->with([
