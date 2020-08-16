@@ -43,7 +43,7 @@ class IndexController extends Controller
 //            ->limit(50)
             ->get()
             ->toArray();
-//        dd($data);
+        dd($data);
 
         foreach ($data as $value)
         {
@@ -125,16 +125,20 @@ class IndexController extends Controller
 
         $time = time();
         // baidu
-        $baidu_param=json_encode(
-            array(
-                "userId"=>111311,
-                "time"=>$time,"apiExtend"=>1,
-                "businessType"=>1006,
-                "keyword"=>$baidu_keyword,
-                "url"=>$baidu_url,
-                "searchType"=>$baidu_sType
-            )
-        );
+        if(isset($baidu_keyword))
+        {
+            $baidu_param=json_encode(
+                array(
+                    "userId"=>111311,
+                    "time"=>$time,
+                    "apiExtend"=>1,
+                    "businessType"=>1006,
+                    "keyword"=>$baidu_keyword,
+                    "url"=>$baidu_url,
+                    "searchType"=>$baidu_sType
+                )
+            );
+        }
 
         // baidu_mobile
         if(isset($baidu_mobile_keyword))

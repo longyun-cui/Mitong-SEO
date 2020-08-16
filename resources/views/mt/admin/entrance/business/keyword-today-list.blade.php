@@ -291,7 +291,7 @@
                     },
                     {
                         "data": "latestconsumption",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return parseInt(data);
                         }
