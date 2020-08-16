@@ -390,8 +390,8 @@
 //                            return data;
 //                            newDate = new Date(data);
 //                            return newDate.toLocaleDateString('chinese',{hour12:false});
-//                            var $date = row.createtime.trim().split(" ")[0];
-                            var $date = row.detect_time.trim().split(/\s+/)[0];
+//                            var $date = row.detect_time.trim().split(/\s+/)[0];
+                            var $date = row.createtime.trim().split(" ")[0];
                             return $date;
                         }
                     },
