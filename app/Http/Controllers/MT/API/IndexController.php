@@ -310,11 +310,13 @@ class IndexController extends Controller
         $xParam = request("xParam",'');
         $xSign = request("xSign",'');
 
+//        dd($xParam);
+
         $temp = new Temp;
         $temp_data['content'] = $xParam;
         $bool_1 = $temp->fill($temp_data)->save();
         echo 2;
-        return false;
+        return "1";
 
 
 
