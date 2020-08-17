@@ -1437,9 +1437,19 @@ class IndexRepository {
     /*
      * 财务系统
      */
+    // 返回【财务概览】视图
     public function show_finance_overview()
     {
-        $query1 = ExpenseRecord::select('id','price','createtime')->whereYear('createtime','2020')->whereMonth('createtime','02');
+        $this_month = date('Y-m');
+        $this_month_year = date('Y');
+        $this_month_month = date('m');
+        $last_month = date('Y-m',strtotime('last month'));
+        $last_month_year = date('Y',strtotime('last month'));
+        $last_month_month = date('m',strtotime('last month'));
+//        dd($this_month_year."--".$this_month_month."--".$last_month_year."--".$last_month_month);
+
+        $query1 = ExpenseRecord::select('id','price','createtime')
+            ->whereYear('createtime',$this_month_year)->whereMonth('createtime',$this_month_month);
         $count1 = $query1->count("*");
         $sum1 = $query1->sum("price");
         $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
@@ -1450,7 +1460,8 @@ class IndexRepository {
                     count(*) as count
                 "))->get();
 
-        $query2 = ExpenseRecord::select('id','price','createtime')->whereYear('createtime','2020')->whereMonth('createtime','06');
+        $query2 = ExpenseRecord::select('id','price','createtime')
+            ->whereYear('createtime',$last_month_year)->whereMonth('createtime',$last_month_month);
         $count2 = $query2->count("*");
         $sum2 = $query2->sum("price");
         $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
@@ -1461,9 +1472,9 @@ class IndexRepository {
                     count(*) as count
                 "))->get();
 
-        $data[0]['month'] = "2020-06";
+        $data[0]['month'] = $this_month;
         $data[0]['data'] = $data1->keyBy('day');
-        $data[1]['month'] = "2020-01";
+        $data[1]['month'] = $last_month;
         $data[1]['data'] = $data2->keyBy('day');
 //        dd($data1->keyBy('day')->toArray());
 
@@ -1475,6 +1486,56 @@ class IndexRepository {
                 'sidebar_finance_overview_active'=>'active'
             ]);
     }
+    // 返回【消费记录】数据
+    public function get_finance_overview_datatable($post_data)
+    {
+        $admin = Auth::guard("admin")->user();
+
+        $query = ExpenseRecord::select('id','price','createtime');
+        $data = $query->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m')"))
+            ->select(
+                DB::raw("
+                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%Y-%m') as month,
+                    DATE_FORMAT(createtime,'%d') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))
+            ->orderby("month","desc")
+            ->get();
+
+        $list = $data->keyBy('month')->sortByDesc('month');
+        $total = $list->count();
+        $list = collect(array_values($list->toArray()));
+
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : -1;
+
+//        if(isset($post_data['order']))
+//        {
+//            $columns = $post_data['columns'];
+//            $order = $post_data['order'][0];
+//            $order_column = $order['column'];
+//            $order_dir = $order['dir'];
+//
+//            $field = $columns[$order_column]["data"];
+//            $query->orderBy($field, $order_dir);
+//        }
+//        else $query->orderBy("id", "desc");
+//
+//        if($limit == -1) $list = $query->get();
+//        else $list = $query->skip($skip)->take($limit)->get();
+
+//        foreach ($list as $k => $v)
+//        {
+//            $list[$k]->encode_id = encode($v->id);
+//        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)
     {

@@ -47,7 +47,7 @@
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">内容列表</h3>
+                <h3 class="box-title">财务总览</h3>
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
@@ -65,34 +65,28 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>站点</th>
-                        <th>关键词</th>
-                        <th>价格</th>
-                        <th>记录时间</th>
-                        <th>操作</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -128,12 +122,12 @@
             var dt = $('#datatable_ajax');
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                "aLengthMenu": [[-1], ["全部"]],
                 "processing": true,
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/finance/expense-record') }}",
+                    'url': "{{ url('/admin/finance/overview') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -155,53 +149,43 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "data": "id",
+                        "title": "月份",
+                        "data": "month",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.user == null ? '未知' : row.user.username;
-                        }
-                    },
-                    {
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
-                        }
-                    },
-                    {
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.keyword == null ? '未知' : row.keyword.keyword;
-                        }
-                    },
-                    {
-                        "data": "price",
+                        "title": "上词总数",
+                        "data": "count",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "data": "createtime",
+                        "title": "累计消费额金额",
+                        "data": "sum",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-//                            return data;
-                            var $date = new Date(data);
-                            var $year = $date.getFullYear();
-                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
-                            var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
+                            return data;
                         }
                     },
+//                    {
+//                        "data": "createtime",
+//                        'orderable': false,
+//                        render: function(data, type, row, meta) {
+////                            return data;
+//                            var $date = new Date(data);
+//                            var $year = $date.getFullYear();
+//                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+//                            var $day = ('00'+($date.getDate())).slice(-2);
+//                            return $year+'-'+$month+'-'+$day;
+//                        }
+//                    },
                     {
+                        "title": "操作",
                         'data': 'id',
                         'orderable': false,
                         render: function(value) {
@@ -211,8 +195,9 @@
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                        '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs item-detail-link" data-id="'+value+'" >查看详情</a>';
                             return html;
                         }
                     }

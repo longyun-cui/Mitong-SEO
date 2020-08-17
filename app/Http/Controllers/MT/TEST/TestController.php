@@ -53,17 +53,17 @@ class TestController extends Controller
                     count(*) as count
                 "))
             ->get();
-//        dd($data->keyBy('month')->toArray());
-//        $data = $query->get();
+        dd($data->keyBy('month')->sortByDesc('month')->toArray());
+        $data = $query->get();
 
-//        $grouped = $data->groupBy(function ($item, $key) {
-//            return date("Y-m-d",strtotime($item['createtime']));
-//        });
-//        dd($grouped->toArray());
+        $grouped = $data->groupBy(function ($item, $key) {
+            return date("Y-m-d",strtotime($item['createtime']));
+        });
+        dd($grouped->toArray());
 
 
         $index_data = [];
-        return view('mt.admin.index')->with('index_data',$index_data);
+//        return view('mt.admin.index')->with('index_data',$index_data);
 
         dd($count."--".$sum);
         dd($data->toArray());
