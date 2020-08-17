@@ -235,6 +235,12 @@ class IndexController extends Controller
         if(request()->isMethod('get')) return $this->repo->show_finance_overview();
         else if(request()->isMethod('post')) return $this->repo->get_finance_overview_datatable(request()->all());
     }
+    // 返回【财务概览】视图
+    public function view_finance_overview_month()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_finance_overview_month(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_finance_overview_month_datatable(request()->all());
+    }
 
     // 返回【财务概览】视图
     public function view_finance_recharge_record()

@@ -17,7 +17,7 @@
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">每月消费统计</h3>
+                <h3 class="box-title">消费统计</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
                         <i class="fa fa-minus"></i></button>
@@ -47,7 +47,7 @@
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">财务总览</h3>
+                <h3 class="box-title">每日统计</h3>
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
@@ -127,7 +127,7 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/finance/overview') }}",
+                    'url': "{{ url('/admin/finance/overview-month?month='.request('month')) }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -149,8 +149,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "title": "月份",
-                        "data": "month",
+                        "title": "日期",
+                        "data": "date",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
@@ -186,10 +186,10 @@
 //                    },
                     {
                         "title": "操作",
-                        'data': 'month',
+                        'data': 'id',
                         'orderable': false,
-                        render: function(data, type, row, meta) {
-                            var html =
+                        render: function(value) {
+                            var html = '';
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
@@ -197,12 +197,90 @@
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-month-detail-link" data-month="'+row.month+'" >查看详情</a>';
+//                                '<a class="btn btn-xs item-detail-link" data-id="'+value+'" >查看详情</a>';
                             return html;
                         }
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    var res=[];
+                    var option_browse = {
+                        title: {
+                            text: '消费统计'
+                        },
+                        tooltip : {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'line',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                }
+                            }
+                        },
+                        legend: {
+                            data:['11']
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis : [
+                            {
+                                type : 'category',
+                                boundaryGap : false,
+                                axisLabel : { interval:0 },
+                                data : [
+                                    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+                                ]
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series : [
+                            {
+                                name:'123',
+                                type:'line',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top'
+                                    }
+                                },
+                                itemStyle : { normal: {label : {show: true}}},
+                                data:res
+                            }
+                        ]
+                    };
+
+
+                    var $api = this.api();
+                    // 输出当前页的数据到浏览器控制台
+//                    console.log( $api.rows().data() );
+
+                    $data = $api.rows().data();
+                    $data = Object.values($data);
+                    $.each($data,function(key,v){
+                        res.push({
+                            value:v.sum,
+                            name:v.day
+                        });
+                    });
+
+                    var myChart_browse = echarts.init(document.getElementById('echart-browse'));
+                    myChart_browse.setOption(option_browse);
+
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();
@@ -268,244 +346,6 @@
     }();
     $(function () {
         TableDatatablesAjax.init();
-    });
-</script>
-<script>
-    $(function() {
-
-        var option_browse = {
-            title: {
-                text: '消费统计'
-            },
-            tooltip : {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'line',
-                    label: {
-                        backgroundColor: '#6a7985'
-                    }
-                }
-            },
-            legend: {
-                data:['{{ $data[0]["month"] }}','{{ $data[1]["month"] }}']
-            },
-            toolbox: {
-                feature: {
-                    saveAsImage: {}
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    boundaryGap : false,
-                    axisLabel : { interval:0 },
-                    data : [
-                        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
-                        {{--@if(count($data[0]["data"]) > count($data[1]["data"]))--}}
-                            {{--@foreach($data[0]["data"] as $v)--}}
-                                {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
-                            {{--@endforeach--}}
-                        {{--@else--}}
-                            {{--@foreach($data[1]["data"] as $v)--}}
-                                {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
-                            {{--@endforeach--}}
-                        {{--@endif--}}
-                    ]
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : [
-                {
-                    name:'{{ $data[0]["month"] }}',
-                    type:'line',
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'top'
-                        }
-                    },
-                    itemStyle : { normal: {label : {show: true}}},
-                    data:[
-                            {{--@foreach($data[0]["data"] as $k=>$v)--}}
-                                {{--@if (($loop->index+1) == $k)--}}
-                                    {{--@if (!$loop->last)--}}
-                                        {{--{ value:{{ $v->sum }}, name:'{{ $v->day }}' },--}}
-                                    {{--@else--}}
-                                        {{--{ value:{{ $v->sum }}, name:'{{ $v->day }}' }--}}
-                                    {{--@endif--}}
-                                {{--@else--}}
-                                    {{--{ value:0, name:'{{ $v->day }}' },--}}
-                                {{--@endif--}}
-                            {{--@endforeach--}}
-                            @for($i=1;$i<32;$i++)
-                                @if (isset($data[0]["data"][$i]))
-                                    { value:{{ $data[0]["data"][$i]->sum }}, name:'{{ $data[0]["data"][$i]->day }}' },
-                                @else
-                                    { value:0, name:'{{ $i }}' },
-                                @endif
-                            @endfor
-                    ]
-                },
-                {
-                    name:'{{ $data[1]["month"] }}',
-                    type:'line',
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'top'
-                        }
-                    },
-                    itemStyle : { normal: {label : {show: true}}},
-                    data:[
-                        @foreach($data[1]["data"] as $v)
-                            @if (!$loop->last)
-                                { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
-                            @else
-                                { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
-                            @endif
-                        @endforeach
-                    ]
-                }
-            ]
-        };
-        var myChart_browse = echarts.init(document.getElementById('echart-browse'));
-        myChart_browse.setOption(option_browse);
-
-    });
-</script>
-<script>
-    $(function() {
-
-        // 表格【查询】
-        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
-            if(event.keyCode ==13)
-            {
-                $("#filter-submit").click();
-            }
-        });
-
-        // 【下载二维码】
-        $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
-            var that = $(this);
-            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
-        });
-
-        // 【数据分析】
-        $("#item-main-body").on('click', ".item-statistics-submit", function() {
-            var that = $(this);
-            window.open("/statistics/item?id="+that.attr('data-id'));
-        });
-
-        // 【编辑】
-        $("#item-main-body").on('click', ".item-edit-submit", function() {
-            var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/item/edit?id="+that.attr('data-id');
-        });
-
-        // 【数据详情】
-        $("#item-main-body").on('click', ".item-month-detail-link", function() {
-            var that = $(this);
-            window.open("/admin/finance/overview-month?month="+that.attr('data-month'));
-        });
-
-        // 【数据详情】
-        $("#item-main-body").on('click', ".item-data-detail-show", function() {
-            var that = $(this);
-            $.post(
-                "{{ url('/item/delete') }}",
-                {
-                    _token: $('meta[name="_token"]').attr('content'),
-                    id:that.attr('data-id')
-                },
-                function(data){
-                    if(!data.success) layer.msg(data.msg);
-                    else location.reload();
-                },
-                'json'
-            );
-            ('#modal-body').modal('show');
-        });
-
-        // 【删除】
-        $("#item-main-body").on('click', ".item-delete-submit", function() {
-            var that = $(this);
-            layer.msg('确定要删除该"产品"么', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/item/delete') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-        // 【启用】
-        $("#item-main-body").on('click', ".item-enable-submit", function() {
-            var that = $(this);
-            layer.msg('确定启用该"产品"？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/item/enable') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-        // 【禁用】
-        $("#item-main-body").on('click', ".item-disable-submit", function() {
-            var that = $(this);
-            layer.msg('确定禁用该"产品"？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/item/disable') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
     });
 </script>
 @endsection

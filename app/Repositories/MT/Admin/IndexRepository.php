@@ -1536,6 +1536,81 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+    // 返回【财务概览】视图
+    public function show_finance_overview_month($post_data)
+    {
+        $month = $post_data['month'];
+        $month_arr = explode("-",$month);
+        $_year = $month_arr[0];
+        $_month = $month_arr[1];
+
+        $data = [];
+        return view('mt.admin.entrance.finance.overview-month')
+            ->with([
+                'data'=>$data,
+                'sidebar_finance_active'=>'active',
+                'sidebar_finance_overview_active'=>'active'
+            ]);
+    }
+    // 返回【消费记录】数据
+    public function get_finance_overview_month_datatable($post_data)
+    {
+        $admin = Auth::guard("admin")->user();
+
+        $month = $post_data['month'];
+        $month_arr = explode("-",$month);
+        $_year = $month_arr[0];
+        $_month = $month_arr[1];
+
+        $query = ExpenseRecord::select('id','price','createtime')->whereYear('createtime',$_year)->whereMonth('createtime',$_month);
+        $list = $query->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+            ->select(
+                DB::raw("
+                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%d') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))
+            ->orderby("day","desc")
+            ->get();
+
+
+//        $list = $data->groupBy(function ($item, $key) {
+//            return date("Y-m-d",strtotime($item['createtime']));
+//        });
+
+//        $list = $data->keyBy('month')->sortByDesc('month');
+        $total = $list->count();
+        $list = collect(array_values($list->toArray()));
+
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : -1;
+
+//        if(isset($post_data['order']))
+//        {
+//            $columns = $post_data['columns'];
+//            $order = $post_data['order'][0];
+//            $order_column = $order['column'];
+//            $order_dir = $order['dir'];
+//
+//            $field = $columns[$order_column]["data"];
+//            $query->orderBy($field, $order_dir);
+//        }
+//        else $query->orderBy("id", "desc");
+//
+//        if($limit == -1) $list = $query->get();
+//        else $list = $query->skip($skip)->take($limit)->get();
+
+//        foreach ($list as $k => $v)
+//        {
+//            $list[$k]->encode_id = encode($v->id);
+//        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)
     {
