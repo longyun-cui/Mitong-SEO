@@ -52,6 +52,10 @@ Route::group([], function () {
         Route::match(['get','post'], '/user/agent-edit', $controller.'@operate_user_agent_edit');
 
         Route::match(['get','post'], '/user/agent-recharge', $controller.'@operate_user_agent_recharge');
+        Route::match(['get','post'], '/user/agent-recharge-limit-close', $controller.'@operate_user_agent_recharge_limit_close');
+        Route::match(['get','post'], '/user/agent-recharge-limit-open', $controller.'@operate_user_agent_recharge_limit_open');
+        Route::match(['get','post'], '/user/agent-sub-agent-close', $controller.'@operate_user_agent_sub_agent_close');
+        Route::match(['get','post'], '/user/agent-sub-agent-open', $controller.'@operate_user_agent_sub_agent_open');
 
         Route::match(['get','post'], '/user/agent-delete', $controller.'@operate_user_agent_delete');
         Route::match(['get','post'], '/user/client-delete', $controller.'@operate_user_client_delete');

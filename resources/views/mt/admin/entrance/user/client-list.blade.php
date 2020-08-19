@@ -140,27 +140,31 @@
                     "orderCellsTop": true,
                     "columns": [
                         {
-                            "data": "id",
-                            'orderable': false,
                             'width':"48px",
+                            "title": "ID",
+                            "data": "id",
+                            'orderable': true,
                             render: function(data, type, row, meta) {
                                 return data;
                             }
                         },
                         {
+                            'width':"72px",
+                            "title": "客户",
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/item/'+data+'">'+row.username+'</a>';
+                                return '<a href="javascript:void(0);">'+row.username+'</a>';
                             }
                         },
                         {
+                            'width':"72px",
+                            "title": "所属代理商",
                             "data": "pid",
                             'orderable': false,
-                            'width':"96px",
                             render: function(data, type, row, meta) {
                                 if(row.parent) {
-                                    return '<a target="_blank" href="/item/'+data+'">'+row.parent.username+'</a>';
+                                    return '<a href="javascript:void(0);">'+row.parent.username+'</a>';
                                 } else {
                                     return '--';
                                 }
@@ -168,53 +172,58 @@
                             }
                         },
                         {
+                            'width':"48px",
+                            "title": "站点数",
                             "data": "id",
                             'orderable': false,
-                            'width':"48px",
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/admin/user/client-site-list/'+data+'">'+row.sites_count+'</a>';
+                                return '<a target="_blank"  href="/admin/user/client-site-list/'+data+'">'+row.sites_count+'</a>';
 
                             }
                         },
                         {
+                            'width':"48px",
+                            "title": "关键词",
                             "data": "id",
                             'orderable': false,
-                            'width':"48px",
                             render: function(data, type, row, meta) {
                                 return '<a target="_blank" href="/admin/user/client-keyword-list/'+data+'">'+row.keywords_count+'</a>';
 
                             }
                         },
                         {
+                            'width':"64px",
+                            "title": "资金总额",
                             "data": "fund_total",
                             'orderable': false,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
+                            "title": "累计消费1 (keyword)",
                             "data": "fund_expense",
                             'orderable': false,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
+                            "title": "累计消费2 (expense)",
                             "data": "fund_expense_2",
                             'orderable': false,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
                             "title": "差额",
                             "data": "id",
                             'orderable': false,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 var $balance = row.fund_total - row.fund_expense;
                                 if($balance < 0) return '<b class="text-red">'+$balance+'</b>';
@@ -222,40 +231,40 @@
                             }
                         },
                         {
+                            'width':"64px",
                             "title": "余额",
                             "data": "fund_balance",
                             'orderable': true,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
                             "title": "可用余额",
                             "data": "fund_available",
                             'orderable': true,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
                             "title": "初始冻结金额",
                             "data": "fund_frozen_init",
                             'orderable': true,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
                                 return data;
                             }
                         },
                         {
+                            'width':"64px",
                             "title": "冻结金额",
                             "data": "fund_frozen",
                             'orderable': true,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
                                 return data;
@@ -285,9 +294,9 @@
 //                        }
 //                    },
                         {
+                            'width':"80px",
                             'data': 'createtime',
                             'orderable': true,
-                            'width':"80px",
                             render: function(data, type, row, meta) {
 //                            return data;
                                 var $date = new Date(data);
@@ -308,9 +317,9 @@
 //                            }
 //                        },
                         {
+                            'width':"64px",
                             'data': 'status',
                             'orderable': false,
-                            'width':"64px",
                             render: function(data, type, row, meta) {
                                 if(data == 0) return '<small class="btn btn-xs">未启用</small>';
                                 else if(data == 1) return '<small class="btn btn-xs">正常</small>';
@@ -327,10 +336,10 @@
 //                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                    '<a class="btn btn-xs item-password-submit" data-id="'+value+'">密码</a>'+
-                                    '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>'+
-                                    '<a class="btn btn-xs item-login-submit" data-id="'+value+'">登录</a>';
+                                    '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+value+'">编辑</a>'+
+                                    '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+value+'">密码</a>'+
+                                    '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                    '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+value+'">登录</a>';
                                 return html;
                             }
                         }

@@ -35,16 +35,18 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>站点</th>
-                        <th>关键词</th>
-                        <th>价格</th>
-                        <th>冻结金额</th>
-                        <th>记录时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -126,6 +128,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "64px",
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -141,14 +145,7 @@
                         }
                     },
                     {
-                        "title": "站点",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
-                        }
-                    },
-                    {
+                        "width": "160px",
                         "title": "关键词",
                         "data": "id",
                         'orderable': false,
@@ -157,6 +154,34 @@
                         }
                     },
                     {
+                        "width": "160px",
+                        "title": "站点",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return row.site == null ? '未知' : row.site.website;
+                        }
+                    },
+                    {
+                        "width": "96px",
+                        "title": "搜索引擎",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(row.keyword == null) return '未知';
+                            else {
+                                var $engine = row.keyword.searchengine;
+                                if($engine = "baidu") return '百度PC';
+                                else if($engine = "baidu_mobile") return '百度移动';
+                                else if($engine = "sougou") return '搜狗';
+                                else if($engine = "360") return '360';
+                                else if($engine = "shenma") return '神马';
+                                else return $engine;
+                            }
+                        }
+                    },
+                    {
+                        "width": "64px",
                         "title": "单价",
                         "data": "id",
                         'orderable': false,
@@ -165,6 +190,7 @@
                         }
                     },
                     {
+                        "width": "64px",
                         "title": "冻结金额",
                         "data": "freezefunds",
                         'orderable': false,
@@ -173,6 +199,8 @@
                         }
                     },
                     {
+                        "width": "112px",
+                        "title": "记录时间",
                         "data": "regtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {

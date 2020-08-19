@@ -216,26 +216,28 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        'width':"32px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
-                        'width':"32px",
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+//                        'width':"192px",
+                        "title": "代理商",
                         "data": "id",
                         'orderable': false,
-                        'width':"192px",
                         render: function(data, type, row, meta) {
                             return '<a target="_blank" href="/item/'+data+'">'+row.username+'</a>';
                         }
                     },
                     {
+                        'width':"64px",
+                        "title": "代理类型",
                         "data": "usergroup",
                         'orderable': false,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(row.usergroup == "Agent") return '1级';
                             else if(row.usergroup == "Agent2") return '二级代理';
@@ -243,9 +245,10 @@
                         }
                     },
                     {
+                        'width':"128px",
+                        "title": "子代理数/上级代理",
                         "data": "id",
                         'orderable': false,
-                        'width':"128px",
                         render: function(data, type, row, meta) {
                             if(row.usergroup == "Agent")
                             {
@@ -271,9 +274,10 @@
                         }
                     },
                     {
+                        'width':"64px",
+                        "title": "客户数量",
                         "data": "id",
                         'orderable': false,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(row.clients_count && row.clients_count > 0)
                             {
@@ -284,21 +288,23 @@
                         }
                     },
                     {
+                        'width':"80px",
+                        "title": "资金总额",
                         "data": "fund_total",
                         'orderable': false,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.totalfunds;
-                            return data;
+                            return '<b class="">'+data+'</b>';
                         }
                     },
                     {
+                        'width':"80px",
+                        "title": "资金余额",
                         "data": "fund_balance",
                         'orderable': false,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.balancefunds;
-                            return data;
+                            return '<b class="">'+data+'</b>';
                         }
                     },
 //                    {
@@ -362,17 +368,40 @@
                         'data': 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            var $recharge_limit = "";
+                            if(row.is_recharge_limit == 1) {
+                                $recharge_limit = '<a class="btn btn-xs btn-danger item-recharge-limit-close-submit" data-id="'+data+'" >关闭充值额度限制</a>';
+                            } else {
+                                $recharge_limit = '<a class="btn btn-xs btn-success item-recharge-limit-open-submit" data-id="'+data+'" >开启充值额度限制</a>';
+                            }
+
+                            var $sub_agent = "";
+                            if(row.usergroup == "Agent2")
+                            {
+                                $sub_agent = '<a class="btn btn-xs btn-default item-sub-agent-none-submit" data-id="'+data+'" >禁止二级代理</a>';
+                            }
+                            else {
+                                if(row.isopen_subagent == 1) {
+                                    $sub_agent = '<a class="btn btn-xs btn-danger item-sub-agent-close-submit" data-id="'+data+'" >关闭二级代理</a>';
+                                }
+                                else {
+                                    $sub_agent = '<a class="btn btn-xs btn-success item-sub-agent-open-submit" data-id="'+data+'" >开启二级代理</a>';
+                                }
+                            }
+
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                '<a class="btn btn-xs item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
-                                '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                '<a class="btn btn-xs item-password-submit" data-id="'+data+'">密码</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                '<a class="btn btn-xs item-login-submit" data-id="'+data+'">登录</a>';
+                                '<a class="btn btn-xs btn-primary item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
+                                $recharge_limit+
+                                $sub_agent+
+                                '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
+                                '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+data+'">修改密码</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+data+'">登录</a>';
                             return html;
                         }
                     }
@@ -511,6 +540,120 @@
         });
 
 
+        // 关闭【充值限制】
+        $("#item-main-body").on('click', ".item-recharge-limit-close-submit", function() {
+            var that = $(this);
+            layer.msg('确定"关闭"么?', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/user/agent-recharge-limit-close') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"recharge-limit-close",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg("操作完成");
+                                location.reload();
+                            }
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+        // 开启【充值限制】
+        $("#item-main-body").on('click', ".item-recharge-limit-open-submit", function() {
+            var that = $(this);
+            layer.msg('确定"开启"么?', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/user/agent-recharge-limit-open') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"recharge-limit-open",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg("操作完成");
+                                location.reload();
+                            }
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
+
+        // 关闭【二级代理】
+        $("#item-main-body").on('click', ".item-sub-agent-close-submit", function() {
+            var that = $(this);
+            layer.msg('确定"关闭二级代理"么?', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/user/agent-sub-agent-close') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"sub-agent-close",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg("操作完成");
+                                location.reload();
+                            }
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+        // 开启【二级代理】
+        $("#item-main-body").on('click', ".item-sub-agent-open-submit", function() {
+            var that = $(this);
+            layer.msg('确定"开启二级代理"么?', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/user/agent-sub-agent-open') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"sub-agent-open",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg("操作完成");
+                                location.reload();
+                            }
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
 
 
         // 【登录】
@@ -530,10 +673,13 @@
             );
         });
 
+
+
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定"删除"么', {
+            layer.msg('确定"删除"么?', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
@@ -579,7 +725,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

@@ -100,21 +100,21 @@
                     <i class="fa fa-cny text-red"></i><span>充值记录</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_finance_expense_active or '' }}">
-                <a href="{{ url('/admin/finance/expense-record') }}">
-                    <i class="fa fa-cny text-red"></i><span>消费记录</span>
-                </a>
-            </li>
-            <li class="treeview {{ $sidebar_finance_expense_daily_active or '' }}">
-                <a href="{{ url('/admin/finance/expense-record-daily') }}">
-                    <i class="fa fa-cny text-red"></i><span>每日消费</span>
-                </a>
-            </li>
             <li class="treeview {{ $sidebar_finance_freeze_active or '' }}">
                 <a href="{{ url('/admin/finance/freeze-record') }}">
                     <i class="fa fa-cny text-red"></i><span>资金冻结记录</span>
                 </a>
             </li>
+            <li class="treeview {{ $sidebar_finance_expense_active or '' }}">
+                <a href="{{ url('/admin/finance/expense-record') }}">
+                    <i class="fa fa-cny text-red"></i><span>消费记录</span>
+                </a>
+            </li>
+            {{--<li class="treeview {{ $sidebar_finance_expense_daily_active or '' }}">--}}
+                {{--<a href="{{ url('/admin/finance/expense-record-daily') }}">--}}
+                    {{--<i class="fa fa-cny text-red"></i><span>每日消费</span>--}}
+                {{--</a>--}}
+            {{--</li>--}}
 
 
 

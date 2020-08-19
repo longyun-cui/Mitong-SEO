@@ -410,6 +410,223 @@ class IndexRepository {
 
     }
 
+    // 关闭【代理商】充值限制
+    public function operate_user_agent_recharge_limit_close($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge-limit-close') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["is_recharge_limit"] = 0;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 开启【代理商】充值限制
+    public function operate_user_agent_recharge_limit_open($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge-limit-open') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["is_recharge_limit"] = 1;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 关闭【二级代理商】
+    public function operate_user_agent_sub_agent_close($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'sub-agent-close') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["isopen_subagent"] = 0;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 开启【二级代理商】
+    public function operate_user_agent_sub_agent_open($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'sub-agent-open') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["isopen_subagent"] = 1;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
 
 
 
@@ -1536,7 +1753,8 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【财务概览】视图
+
+    // 返回【月份财务】视图
     public function show_finance_overview_month($post_data)
     {
         $month = $post_data['month'];
@@ -1552,7 +1770,7 @@ class IndexRepository {
                 'sidebar_finance_overview_active'=>'active'
             ]);
     }
-    // 返回【消费记录】数据
+    // 返回【月份财务】数据
     public function get_finance_overview_month_datatable($post_data)
     {
         $admin = Auth::guard("admin")->user();
@@ -1567,7 +1785,9 @@ class IndexRepository {
             ->select(
                 DB::raw("
                     STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+                    DATE_FORMAT(createtime,'%Y-%m') as month,
                     DATE_FORMAT(createtime,'%d') as day,
+                    DATE_FORMAT(createtime,'%e') as day_0,
                     sum(price) as sum,
                     count(*) as count
                 "))
@@ -1610,6 +1830,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
+
 
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)
@@ -1656,6 +1877,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+
     // 返回【消费记录】数据
     public function get_finance_expense_record_datatable($post_data)
     {
@@ -1664,6 +1886,11 @@ class IndexRepository {
 //        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
             ->with('user','site','keyword')
             ->orderby("id","desc");
+
+        if(!empty($post_data['createtime']))
+        {
+            $query->whereDate('createtime', $post_data['createtime']);
+        }
 
         $total = $query->count();
 
@@ -1693,8 +1920,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
-
-    // 返回【消费记录】数据
+    // 返回【每日消费记录】数据
     public function get_finance_expense_record_daily_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -1742,6 +1968,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
+
 
     // 返回【关键词检测】视图
     public function show_finance_freeze_record()
@@ -1868,7 +2095,6 @@ class IndexRepository {
             return response_fail([],'启用失败，请重试');
         }
     }
-
     // 禁用
     public function disable($post_data)
     {

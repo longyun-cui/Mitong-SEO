@@ -35,12 +35,13 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>站点</th>
-                        <th>关键词</th>
-                        <th>价格</th>
-                        <th>记录时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
@@ -50,19 +51,22 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="createtime" /></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -105,6 +109,7 @@
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.createtime = $('input[name="createtime"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -122,6 +127,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "64px",
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -129,6 +136,7 @@
                         }
                     },
                     {
+                        "title": "客户",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -136,13 +144,8 @@
                         }
                     },
                     {
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
-                        }
-                    },
-                    {
+                        "width": "160px",
+                        "title": "关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -150,6 +153,35 @@
                         }
                     },
                     {
+                        "width": "160px",
+                        "title": "站点",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return row.site == null ? '未知' : row.site.website;
+                        }
+                    },
+                    {
+                        "width": "96px",
+                        "title": "搜索引擎",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(row.keyword == null) return '未知';
+                            else {
+                                var $engine = row.keyword.searchengine;
+                                if($engine = "baidu") return '百度PC';
+                                else if($engine = "baidu_mobile") return '百度移动';
+                                else if($engine = "sougou") return '搜狗';
+                                else if($engine = "360") return '360';
+                                else if($engine = "shenma") return '神马';
+                                else return $engine;
+                            }
+                        }
+                    },
+                    {
+                        "width": "64px",
+                        "title": "价格",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -157,6 +189,8 @@
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -255,23 +289,30 @@
 <script>
     $(function() {
 
+        $(".form_datetime").datepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            todayHighlight: true,
+            autoclose: true
+        });
+
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
         });
 
         // 【数据分析】
         $("#item-main-body").on('click', ".item-statistics-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+            window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
         // 【删除】

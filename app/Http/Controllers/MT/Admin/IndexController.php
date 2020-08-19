@@ -84,6 +84,31 @@ class IndexController extends Controller
         return $this->repo->operate_user_agent_recharge(request()->all());
     }
 
+    // 关闭【代理商】充值限制
+    public function operate_user_agent_recharge_limit_close()
+    {
+        return $this->repo->operate_user_agent_recharge_limit_close(request()->all());
+    }
+
+    // 开启【代理商】充值限制
+    public function operate_user_agent_recharge_limit_open()
+    {
+        return $this->repo->operate_user_agent_recharge_limit_open(request()->all());
+    }
+
+
+    // 关闭【代理商】充值限制
+    public function operate_user_agent_sub_agent_close()
+    {
+        return $this->repo->operate_user_agent_sub_agent_close(request()->all());
+    }
+
+    // 开启【代理商】充值限制
+    public function operate_user_agent_sub_agent_open()
+    {
+        return $this->repo->operate_user_agent_sub_agent_open(request()->all());
+    }
+
 
 
 

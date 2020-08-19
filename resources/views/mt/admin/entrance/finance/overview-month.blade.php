@@ -69,8 +69,10 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     <tr>
+                        <td><</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -149,6 +151,16 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "128px",
+                        "title": "月份",
+                        "data": "month",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "width": "128px",
                         "title": "日期",
                         "data": "date",
                         'orderable': false,
@@ -157,6 +169,7 @@
                         }
                     },
                     {
+                        "width": "96px",
                         "title": "上词总数",
                         "data": "count",
                         'orderable': false,
@@ -165,7 +178,8 @@
                         }
                     },
                     {
-                        "title": "累计消费额金额",
+                        "width": "96px",
+                        "title": "累计消费金额",
                         "data": "sum",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -204,7 +218,22 @@
                 ],
                 "drawCallback": function (settings) {
 
-                    var res=[];
+
+
+                    var $api = this.api();
+//                    console.log($api.rows().data()); // 输出当前页的数据到浏览器控制台
+
+                    $data = $api.rows().data();
+                    $data = Object.values($data);
+
+
+                    var $res = new Array();
+                    $.each($data,function(key,v){
+                        $res[(v.day_0 - 1)] = { value:v.sum, name:v.date };
+//                        $res.push({ value:v.sum, name:v.date });
+                    });
+//                    console.log($res);
+
                     var option_browse = {
                         title: {
                             text: '消费统计'
@@ -219,7 +248,7 @@
                             }
                         },
                         legend: {
-                            data:['11']
+                            data: ['']
                         },
                         toolbox: {
                             feature: {
@@ -234,22 +263,22 @@
                         },
                         xAxis : [
                             {
-                                type : 'category',
-                                boundaryGap : false,
-                                axisLabel : { interval:0 },
-                                data : [
+                                type: 'category',
+                                boundaryGap: false,
+                                axisLabel: { interval:0 },
+                                data: [
                                     1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
                                 ]
                             }
                         ],
                         yAxis : [
                             {
-                                type : 'value'
+                                type: 'value'
                             }
                         ],
                         series : [
                             {
-                                name:'123',
+                                name:'累计消费',
                                 type:'line',
                                 label: {
                                     normal: {
@@ -257,26 +286,11 @@
                                         position: 'top'
                                     }
                                 },
-                                itemStyle : { normal: {label : {show: true}}},
-                                data:res
+                                itemStyle: { normal: {label : {show: true}}},
+                                data: $res
                             }
                         ]
                     };
-
-
-                    var $api = this.api();
-                    // 输出当前页的数据到浏览器控制台
-//                    console.log( $api.rows().data() );
-
-                    $data = $api.rows().data();
-                    $data = Object.values($data);
-                    $.each($data,function(key,v){
-                        res.push({
-                            value:v.sum,
-                            name:v.day
-                        });
-                    });
-
                     var myChart_browse = echarts.init(document.getElementById('echart-browse'));
                     myChart_browse.setOption(option_browse);
 
@@ -346,6 +360,106 @@
     }();
     $(function () {
         TableDatatablesAjax.init();
+    });
+</script>
+<script>
+    $(function() {
+
+        $(".form_datetime").datepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm',
+            todayHighlight: true,
+            autoclose: true
+        });
+
+        // 【下载二维码】
+        $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
+            var that = $(this);
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+        });
+
+        // 【数据分析】
+        $("#item-main-body").on('click', ".item-statistics-submit", function() {
+            var that = $(this);
+            window.open("/statistics/item?id="+that.attr('data-id'));
+        });
+
+        // 【编辑】
+        $("#item-main-body").on('click', ".item-edit-submit", function() {
+            var that = $(this);
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
+        });
+
+        // 【删除】
+        $("#item-main-body").on('click', ".item-delete-submit", function() {
+            var that = $(this);
+            layer.msg('确定要删除该"产品"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/item/delete') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+        // 【启用】
+        $("#item-main-body").on('click', ".item-enable-submit", function() {
+            var that = $(this);
+            layer.msg('确定启用该"产品"？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/item/enable') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+        // 【禁用】
+        $("#item-main-body").on('click', ".item-disable-submit", function() {
+            var that = $(this);
+            layer.msg('确定禁用该"产品"？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/item/disable') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
     });
 </script>
 @endsection
