@@ -388,8 +388,9 @@ class IndexController extends Controller
                 $keyword->standarddate = $current_time;// 达标时间
                 $keyword->standardstatus = '已达标';// 达标状态
                 $keyword->latestconsumption = $keyword->price; // 最新消费
-                $keyword->standarddays = $keyword->standarddays + 1;// 达标天数
-                $keyword->totalconsumption 	= $keyword->totalconsumption + $keyword->price; // 累计消费
+                $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+                $keyword->standard_days = $keyword->standard_days + 1;// 达标天数+1
+                $keyword->totalconsumption 	= $keyword->totalconsumption + $keyword->price; // 累计消费+price
 
                 if(!$keyword->firststandarddate)
                 {
