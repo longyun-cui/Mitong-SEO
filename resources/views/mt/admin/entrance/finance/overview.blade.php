@@ -273,6 +273,21 @@
 <script>
     $(function() {
 
+
+        var $api = this.api();
+//                    console.log($api.rows().data()); // 输出当前页的数据到浏览器控制台
+
+        $data = $api.rows().data();
+        $data = Object.values($data);
+
+
+        var $res = new Array();
+        $.each($data,function(key,v){
+            $res[(v.day_0 - 1)] = { value:v.sum, name:v.date };
+//                        $res.push({ value:v.sum, name:v.date });
+        });
+//                    console.log($res);
+
         var option_browse = {
             title: {
                 text: '消费统计'

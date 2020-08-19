@@ -34,15 +34,15 @@ class IndexController extends Controller
     // 关键词检测请求
     public function morning_send()
     {
-
         $date = date('Y-m-d');
-        $data = SEOKeyword::select('id','keyword','website','searchengine')
+        $query = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate','<',$date)
-            ->orderby('id','desc')
-//            ->limit(50)
-            ->get()
-            ->toArray();
+            ->orderby('id','desc');
+
+        $limit = request("limit",0);
+        if($limit) $query->limit($limit);
+        $data = $query->get()->toArray();
 //        dd($data);
 
         foreach ($data as $value)
@@ -111,15 +111,44 @@ class IndexController extends Controller
         }
 
 
+        $count = 0;
         echo '<pre>';
-        var_dump($baidu_url);
-        if(isset($baidu_keyword)) echo 'baidu => '.count($baidu_keyword).'<br>';
-        if(isset($baidu_mobile_keyword)) echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
-        if(isset($abc_keyword)) echo 'abc => '.count($abc_keyword).'<br>';
-        if(isset($abc_mobile_keyword)) echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
-        if(isset($sougou_keyword)) echo 'sougou => '.count($sougou_keyword).'<br>';
-        if(isset($sougou_mobile_keyword)) echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
-        if(isset($shenma_keyword)) echo 'shenma => '.count($shenma_keyword).'<br>';
+        if(isset($baidu_keyword))
+        {
+            echo 'baidu => '.count($baidu_keyword).'<br>';
+            $count += count($baidu_keyword);
+        }
+        if(isset($baidu_mobile_keyword))
+        {
+            echo 'baidu_mobile => '.count($baidu_mobile_keyword).'<br>';
+            $count += count($baidu_mobile_keyword);
+        }
+        if(isset($abc_keyword))
+        {
+            echo 'abc => '.count($abc_keyword).'<br>';
+            $count += count($abc_keyword);
+        }
+        if(isset($abc_mobile_keyword))
+        {
+            echo 'abc_mobile => '.count($abc_mobile_keyword).'<br>';
+            $count += count($abc_mobile_keyword);
+        }
+        if(isset($sougou_keyword))
+        {
+            echo 'sougou => '.count($sougou_keyword).'<br>';
+            $count += count($sougou_keyword);
+        }
+        if(isset($sougou_mobile_keyword))
+        {
+            echo 'sougou_mobile => '.count($sougou_mobile_keyword).'<br>';
+            $count += count($sougou_mobile_keyword);
+        }
+        if(isset($shenma_keyword))
+        {
+            echo 'shenma => '.count($shenma_keyword).'<br>';
+            $count += count($shenma_keyword);
+        }
+        echo 'count => '.$count.'<br>';
         echo '</pre>';
 //        die();
 
