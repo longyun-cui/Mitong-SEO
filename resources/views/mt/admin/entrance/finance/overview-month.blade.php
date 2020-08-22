@@ -218,8 +218,6 @@
                 ],
                 "drawCallback": function (settings) {
 
-
-
                     var $api = this.api();
 //                    console.log($api.rows().data()); // 输出当前页的数据到浏览器控制台
 
@@ -365,12 +363,36 @@
 <script>
     $(function() {
 
-        $(".form_datetime").datepicker({
+        $(".form__datetime").datepicker({
             language: 'zh-CN',
             format: 'yyyy-mm',
             todayHighlight: true,
             autoclose: true
         });
+
+        $('.form_datetime').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'yyyy-mm',
+            showButtonPanel: true,
+            monthNamesShort: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+            closeText: '选择',
+            currentText: '本月',
+            isSelMon:'true',
+            onClose: function (dateText, inst) {
+                var month = +$("#ui-datepicker-div .ui-datepicker-month :selected").val() + 1,
+                    year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                if (month < 10) {
+                    month = '0' + month;
+                }
+                this.value = year + '-' + month;
+                if (typeof this.blur === 'function') {
+                    this.blur();
+                }
+            }
+        });
+
+
 
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {

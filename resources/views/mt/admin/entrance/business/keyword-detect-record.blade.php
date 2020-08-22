@@ -72,12 +72,13 @@
                     <thead>
                     <tr role='row' class='heading'>
                         <th>选择</th>
-                        <th>id</th>
-                        <th>关键词</th>
-                        <th>站点</th>
-                        <th>搜索引擎</th>
-                        <th>最新排名</th>
-                        <th>检测时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
@@ -89,6 +90,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td>
+                            <select name="rank" class="form-control form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="1">已达标</option>
+                            </select></td>
                         <td></td>
                         <td>
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
@@ -319,6 +325,7 @@
                         d.keyword = $('input[name="keyword"]').val();
                         d.website = $('input[name="website"]').val();
                         d.keywordstatus = $('select[name="keywordstatus"]').val();
+                        d.rank = $('select[name="rank"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -336,6 +343,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "title": "选择",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -343,6 +351,7 @@
                         }
                     },
                     {
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -350,6 +359,15 @@
                         }
                     },
                     {
+                        "title": "扣费ID",
+                        "data": "expense_id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -357,6 +375,7 @@
                         }
                     },
                     {
+                        "title": "站点",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -364,6 +383,7 @@
                         }
                     },
                     {
+                        "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -376,6 +396,7 @@
                         }
                     },
                     {
+                        "title": "排名",
                         "data": "rank",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -384,6 +405,7 @@
                         }
                     },
                     {
+                        "title": "检测时间",
                         "data": "detect_time",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -396,6 +418,7 @@
                         }
                     },
                     {
+                        "title": "操作",
                         'data': 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {

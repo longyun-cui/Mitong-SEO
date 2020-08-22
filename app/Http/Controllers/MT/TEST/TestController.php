@@ -32,7 +32,35 @@ class TestController extends Controller
     // 返回【主页】视图
     public function index()
     {
-        dd('test');
+
+        $keyword_data = SEOKeyword::first(
+            array(
+                \DB::raw('COUNT(*) as keyword_count'),
+                \DB::raw('SUM(standarddays) as standarddays_sum'),
+                \DB::raw('SUM(standard_days) as standard_days_sum'),
+                \DB::raw('SUM(totalconsumption) as totalconsumption_sum'),
+                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
+            )
+        )->toArray();
+
+        $test_data["keyword_count"] = number_format($keyword_data["keyword_count"]);
+        $test_data["standarddays_sum"] = number_format($keyword_data["standarddays_sum"]);
+        $test_data["standard_days_sum"] = number_format($keyword_data["standard_days_sum"]);
+        $test_data["totalconsumption_sum"] = number_format($keyword_data["totalconsumption_sum"]);
+        $test_data["standard_days_consumption_sum"] = number_format($keyword_data["standard_days_consumption_sum"]);
+
+
+        $keyword_data = User::first(
+            array(
+                \DB::raw('COUNT(*) as keyword_count'),
+                \DB::raw('SUM(fund_expense) as fund_expense_sum'),
+                \DB::raw('SUM(fund_expense_2) as fund_expense_2_sum'),
+                \DB::raw('SUM(fund_balance) as fund_balance'),
+                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
+            )
+        )->toArray();
+
+        return view('mt.admin.test')->with('test_data',$test_data);
     }
 
 
@@ -97,6 +125,148 @@ class TestController extends Controller
             echo $user->id.'--'.$pass_decrypt."<br>";
         }
     }
+
+
+
+
+    // 补加【消费记录表】数据
+    public function fill_expense()
+    {
+        $detect_list = SEOKeywordDetectRecord::select('id','owner_id','ownuserid','expense_id','keywordid','rank','createuserid','createtime')
+            ->where("expense_id",0)->where("rank",">",0)->where("rank","<=",10)
+            ->limit(1000)->orderby("id","asc")->get();
+        echo $detect_list->count()."</br>";
+
+        $count = 1;
+        foreach($detect_list as $k => $detect)
+        {
+            $keyword_id = $detect->keywordid;
+            $keyword = SEOKeyword::find($keyword_id);
+            $create_time = $detect->createtime;
+            $create_date = explode(" ",trim($create_time))[0];
+
+            DB::beginTransaction();
+            try
+            {
+                $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword_id])->whereDate('standarddate',$create_date)->first();
+                if(!$ExpenseRecord)
+                {
+                    $ExpenseRecord = new ExpenseRecord;
+                    $ExpenseRecord_data['detect_id'] = $detect->id;
+                    $ExpenseRecord_data['owner_id'] = $detect->ownuserid;
+                    $ExpenseRecord_data['ownuserid'] = $detect->ownuserid;
+                    $ExpenseRecord_data['standarddate'] = $create_time;
+                    $ExpenseRecord_data['createtime'] = $create_time;
+                    $ExpenseRecord_data['siteid'] = $keyword->siteid;
+                    $ExpenseRecord_data['keywordid'] = $keyword->id;
+                    $ExpenseRecord_data['keyword'] = $keyword->keyword;
+                    $ExpenseRecord_data['price'] = (int)$keyword->price;
+                    $bool_1 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+                    if(!$bool_1) throw new Exception("update--expense-record--fail");
+                }
+                else
+                {
+                    $ExpenseRecord->detect_id = $detect->id;
+                    $ExpenseRecord->save();
+                }
+
+                $detect->expense_id = $ExpenseRecord->id;
+                $detect->save();
+
+                DB::commit();
+                $count += 1;
+            }
+            catch (Exception $e)
+            {
+                DB::rollback();
+                $msg = '操作失败，请重试！';
+                $msg = $e->getMessage();
+//                exit($e->getMessage());
+                return response_fail([],$msg);
+            }
+        }
+        echo $count."</br>";
+        return response_success([]);
+    }
+
+    // 补加【检测表】数据
+    public function fill_detect()
+    {
+        $expense_list = ExpenseRecord::where("detect_id",0)->orderby("id","asc")->get();
+        echo $expense_list->count()."</br>";
+        $count = 0;
+        foreach($expense_list as $k => $expense)
+        {
+            $keyword_id = $expense->keywordid;
+            $create_time = $expense->createtime;
+            $create_date = explode(" ",trim($create_time))[0];
+
+            DB::beginTransaction();
+            try
+            {
+
+                // 添加检测记录
+                $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword_id])->whereDate('createtime',$create_date)->first();
+                if(!$DetectRecord)
+                {
+                    $keyword = SEOKeyword::find($keyword_id);
+
+                    $DetectRecord = new SEOKeywordDetectRecord;
+
+                    $DetectRecord_data['owner_id'] = $keyword->createuserid;
+                    $DetectRecord_data['ownuserid'] = $keyword->createuserid;
+                    $DetectRecord_data['createuserid'] = $keyword->createuserid;
+                    $DetectRecord_data['createusername'] = $keyword->createusername;
+                    $DetectRecord_data['createtime'] = $create_time;
+                    $DetectRecord_data['keywordid'] = $keyword->id;
+                    $DetectRecord_data['keyword'] = $keyword->keyword;
+                    $DetectRecord_data['website'] = $keyword->website;
+                    $DetectRecord_data['searchengine'] = $keyword->searchengine;
+                    $DetectRecord_data['detect_time'] = $create_time;
+                    $DetectRecord_data['rank'] = 1;
+                    $DetectRecord_data['rank_original'] = 1;
+                    $DetectRecord_data['rank_real'] = 1;
+                    $DetectRecord_data['detectdata'] = "";
+
+                    $bool_1 = $DetectRecord->fill($DetectRecord_data)->save();
+                    if(!$bool_1) throw new Exception("update--detect-record--fail");
+                    echo $count."INSERT"."<br>";
+                }
+                else
+                {
+                    echo $count."--EXIST--rank(".$DetectRecord->rank.")--real(".$DetectRecord->rank_real.")"."<br>";
+
+                    if($DetectRecord->rank_real <= 10)
+                    {
+                        $DetectRecord->rank = $DetectRecord->rank_real;
+                    }
+                    else $DetectRecord->rank = 1;
+
+                    $DetectRecord->expense_id = $expense->id;
+                    $DetectRecord->save();
+                }
+
+                $expense->detect_id = $expense->id;
+                $expense->save();
+
+                DB::commit();
+                $count += 1;
+            }
+            catch (Exception $e)
+            {
+                DB::rollback();
+                $msg = '操作失败，请重试！';
+                $msg = $e->getMessage();
+//                exit($e->getMessage());
+                return response_fail([],$msg);
+            }
+        }
+        echo $count."</br>";
+        return response_success([]);
+    }
+
+
+
 
     // 返回主页视图
     public function add_user_id_to_table_keyword()

@@ -930,7 +930,7 @@ class IndexRepository {
         if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
-        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus']);
+        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
 
         $total = $query->count();
 
@@ -1116,6 +1116,14 @@ class IndexRepository {
         $id  = $post_data["id"];
         $query = SEOKeywordDetectRecord::select('*')->where('keywordid',$id);
 
+        if(!empty($post_data['rank']))
+        {
+            if($post_data['rank'] = 1)
+            {
+                $query->where('rank', '>', 0)->where('rank', '<=', 10);
+            }
+        }
+
         $total = $query->count();
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
@@ -1132,7 +1140,7 @@ class IndexRepository {
             $field = $columns[$order_column]["data"];
             $query->orderBy($field, $order_dir);
         }
-        else $query->orderBy("id", "desc");
+        else $query->orderBy("createtime", "desc");
 
         if($limit == -1) $list = $query->get();
         else $list = $query->skip($skip)->take($limit)->get();
@@ -1249,7 +1257,9 @@ class IndexRepository {
                 }
 
                 $keyword->standarddays = $detect_standard_count;
+                $keyword->standard_days = $detect_standard_count;
                 $keyword->totalconsumption = $detect_standard_price_sum;
+                $keyword->consumption_total = $detect_standard_price_sum;
 
                 $bool_1 = $keyword->save();
                 if($bool_1)
@@ -1401,7 +1411,9 @@ class IndexRepository {
                 }
 
                 $keyword->standarddays = $detect_standard_count;
+                $keyword->standard_days = $detect_standard_count;
                 $keyword->totalconsumption = $detect_standard_price_sum;
+                $keyword->consumption_total = $detect_standard_price_sum;
 
                 $bool_1 = $keyword->save();
                 if($bool_1)
@@ -1693,7 +1705,7 @@ class IndexRepository {
         $data[0]['data'] = $data1->keyBy('day');
         $data[1]['month'] = $last_month;
         $data[1]['data'] = $data2->keyBy('day');
-//        dd($data1->keyBy('day')->toArray());
+//        dd($data[0]['data']);
 
 
         return view('mt.admin.entrance.finance.overview')

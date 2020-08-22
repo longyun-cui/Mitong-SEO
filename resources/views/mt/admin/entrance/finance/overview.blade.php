@@ -203,6 +203,29 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    var $api = this.api();
+//                    console.log($api.rows().data()); // 输出当前页的数据到浏览器控制台
+
+                    $data = $api.rows().data();
+                    $data = Object.values($data);
+
+
+                    var $res_1 = new Array();
+                    $.each($data[0]["data"],function(key,v){
+                        $res_1[(v.day_0 - 1)] = { value:v.sum, name:v.date };
+//                        $res_1.push({ value:v.sum, name:v.date });
+                    });
+                    console.log($res_1);
+
+                    var $res_2 = new Array();
+                    $.each($data[1]["data"],function(key,v){
+                        $res_1[(v.day_0 - 1)] = { value:v.sum, name:v.date };
+//                        $res_1.push({ value:v.sum, name:v.date });
+                    });
+                    console.log($res_2);
+
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();
@@ -273,21 +296,6 @@
 <script>
     $(function() {
 
-
-        var $api = this.api();
-//                    console.log($api.rows().data()); // 输出当前页的数据到浏览器控制台
-
-        $data = $api.rows().data();
-        $data = Object.values($data);
-
-
-        var $res = new Array();
-        $.each($data,function(key,v){
-            $res[(v.day_0 - 1)] = { value:v.sum, name:v.date };
-//                        $res.push({ value:v.sum, name:v.date });
-        });
-//                    console.log($res);
-
         var option_browse = {
             title: {
                 text: '消费统计'
@@ -323,13 +331,13 @@
                     data : [
                         1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
                         {{--@if(count($data[0]["data"]) > count($data[1]["data"]))--}}
-                            {{--@foreach($data[0]["data"] as $v)--}}
-                                {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
-                            {{--@endforeach--}}
+                        {{--@foreach($data[0]["data"] as $v)--}}
+                        {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
+                        {{--@endforeach--}}
                         {{--@else--}}
-                            {{--@foreach($data[1]["data"] as $v)--}}
-                                {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
-                            {{--@endforeach--}}
+                        {{--@foreach($data[1]["data"] as $v)--}}
+                        {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
+                        {{--@endforeach--}}
                         {{--@endif--}}
                     ]
                 }
@@ -351,24 +359,13 @@
                     },
                     itemStyle : { normal: {label : {show: true}}},
                     data:[
-                            {{--@foreach($data[0]["data"] as $k=>$v)--}}
-                                {{--@if (($loop->index+1) == $k)--}}
-                                    {{--@if (!$loop->last)--}}
-                                        {{--{ value:{{ $v->sum }}, name:'{{ $v->day }}' },--}}
-                                    {{--@else--}}
-                                        {{--{ value:{{ $v->sum }}, name:'{{ $v->day }}' }--}}
-                                    {{--@endif--}}
-                                {{--@else--}}
-                                    {{--{ value:0, name:'{{ $v->day }}' },--}}
-                                {{--@endif--}}
-                            {{--@endforeach--}}
-                            @for($i=1;$i<32;$i++)
-                                @if (isset($data[0]["data"][$i]))
-                                    { value:{{ $data[0]["data"][$i]->sum }}, name:'{{ $data[0]["data"][$i]->day }}' },
+                            @foreach($data[0]["data"] as $v)
+                                @if (!$loop->last)
+                                    { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
                                 @else
-                                    { value:0, name:'{{ $i }}' },
+                                    { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
                                 @endif
-                            @endfor
+                            @endforeach
                     ]
                 },
                 {
@@ -381,14 +378,14 @@
                         }
                     },
                     itemStyle : { normal: {label : {show: true}}},
-                    data:[
-                        @foreach($data[1]["data"] as $v)
-                            @if (!$loop->last)
-                                { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
-                            @else
-                                { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
-                            @endif
-                        @endforeach
+                    data: [
+                            @foreach($data[1]["data"] as $v)
+                                @if (!$loop->last)
+                                    { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
+                                @else
+                                    { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
+                                @endif
+                            @endforeach
                     ]
                 }
             ]

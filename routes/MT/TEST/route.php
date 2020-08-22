@@ -16,5 +16,8 @@ Route::group([], function () {
     Route::match(['get','post'], '/search-keyword', $controller.'@search_keyword');
     Route::match(['get','post'], '/morning-send', $controller.'@morning_send');
 
+    Route::match(['get','post'], '/fill-expense', $controller.'@fill_expense');
+    Route::match(['get','post'], '/fill-detect', $controller.'@fill_detect');
+
 
 });

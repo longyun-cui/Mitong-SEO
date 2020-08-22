@@ -39,6 +39,7 @@
                         <th>资产总额</th>
                         <th>累计消费1(keyword)</th>
                         <th>累计消费2(expense)</th>
+                        <th></th>
                         <th>余额(差额)</th>
                         <th>资金余额</th>
                         <th>初始冻结金额</th>
@@ -52,6 +53,7 @@
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="agentname" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -217,6 +219,15 @@
                             'orderable': false,
                             render: function(data, type, row, meta) {
                                 return data;
+                            }
+                        },
+                        {
+                            'width':"64px",
+                            "title": "2-1",
+                            "data": "id",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+                                return row.fund_expense_2 - row.fund_expense;
                             }
                         },
                         {
