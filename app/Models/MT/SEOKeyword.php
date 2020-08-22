@@ -11,7 +11,8 @@ class SEOKeyword extends Model
         'owner_id', 'createuserid', 'createusername', 'createtime',
         'taskId', 'updateTime', 'reviewopinion',
         'cartid', 'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price', 'unit', 'unit2', 'keywordstatus',
-        'keywordstatus', 'standardstatus', 'standarddays', 'is_detect', 'detectiondate',
+        'keywordstatus', 'standardstatus', 'is_detect', 'detectiondate',
+        'standarddays',  'standard_days', 'standard_days_1', 'standard_days_2',
         'initialranking', 'latestranking', 'latestconsumption', 'totalconsumption', 'reviewdate', 'reviewuserid', 'reviewusername',
         'firststandarddate', 'standarddate', 'optimizetime', 'cooperationstopdate', 'freezefunds', 'unfreezedate', 'unfreezetime',
         'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime'

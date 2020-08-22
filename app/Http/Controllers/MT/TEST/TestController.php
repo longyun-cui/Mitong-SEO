@@ -64,6 +64,16 @@ class TestController extends Controller
     }
 
 
+
+    // 返回【主页】视图
+    public function repeat()
+    {
+
+//        $expenses = ExpenseRecord::with('detects')->has('detects', '>=', 1)->get();
+//        dd($expenses->toArray());
+    }
+
+
     // 返回主页视图
     public function statistics()
     {
@@ -142,21 +152,21 @@ class TestController extends Controller
         {
             $keyword_id = $detect->keywordid;
             $keyword = SEOKeyword::find($keyword_id);
-            $create_time = $detect->createtime;
-            $create_date = explode(" ",trim($create_time))[0];
+            $detect_time = $detect->detect_time;
+            $detect_date = explode(" ",trim($detect_time))[0];
 
             DB::beginTransaction();
             try
             {
-                $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword_id])->whereDate('standarddate',$create_date)->first();
+                $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword_id])->whereDate('standarddate',$detect_date)->first();
                 if(!$ExpenseRecord)
                 {
                     $ExpenseRecord = new ExpenseRecord;
                     $ExpenseRecord_data['detect_id'] = $detect->id;
                     $ExpenseRecord_data['owner_id'] = $detect->ownuserid;
                     $ExpenseRecord_data['ownuserid'] = $detect->ownuserid;
-                    $ExpenseRecord_data['standarddate'] = $create_time;
-                    $ExpenseRecord_data['createtime'] = $create_time;
+                    $ExpenseRecord_data['standarddate'] = $detect_time;
+                    $ExpenseRecord_data['createtime'] = $detect_time;
                     $ExpenseRecord_data['siteid'] = $keyword->siteid;
                     $ExpenseRecord_data['keywordid'] = $keyword->id;
                     $ExpenseRecord_data['keyword'] = $keyword->keyword;
@@ -198,15 +208,15 @@ class TestController extends Controller
         foreach($expense_list as $k => $expense)
         {
             $keyword_id = $expense->keywordid;
-            $create_time = $expense->createtime;
-            $create_date = explode(" ",trim($create_time))[0];
+            $standard_time = $expense->standarddate;
+            $standard_date = explode(" ",trim($standard_time))[0];
 
             DB::beginTransaction();
             try
             {
 
                 // 添加检测记录
-                $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword_id])->whereDate('createtime',$create_date)->first();
+                $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword_id])->whereDate('detect_time',$standard_date)->first();
                 if(!$DetectRecord)
                 {
                     $keyword = SEOKeyword::find($keyword_id);
@@ -217,12 +227,12 @@ class TestController extends Controller
                     $DetectRecord_data['ownuserid'] = $keyword->createuserid;
                     $DetectRecord_data['createuserid'] = $keyword->createuserid;
                     $DetectRecord_data['createusername'] = $keyword->createusername;
-                    $DetectRecord_data['createtime'] = $create_time;
+                    $DetectRecord_data['createtime'] = $standard_time;
                     $DetectRecord_data['keywordid'] = $keyword->id;
                     $DetectRecord_data['keyword'] = $keyword->keyword;
                     $DetectRecord_data['website'] = $keyword->website;
                     $DetectRecord_data['searchengine'] = $keyword->searchengine;
-                    $DetectRecord_data['detect_time'] = $create_time;
+                    $DetectRecord_data['detect_time'] = $standard_time;
                     $DetectRecord_data['rank'] = 1;
                     $DetectRecord_data['rank_original'] = 1;
                     $DetectRecord_data['rank_real'] = 1;

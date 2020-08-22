@@ -29,6 +29,12 @@ class ExpenseRecord extends Model
         return $this->belongsTo('App\Models\MT\User','ownuserid','id');
     }
 
+    //
+    function detects()
+    {
+        return $this->hasMany('App\Models\MT\SEOKeywordDetectRecord','expense_id','id');
+    }
+
     function site()
     {
         return $this->belongsTo('App\Models\MT\SEOSite','siteid','id');
