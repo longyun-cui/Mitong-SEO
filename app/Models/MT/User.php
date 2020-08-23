@@ -18,7 +18,7 @@ class User extends Authenticatable
         'usertype', 'usertype_desc', 'product', 'product_desc', 'seller_id', 'operation_id', 'customer_id',
         'isopen_oem', 'isopen_subagent', 'is_recharge_limit',
         'regfrom', 'userstatus', 'usersessionid', 'expand_info',
-        'fund_total', 'fund_expense', 'fund_expense_2', 'fund_balance', 'fund_available', 'fund_frozen', 'fund_frozen_init',
+        'fund_total', 'fund_expense', 'fund_expense_1', 'fund_expense_2', 'fund_balance', 'fund_available', 'fund_frozen', 'fund_frozen_init',
         'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime',
     ];
 

@@ -142,7 +142,7 @@ class TestController extends Controller
     // 补加【消费记录表】数据
     public function fill_expense()
     {
-        $detect_list = SEOKeywordDetectRecord::select('id','owner_id','ownuserid','expense_id','keywordid','rank','createuserid','createtime')
+        $detect_list = SEOKeywordDetectRecord::select('id','owner_id','ownuserid','expense_id','keywordid','rank','createuserid','detect_time','createtime')
             ->where("expense_id",0)->where("rank",">",0)->where("rank","<=",10)
             ->limit(1000)->orderby("id","asc")->get();
         echo $detect_list->count()."</br>";

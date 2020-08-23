@@ -12,7 +12,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4" style="display:none;">
         <!-- Widget: user widget style 1 -->
         <div class="box box-widget widget-user-2">
             <!-- Add the bg color to the header using any of the bg-* classes -->
@@ -51,7 +51,7 @@
                 <div class="row">
                     <div class="col-sm-4 border-right">
                         <div class="description-block">
-                            <h5 class="description-header">3,200</h5>
+                            <h5 class="description-header">0</h5>
                             <span class="description-text">SALES</span>
                         </div>
                         <!-- /.description-block -->
@@ -59,7 +59,7 @@
                     <!-- /.col -->
                     <div class="col-sm-4 border-right">
                         <div class="description-block">
-                            <h5 class="description-header">13,000</h5>
+                            <h5 class="description-header">0</h5>
                             <span class="description-text">FOLLOWERS</span>
                         </div>
                         <!-- /.description-block -->
@@ -67,7 +67,7 @@
                     <!-- /.col -->
                     <div class="col-sm-4">
                         <div class="description-block">
-                            <h5 class="description-header">35</h5>
+                            <h5 class="description-header">0</h5>
                             <span class="description-text">PRODUCTS</span>
                         </div>
                         <!-- /.description-block -->
@@ -83,14 +83,15 @@
 </div>
 
 
+{{--关键词优化--}}
 <div class="row">
     <div class="col-md-12">
         <div class="box">
             <div class="callout callout-green">
-                <h4>今日概览</h4>
+                <h4>关键词优化</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $index_data['keyword_num'] or 0 }}</span> 个
+                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $index_data['keyword_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -98,11 +99,11 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标 <span class="text-red font-24px">{{ $index_data['keyword_standard_num'] or 0 }}</span> 个
+                        达标 <span class="text-red font-24px">{{ $index_data['keyword_standard_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $index_data['keyword_standard_cost'] or 0 }}</span> 元
+                        达标消费 <span class="text-red font-24px">{{ $index_data['keyword_standard_cost_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
@@ -110,215 +111,128 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-aqua">
-            <div class="inner">
-                <h3>{{ $index_data['agent_count'] or 0 }}</h3>
 
-                <p>1级代理</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-bag"></i>
-            </div>
-            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <h3>{{ $index_data['agent2_num'] or 0 }}</h3>
-
-                <p>二级代理</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-person-add"></i>
-            </div>
-            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6 _none">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <h3><sup style="font-size: 20px">%</sup></h3>
-
-                <p>客户数</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="{{ url('/admin/user/agent-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <h3>{{ $index_data['client_num'] or 0 }}</h3>
-
-                <p>客户</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="{{ url('/admin/user/client-list') }}" class="small-box-footer">查看列表 <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-</div>
-
+{{--用户信息--}}
 <div class="row">
     <div class="col-md-12">
         <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title">代理商概览</h3>
+            <div class="callout callout-green">
+                <h4>用户概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</span> 个
+                    </span>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-wrench"></i></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
-                    </div>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    <span style="margin-right:12px;">
+                        1级代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent1_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        2级代理商 <span class="text-red font-24px">{{ $index_data['agent2_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        客户 <span class="text-red font-24px">{{ $index_data['client_count'] or 0 }}</span> 个
+                    </span>
                 </div>
             </div>
-            <!-- /.box-header -->
-            <!-- ./box-body -->
-            <div class="box-footer">
-                <div class="row">
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</h5>
-                            <span class="description-text">总数</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_fund_total_sum'] or 0 }}</h5>
-                            <span class="description-text">资金总额</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['agent_fund_balance_sum'] or 0 }}</h5>
-                            <span class="description-text">资金余额</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
-                            <h5 class="description-header">1200</h5>
-                            <span class="description-text">GOAL COMPLETIONS</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.box-footer -->
         </div>
-        <!-- /.box -->
     </div>
-    <!-- /.col -->
 </div>
 
+
+
+
+{{--代理商概览--}}
 <div class="row">
     <div class="col-md-12">
         <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title">客户概览</h3>
+            <div class="callout callout-green">
+                <h4>代理商概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</span> 个
+                    </span>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-wrench"></i></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
-                    </div>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    <span style="margin-right:12px;">
+                        资金总额 <span class="text-red font-24px">{{ $index_data['agent_fund_total_sum'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资金余额 <span class="text-red font-24px">{{ $index_data['agent_fund_balance_sum'] or 0 }}</span> 个
+                    </span>
                 </div>
             </div>
-            <!-- /.box-header -->
-            <!-- ./box-body -->
-            <div class="box-footer">
-                <div class="row">
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
-                            <h3 class="description-header" style="font-size:24px;">{{ $index_data['client_num'] or 0 }}</h3>
-                            <span class="description-text">客户数</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_total_sum'] or 0 }}</h5>
-                            <span class="description-text">资金总额</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_expense_sum'] or 0 }}</h5>
-                            <span class="description-text">累计消费</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
-                            <h5 class="description-header" style="font-size:24px;">{{ $index_data['client_fund_balance_sum'] or 0 }}</h5>
-                            <span class="description-text">资金余额</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.box-footer -->
         </div>
-        <!-- /.box -->
     </div>
-    <!-- /.col -->
 </div>
 
 
-<!-- Default box -->
+
+{{--客户概览--}}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>客户概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        客户 <span class="text-red" style="font-size:24px;">{{ $index_data['client_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资金总额 <span class="text-red font-24px">{{ $index_data['client_fund_total_sum'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        累计消费 <span class="text-red font-24px">{{ $index_data['client_fund_expense_sum'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资金余额 <span class="text-red font-24px">{{ $index_data['client_fund_balance_sum'] or 0 }}</span> 个
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{--消费统计--}}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN PORTLET-->
+        <div class="box box-info">
+
+            <div class="box-header with-border" style="margin:16px 0;">
+                <h3 class="box-title">消费统计</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
+                        <i class="fa fa-times"></i></button>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="echart-browse" style="width:100%;height:320px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box-footer">
+            </div>
+
+        </div>
+        <!-- END PORTLET-->
+    </div>
+</div>
+
+
+
+
 <div class="box">
     <div class="box-header with-border">
         <h3 class="box-title">Title</h3>
@@ -333,76 +247,120 @@
     <div class="box-body">
         Start creating your amazing application!
     </div>
-    <!-- /.box-body -->
     <div class="box-footer">
         Footer
     </div>
-    <!-- /.box-footer-->
 </div>
-<!-- /.box -->
 
-<div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">总资金</span>
-                <span class="info-box-number">90<small>%</small></span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">Likes</span>
-                <span class="info-box-number">41,410</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">总支出</span>
-                <span class="info-box-number">760</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">New Members</span>
-                <span class="info-box-number">2,000</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-</div>
 @endsection
 
 
+@section('custom-js')
+    <script src="{{ asset('/lib/js/echarts-3.7.2.min.js') }}"></script>
+@endsection
 @section('custom-script')
+<script>
+    $(function() {
+
+        var option_browse = {
+            title: {
+                text: '消费统计'
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'line',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data:['{{ $consumption_data[0]["month"] }}','{{ $consumption_data[1]["month"] }}']
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    axisLabel : { interval:0 },
+                    data : [
+                        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+                        {{--@if(count($data[0]["data"]) > count($data[1]["data"]))--}}
+                        {{--@foreach($data[0]["data"] as $v)--}}
+                        {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
+                        {{--@endforeach--}}
+                        {{--@else--}}
+                        {{--@foreach($data[1]["data"] as $v)--}}
+                        {{--@if (!$loop->last) '{{ $v->day }}', @else '{{ $v->day }}' @endif--}}
+                        {{--@endforeach--}}
+                        {{--@endif--}}
+                    ]
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'{{ $consumption_data[0]["month"] }}',
+                    type:'line',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    itemStyle : { normal: {label : {show: true}}},
+                    data:[
+                            @foreach($consumption_data[0]["data"] as $v)
+                            @if (!$loop->last)
+                        { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
+                            @else
+                        { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
+                        @endif
+                        @endforeach
+                    ]
+                },
+                {
+                    name:'{{ $consumption_data[1]["month"] }}',
+                    type:'line',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    itemStyle : { normal: {label : {show: true}}},
+                    data: [
+                            @foreach($consumption_data[1]["data"] as $v)
+                            @if (!$loop->last)
+                        { value:'{{ $v->sum }}', name:'{{ $v->day }}' },
+                            @else
+                        { value:'{{ $v->sum }}', name:'{{ $v->day }}' }
+                        @endif
+                        @endforeach
+                    ]
+                }
+            ]
+        };
+        var myChart_browse = echarts.init(document.getElementById('echart-browse'));
+        myChart_browse.setOption(option_browse);
+
+    });
+</script>
 <script>
     $(function() {
     });

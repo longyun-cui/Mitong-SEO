@@ -17,7 +17,7 @@
 .datatable-body * {  }
 .datatable-body .form-control { padding:4px; }
 .datatable-body thead * { font-size:13px; text-align: center; }
-.datatable-body tbody * { font-size:12px; text-align: center; }
+.datatable-body tbody * { font-size:13px; text-align: center; }
 .btn-group-xs>.btn, .btn-xs { padding:1px 2px; margin-left:2px; margin-right:2px; }
 table.dataTable thead > tr > th { padding:8px 4px; }
 table.dataTable .text-center { text-align:center; }

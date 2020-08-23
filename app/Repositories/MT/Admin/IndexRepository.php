@@ -27,76 +27,119 @@ class IndexRepository {
     // 返回（后台）主页视图
     public function view_admin_index()
     {
-        $admin = Auth::guard("admin")->user();
+        $me = Auth::guard("admin")->user();
+
+
+        $this_month = date('Y-m');
+        $this_month_year = date('Y');
+        $this_month_month = date('m');
+        $last_month = date('Y-m',strtotime('last month'));
+        $last_month_year = date('Y',strtotime('last month'));
+        $last_month_month = date('m',strtotime('last month'));
+
+        $query1 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$this_month_year)->whereMonth('standarddate',$this_month_month);
+        $count1 = $query1->count("*");
+        $sum1 = $query1->sum("price");
+        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $query2 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$last_month_year)->whereMonth('standarddate',$last_month_month);
+        $count2 = $query2->count("*");
+        $sum2 = $query2->sum("price");
+        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $consumption_data[0]['month'] = $this_month;
+        $consumption_data[0]['data'] = $data1->keyBy('day');
+        $consumption_data[1]['month'] = $last_month;
+        $consumption_data[1]['data'] = $data2->keyBy('day');
+
 
 //        $agent_num = User::where(['usergroup'=>'Agent'])->count();
 //        $agent_fund_total_sum = User::where(['usergroup'=>'Agent'])->sum('fund_total');
 //        $agent_fund_balance_sum = User::where(['usergroup'=>'Agent'])->sum('fund_balance');
 
-        $agent_data = User::where(['usergroup'=>'Agent'])->first(
-            array(
-                \DB::raw('COUNT(*) as agent_count'),
-                \DB::raw('SUM(fund_total) as agent_fund_total_sum'),
-                \DB::raw('SUM(fund_balance) as agent_fund_balance_sum')
+        $agent_data = User::where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2'])
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as agent_count'),
+                    \DB::raw('SUM(fund_total) as agent_fund_total_sum'),
+                    \DB::raw('SUM(fund_balance) as agent_fund_balance_sum')
+                )
             )
-        )->toArray();
-//        dd($agent_data);
+            ->toArray();
         $index_data['agent_count'] = $agent_data['agent_count'];
         $index_data['agent_fund_total_sum'] = number_format($agent_data['agent_fund_total_sum']);
         $index_data['agent_fund_balance_sum'] = number_format($agent_data['agent_fund_balance_sum'],0);
 
+        $agent2_count = User::where(['usergroup'=>'Agent2'])->count();
+        $index_data['agent2_count'] = $agent2_count;
+        $index_data['agent1_count'] = $agent_data['agent_count'] - $agent2_count;
 
-        $agent2_num = User::where(['usergroup'=>'Agent2'])->count();
-        $index_data['agent2_num'] = $agent2_num;
+        $client_data = User::where(['usergroup'=>'Service'])
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as client_count'),
+                    \DB::raw('SUM(fund_total) as client_fund_total_sum'),
+                    \DB::raw('SUM(fund_expense) as client_fund_balance_sum')
+                )
+            )
+            ->toArray();
 
+        $client_count = $client_data['client_count'];
+        $client_fund_total_sum = $client_data['client_fund_total_sum'];
+        $client_fund_expense_sum = $client_data['client_fund_balance_sum'];
 
-        $client_num = User::where(['usergroup'=>'Service'])->count();
-        $index_data['client_num'] = $client_num;
-
-        $agent_client_total_sum = User::where(['usergroup'=>'Service'])->sum('fund_total');
-        $index_data['client_fund_total_sum'] = number_format($agent_client_total_sum);
-
-        $client_fund_expense_sum = User::where(['usergroup'=>'Service'])->sum('fund_expense');
+        $index_data['client_count'] = number_format($client_count);
+        $index_data['client_fund_total_sum'] = number_format($client_fund_total_sum);
         $index_data['client_fund_expense_sum'] = number_format($client_fund_expense_sum,0);
+        $index_data['client_fund_balance_sum'] = number_format((int)$client_fund_total_sum - (int)$client_fund_expense_sum);
 
-        $index_data['client_fund_balance_sum'] = number_format((int)$agent_client_total_sum - (int)$client_fund_expense_sum);
 
+        /*
+         * 关键词
+         */
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->count();
+        $index_data['keyword_count'] = $keyword_count;
 
-        $keyword_num = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->count();
-        $index_data['keyword_num'] = $keyword_num;
-
-        $keyword_standard_num = SEOKeyword::where(['keywordstatus'=>'优化中','standardstatus'=>'已达标'])
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate',date("Y-m-d"))
             ->count();
-        $index_data['keyword_standard_num'] = $keyword_standard_num;
+        $index_data['keyword_detect_count'] = $keyword_detect_count;
 
-        $keyword_standard_cost = SEOKeyword::where(['keywordstatus'=>'优化中','standardstatus'=>'已达标'])
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
             ->whereDate('detectiondate',date("Y-m-d"))
-            ->sum('price');
-        $index_data['keyword_standard_cost'] = $keyword_standard_cost;
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            )->toArray();
+        $index_data['keyword_standard_count'] = $keyword_standard_data["keyword_standard_count"];
+        $index_data['keyword_standard_cost_sum'] = $keyword_standard_data["keyword_standard_cost_sum"];
 
-        return view('mt.admin.index')->with('index_data',$index_data);
-    }
 
 
-    // 返回（后台）主页视图
-    public function test()
-    {
-        $user = User::where("id",616)->first();
-
-        $userpass = $user->userpass;
-        $pass_encrypt = basic_encrypt("df123456");
-        $pass_decrypt = basic_decrypt($user->userpass);
-
-        $user->password = $pass_decrypt;
-        $user->save();
-        $password = $user->password;
-
-        echo $userpass."<br>";
-        echo $pass_encrypt."<br>";
-        echo $pass_decrypt."<br>";
-        echo $password."<br>";
-        dd($pass_decrypt);
+        return view('mt.admin.index')
+            ->with([
+                'index_data'=>$index_data,
+                'consumption_data'=>$consumption_data
+            ]);
     }
 
 
@@ -1669,44 +1712,45 @@ class IndexRepository {
     // 返回【财务概览】视图
     public function show_finance_overview()
     {
-        $this_month = date('Y-m');
-        $this_month_year = date('Y');
-        $this_month_month = date('m');
-        $last_month = date('Y-m',strtotime('last month'));
-        $last_month_year = date('Y',strtotime('last month'));
-        $last_month_month = date('m',strtotime('last month'));
-//        dd($this_month_year."--".$this_month_month."--".$last_month_year."--".$last_month_month);
+//        $this_month = date('Y-m');
+//        $this_month_year = date('Y');
+//        $this_month_month = date('m');
+//        $last_month = date('Y-m',strtotime('last month'));
+//        $last_month_year = date('Y',strtotime('last month'));
+//        $last_month_month = date('m',strtotime('last month'));
+////        dd($this_month_year."--".$this_month_month."--".$last_month_year."--".$last_month_month);
+//
+//        $query1 = ExpenseRecord::select('id','price','createtime')
+//            ->whereYear('createtime',$this_month_year)->whereMonth('createtime',$this_month_month);
+//        $count1 = $query1->count("*");
+//        $sum1 = $query1->sum("price");
+//        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+//            ->select(DB::raw("
+//                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+//                    DATE_FORMAT(createtime,'%e') as day,
+//                    sum(price) as sum,
+//                    count(*) as count
+//                "))->get();
+//
+//        $query2 = ExpenseRecord::select('id','price','createtime')
+//            ->whereYear('createtime',$last_month_year)->whereMonth('createtime',$last_month_month);
+//        $count2 = $query2->count("*");
+//        $sum2 = $query2->sum("price");
+//        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+//            ->select(DB::raw("
+//                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
+//                    DATE_FORMAT(createtime,'%e') as day,
+//                    sum(price) as sum,
+//                    count(*) as count
+//                "))->get();
+//
+//        $data[0]['month'] = $this_month;
+//        $data[0]['data'] = $data1->keyBy('day');
+//        $data[1]['month'] = $last_month;
+//        $data[1]['data'] = $data2->keyBy('day');
+////        dd($data[0]['data']);
 
-        $query1 = ExpenseRecord::select('id','price','createtime')
-            ->whereYear('createtime',$this_month_year)->whereMonth('createtime',$this_month_month);
-        $count1 = $query1->count("*");
-        $sum1 = $query1->sum("price");
-        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
-            ->select(DB::raw("
-                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
-                    DATE_FORMAT(createtime,'%e') as day,
-                    sum(price) as sum,
-                    count(*) as count
-                "))->get();
-
-        $query2 = ExpenseRecord::select('id','price','createtime')
-            ->whereYear('createtime',$last_month_year)->whereMonth('createtime',$last_month_month);
-        $count2 = $query2->count("*");
-        $sum2 = $query2->sum("price");
-        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
-            ->select(DB::raw("
-                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
-                    DATE_FORMAT(createtime,'%e') as day,
-                    sum(price) as sum,
-                    count(*) as count
-                "))->get();
-
-        $data[0]['month'] = $this_month;
-        $data[0]['data'] = $data1->keyBy('day');
-        $data[1]['month'] = $last_month;
-        $data[1]['data'] = $data2->keyBy('day');
-//        dd($data[0]['data']);
-
+        $data = [];
 
         return view('mt.admin.entrance.finance.overview')
             ->with([
@@ -1718,15 +1762,15 @@ class IndexRepository {
     // 返回【消费记录】数据
     public function get_finance_overview_datatable($post_data)
     {
-        $admin = Auth::guard("admin")->user();
+        $me = Auth::guard("admin")->user();
 
-        $query = ExpenseRecord::select('id','price','createtime');
-        $data = $query->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m')"))
+        $query = ExpenseRecord::select('id','price','standarddate','createtime');
+        $data = $query->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m')"))
             ->select(
                 DB::raw("
-                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
-                    DATE_FORMAT(createtime,'%Y-%m') as month,
-                    DATE_FORMAT(createtime,'%d') as day,
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%Y-%m') as month,
+                    DATE_FORMAT(standarddate,'%d') as day,
                     sum(price) as sum,
                     count(*) as count
                 "))
@@ -1792,14 +1836,14 @@ class IndexRepository {
         $_year = $month_arr[0];
         $_month = $month_arr[1];
 
-        $query = ExpenseRecord::select('id','price','createtime')->whereYear('createtime',$_year)->whereMonth('createtime',$_month);
-        $list = $query->groupBy(DB::raw("STR_TO_DATE(createtime,'%Y-%m-%d')"))
+        $query = ExpenseRecord::select('id','price','standarddate')->whereYear('standarddate',$_year)->whereMonth('standarddate',$_month);
+        $list = $query->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
             ->select(
                 DB::raw("
-                    STR_TO_DATE(createtime,'%Y-%m-%d') as date,
-                    DATE_FORMAT(createtime,'%Y-%m') as month,
-                    DATE_FORMAT(createtime,'%d') as day,
-                    DATE_FORMAT(createtime,'%e') as day_0,
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%Y-%m') as month,
+                    DATE_FORMAT(standarddate,'%d') as day,
+                    DATE_FORMAT(standarddate,'%e') as day_0,
                     sum(price) as sum,
                     count(*) as count
                 "))
