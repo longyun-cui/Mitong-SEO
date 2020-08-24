@@ -499,7 +499,7 @@ class IndexController extends Controller
 
             DB::commit();
             echo 1;
-            return response_success([]);
+//            return response_success([]);
         }
         catch (Exception $e)
         {
