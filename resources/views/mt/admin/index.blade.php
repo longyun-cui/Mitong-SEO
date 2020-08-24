@@ -11,8 +11,8 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <div class="col-md-4" style="display:none;">
+<div class="row" style="display:none;">
+    <div class="col-md-4">
         <!-- Widget: user widget style 1 -->
         <div class="box box-widget widget-user-2">
             <!-- Add the bg color to the header using any of the bg-* classes -->
