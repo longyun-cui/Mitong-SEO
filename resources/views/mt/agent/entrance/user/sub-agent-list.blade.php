@@ -57,18 +57,20 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>

@@ -36,15 +36,14 @@ class IndexRepository {
     // 返回【子代理商列表】数据
     public function get_user_sub_agent_list_datatable($post_data)
     {
-        $mine = Auth::guard("agent")->user()->id;
-        $mine_id = Auth::guard("agent")->user()->id;
+        $me = Auth::guard("agent")->user();
+
         $query = User::select('*')
 //        $query = User::select('id','pid','epid','username','usergroup','createtime')
 //            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('ep','parent','fund')
             ->withCount(['clients'])
-            ->where('userstatus','正常')->where('status',1)->where('pid',$mine_id)->whereIn('usergroup',['Agent2'])
-            ->orderby("id","desc");
+            ->where('userstatus','正常')->where('status',1)->where('pid',$me->id)->whereIn('usergroup',['Agent2']);
 
         $total = $query->count();
 
@@ -62,7 +61,7 @@ class IndexRepository {
             $field = $columns[$order_column]["data"];
             $query->orderBy($field, $order_dir);
         }
-        else $query->orderBy("updated_at", "desc");
+        else $query->orderBy("id", "desc");
 
         if($limit == -1) $list = $query->get();
         else $list = $query->skip($skip)->take($limit)->get();
@@ -427,12 +426,18 @@ class IndexRepository {
         // 充值金额应该大于资金余额
         if($amount > 0)
         {
-            if(($mine->fund_balance - $amount) < 0) return response_error([],"您的余额不足");
+            if(($mine->fund_balance - $amount) < 0) return response_error([],"您的余额不足！");
+        }
+
+        // 充值限制
+        if($mine->is_recharge_limit == 1)
+        {
+            if($amount < 5000) return response_error([],"充值金额需要大于5000！");
         }
 
         $sub_agent = User::find($id);
         if(!$sub_agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($sub_agent->usergroup,['Agent2'])) return response_error([],"该用户不是1级代理商，你不能操作");
+        if(!in_array($sub_agent->usergroup,['Agent2'])) return response_error([],"该用户不是1级代理商，你不能操作！");
         if($sub_agent->pid != $mine->id) return response_error([],"该客户不是你的二级代理商，你无权充值/退款操作！");
 
         // 退款金额应该小于资金余额
@@ -516,6 +521,12 @@ class IndexRepository {
         if($amount > 0)
         {
             if(($mine->fund_balance - $amount) < 0) return response_error([],"您的余额不足");
+        }
+
+        // 充值限制
+        if($mine->is_recharge_limit == 1)
+        {
+            if($amount < 5000) return response_error([],"充值金额需要大于5000！");
         }
 
         $client = User::find($id);

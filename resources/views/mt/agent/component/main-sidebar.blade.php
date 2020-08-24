@@ -35,11 +35,13 @@
             <li class="header">用户管理</li>
             <!-- Optionally, you can add icons to the links -->
 
+            @if(Auth::guard('agent')->user()->usergroup == "Agent" and Auth::guard('agent')->user()->isopen_subagent == 1)
             <li class="treeview {{ $sidebar_user_sub_agent_list_active or '' }}">
                 <a href="{{ url('/agent/user/sub-agent-list') }}">
                     <i class="fa fa-user"></i><span>二级代理列表</span>
                 </a>
             </li>
+            @endif
 
             <li class="treeview {{ $sidebar_user_client_list_active or '' }}">
                 <a href="{{ url('/agent/user/client-list') }}">
