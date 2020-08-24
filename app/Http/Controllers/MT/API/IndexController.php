@@ -370,7 +370,7 @@ class IndexController extends Controller
 
 
         // 判断是否重复记录
-        if(date("Y-m-d",strtotime($keyword->standarddate)) == $current_date)
+        if(date("Y-m-d",strtotime($keyword->detectiondate)) == $current_date)
         {
             if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
             {
@@ -420,7 +420,7 @@ class IndexController extends Controller
 
             // 【STEP 2】更新【关键词表】
             // [Condition A] 已检测
-            if(date("Y-m-d",strtotime($keyword->standarddate)) == $current_date)
+            if(date("Y-m-d",strtotime($keyword->detectiondate)) == $current_date)
             {
                 // [odd=1-10]
                 if($keyword->latestranking > 0 and $keyword->latestranking <= 10)
@@ -504,7 +504,7 @@ class IndexController extends Controller
             }
 
             // [Condition B] 未检测
-            if(date("Y-m-d",strtotime($keyword->standarddate)) != $current_date)
+            if(date("Y-m-d",strtotime($keyword->detectiondate)) != $current_date)
             {
 
                 // 第一次检测，初始排名+随机10-15

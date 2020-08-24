@@ -160,8 +160,7 @@ class IndexRepository {
                 'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
                 'clients'
             ])
-            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2'])
-            ->orderby("id","desc");
+            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2']);
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
 
@@ -181,7 +180,7 @@ class IndexRepository {
             $field = $columns[$order_column]["data"];
             $query->orderBy($field, $order_dir);
         }
-        else $query->orderBy("updated_at", "desc");
+        else $query->orderBy("id", "desc");
 
         if($limit == -1) $list = $query->get();
         else $list = $query->skip($skip)->take($limit)->get();
@@ -203,8 +202,7 @@ class IndexRepository {
 //            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('parent','ep','fund')
             ->withCount(['sites','keywords'])
-            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Service'])
-            ->orderby("id","desc");
+            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Service']);
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
 
@@ -224,7 +222,7 @@ class IndexRepository {
             $field = $columns[$order_column]["data"];
             $query->orderBy($field, $order_dir);
         }
-        else $query->orderBy("updated_at", "desc");
+        else $query->orderBy("id", "desc");
 
         if($limit == -1) $list = $query->get();
         else $list = $query->skip($skip)->take($limit)->get();
@@ -232,6 +230,9 @@ class IndexRepository {
         foreach ($list as $k => $v)
         {
             $list[$k]->encode_id = encode($v->id);
+//            $v->fund_total = number_format($v->fund_total);
+//            $v->fund_expense = number_format($v->fund_expense);
+//            $v->fund_balance = number_format($v->fund_balance);
         }
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);

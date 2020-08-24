@@ -216,7 +216,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        'width':"32px",
+                        'width':"48px",
                         "title": "ID",
                         "data": "id",
                         'orderable': true,
@@ -294,7 +294,7 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.totalfunds;
-                            return '<b class="">'+data+'</b>';
+                            return parseInt(data).toLocaleString();
                         }
                     },
                     {
@@ -304,7 +304,7 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.balancefunds;
-                            return '<b class="">'+data+'</b>';
+                            return '<b class="">'+parseInt(data).toLocaleString()+'</b>';
                         }
                     },
 //                    {
@@ -368,13 +368,8 @@
                         'data': 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $recharge_limit = "";
-                            if(row.is_recharge_limit == 1) {
-                                $recharge_limit = '<a class="btn btn-xs btn-danger item-recharge-limit-close-submit" data-id="'+data+'" >关闭充值额度限制</a>';
-                            } else {
-                                $recharge_limit = '<a class="btn btn-xs btn-success item-recharge-limit-open-submit" data-id="'+data+'" >开启充值额度限制</a>';
-                            }
 
+                            // 二级代理权限
                             var $sub_agent = "";
                             if(row.usergroup == "Agent2")
                             {
@@ -389,6 +384,14 @@
                                 }
                             }
 
+                            // 充值限制权限
+                            var $recharge_limit = "";
+                            if(row.is_recharge_limit == 1) {
+                                $recharge_limit = '<a class="btn btn-xs btn-danger item-recharge-limit-close-submit" data-id="'+data+'" >关闭充值额度限制</a>';
+                            } else {
+                                $recharge_limit = '<a class="btn btn-xs btn-success item-recharge-limit-open-submit" data-id="'+data+'" >开启充值额度限制</a>';
+                            }
+
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -396,8 +399,8 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
                                 '<a class="btn btn-xs btn-primary item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
-                                $recharge_limit+
                                 $sub_agent+
+                                $recharge_limit+
                                 '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
                                 '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+data+'">修改密码</a>'+
                                 '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+

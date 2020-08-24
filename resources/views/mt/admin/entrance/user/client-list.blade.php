@@ -31,17 +31,13 @@
                 <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>客户</th>
                         <th>代理商</th>
                         <th>站点</th>
                         <th>关键词</th>
                         <th>资产总额</th>
                         <th>累计消费</th>
-                        <th>累计消费1(keyword)</th>
-                        <th>累计消费2(expense)</th>
-                        <th></th>
-                        <th>余额(差额)</th>
                         <th>资金余额</th>
                         <th>初始冻结金额</th>
                         <th>冻结余额</th>
@@ -54,10 +50,6 @@
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="agentname" /></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -153,7 +145,6 @@
                             }
                         },
                         {
-                            'width':"72px",
                             "title": "客户",
                             "data": "id",
                             'orderable': false,
@@ -202,54 +193,16 @@
                             'orderable': false,
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
-                                return data;
+                                return parseInt(data).toLocaleString();
                             }
                         },
                         {
                             'width':"64px",
-                            "title": "累计消费1(keyword)",
+                            "title": "累计消费",
                             "data": "fund_expense",
-                            'orderable': false,
+                            'orderable': true,
                             render: function(data, type, row, meta) {
-                                return data;
-                            }
-                        },
-                        {
-                            'width':"64px",
-                            "title": "累计消费1(keyword)",
-                            "data": "fund_expense_1",
-                            'orderable': false,
-                            render: function(data, type, row, meta) {
-                                return data;
-                            }
-                        },
-                        {
-                            'width':"64px",
-                            "title": "累计消费2 (expense)",
-                            "data": "fund_expense_2",
-                            'orderable': false,
-                            render: function(data, type, row, meta) {
-                                return data;
-                            }
-                        },
-                        {
-                            'width':"64px",
-                            "title": "2-1",
-                            "data": "id",
-                            'orderable': false,
-                            render: function(data, type, row, meta) {
-                                return row.fund_expense_2 - row.fund_expense_1;
-                            }
-                        },
-                        {
-                            'width':"64px",
-                            "title": "差额",
-                            "data": "id",
-                            'orderable': false,
-                            render: function(data, type, row, meta) {
-                                var $balance = row.fund_total - row.fund_expense;
-                                if($balance < 0) return '<b class="text-red">'+$balance+'</b>';
-                                else return $balance;
+                                return parseInt(data).toLocaleString();
                             }
                         },
                         {
@@ -259,7 +212,9 @@
                             'orderable': true,
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.balancefunds;
-                                return data;
+//                                return data;
+                                if(data < 0) return '<b class="text-red">'+parseInt(data).toLocaleString()+'</b>';
+                                else return parseInt(data).toLocaleString();
                             }
                         },
                         {
@@ -269,17 +224,17 @@
                             'orderable': true,
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
-                                return data;
+                                return parseInt(data).toLocaleString();
                             }
                         },
                         {
                             'width':"64px",
-                            "title": "初始冻结金额",
+                            "title": "初始冻结",
                             "data": "fund_frozen_init",
                             'orderable': true,
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
-                                return data;
+                                return parseInt(data).toLocaleString();
                             }
                         },
                         {
@@ -289,7 +244,7 @@
                             'orderable': true,
                             render: function(data, type, row, meta) {
 //                                return row.fund == null ? '未知' : row.fund.availablefunds;
-                                return data;
+                                return parseInt(data).toLocaleString();
                             }
                         },
 //                    {
