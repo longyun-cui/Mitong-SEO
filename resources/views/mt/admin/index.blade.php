@@ -155,11 +155,11 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red font-24px">{{ $index_data['agent_fund_total_sum'] or 0 }}</span> 个
+                        资金总额 <span class="text-red font-24px">{{ $index_data['agent_fund_total_sum'] or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金余额 <span class="text-red font-24px">{{ $index_data['agent_fund_balance_sum'] or 0 }}</span> 个
+                        资金余额 <span class="text-red font-24px">{{ $index_data['agent_fund_balance_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
@@ -181,15 +181,15 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red font-24px">{{ $index_data['client_fund_total_sum'] or 0 }}</span> 个
+                        资金总额 <span class="text-red font-24px">{{ $index_data['client_fund_total_sum'] or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        累计消费 <span class="text-red font-24px">{{ $index_data['client_fund_expense_sum'] or 0 }}</span> 个
+                        累计消费 <span class="text-red font-24px">{{ $index_data['client_fund_expense_sum'] or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金余额 <span class="text-red font-24px">{{ $index_data['client_fund_balance_sum'] or 0 }}</span> 个
+                        资金余额 <span class="text-red font-24px">{{ $index_data['client_fund_balance_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
