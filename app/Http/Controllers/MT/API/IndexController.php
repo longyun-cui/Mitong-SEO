@@ -368,11 +368,18 @@ class IndexController extends Controller
         $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
 
+        // 判断是否重复记录
+        if(date("Y-m-d",strtotime($keyword->standarddate)) == date("Y-m-d"))
+        {
+            if($keyword->latestranking == $rank) return 1;
+            if($keyword->latestranking > 0 and $keyword->rank <= 10) return 1;
+        }
+
+
+
         DB::beginTransaction();
         try
         {
-            $keyword_id = $keyword->id;
-
             $keyword->latestranking = $rank;
 
             // 第一次检测，初始排名+随机10-15
@@ -498,7 +505,7 @@ class IndexController extends Controller
             }
 
             DB::commit();
-            echo 1;
+            return 1;
 //            return response_success([]);
         }
         catch (Exception $e)
@@ -507,7 +514,6 @@ class IndexController extends Controller
             $msg = '操作失败，请重试！';
             $msg = $e->getMessage();
 //            exit($e->getMessage());
-            echo 2;
             return response_fail([],$msg);
         }
 

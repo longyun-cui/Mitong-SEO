@@ -68,6 +68,17 @@ class TestController extends Controller
     // 返回【主页】视图
     public function repeat()
     {
+        $a = "2020-08-24 12:30:22";
+        echo date("Y-m-d",strtotime($a));
+        echo "<br>";
+        echo date("Y-m-d");
+        echo "<br>";
+        if(date("Y-m-d",strtotime($a)) == date("Y-m-d"))
+        {
+            echo "today";
+        }
+        else echo "not today";
+        echo "<br>";
 
 //        $expenses = ExpenseRecord::with('detects')->has('detects', '>=', 1)->get();
 //        dd($expenses->toArray());
