@@ -368,64 +368,22 @@ class IndexController extends Controller
         $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
 
-        // 判断是否重复记录
-        if(date("Y-m-d",strtotime($keyword->standarddate)) == date("Y-m-d"))
-        {
-            if($keyword->latestranking == $rank) return 1;
-            if($keyword->latestranking > 0 and $keyword->rank <= 10) return 1;
-        }
 
+        // 判断是否重复记录
+        if(date("Y-m-d",strtotime($keyword->standarddate)) == $current_date)
+        {
+            if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
+            {
+                return 1;
+            }
+        }
 
 
         DB::beginTransaction();
         try
         {
-            $keyword->latestranking = $rank;
-
-            // 第一次检测，初始排名+随机10-15
-            if(!$keyword->detectiondate)
-            {
-                $keyword->initialranking = $rank + rand(10,15);
-            }
-
-            $keyword->detectiondate = $current_time; // 检测时间
-
-            if($rank > 0 and $rank <= 10)
-            {
-                $keyword->standarddate = $current_time;// 达标时间
-                $keyword->standardstatus = '已达标';// 达标状态
-                $keyword->latestconsumption = $keyword->price; // 最新消费
-                $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
-                $keyword->standard_days_1 = $keyword->standard_days_1 + 1;// 达标天数+1
-                $keyword->standard_days_2 = $keyword->standard_days_2 + 1;// 达标天数+1
-                $keyword->totalconsumption 	= $keyword->totalconsumption + $keyword->price; // 累计消费+price
-
-                if(!$keyword->firststandarddate)
-                {
-                    // 如果关键词是首次达标，则需要冻结该关键词90天，90天内不能解冻，并且冻结30天的费用
-                    $keyword->firststandarddate = $current_time;// 首次达标时间
-
-                    // 冻结费用
-                    $freeze_funds = $keyword->price * 30;
-                    $keyword->freezefunds = $freeze_funds;
-
-                    // 冻结关键词90天，90天之后的日期:允许解冻日期
-                    $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
-                    $keyword->unfreezedate = $unfreeze_date;
-                }
-            }
-            else
-            {
-                $keyword->standardstatus = '未达标';// 达标状态
-                $keyword->latestconsumption = 0; // 最新消费
-            }
-
-            $bool = $keyword->save();
-            if(!$bool) throw new Exception("update--keyword--fail");
-
-
-            // 添加检测记录
-            $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('createtime',$current_date)->first();
+            // 【STEP 1】添加【检测表】
+            $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('detect_time',$current_date)->first();
             if(!$DetectRecord)
             {
                 $DetectRecord = new SEOKeywordDetectRecord;
@@ -451,13 +409,164 @@ class IndexController extends Controller
             else
             {
                 $DetectRecord_rank = $DetectRecord->rank;
-                if($rank < $DetectRecord_rank)
+                if($rank > 0 and $rank < $DetectRecord_rank)
                 {
                     $DetectRecord->rank = $rank;
                     $DetectRecord->save();
                 }
             }
 
+
+
+            // 【STEP 2】更新【关键词表】
+            // [Condition A] 已检测
+            if(date("Y-m-d",strtotime($keyword->standarddate)) == $current_date)
+            {
+                // [odd=1-10]
+                if($keyword->latestranking > 0 and $keyword->latestranking <= 10)
+                {
+                    // [odd=1-10][new=1-10]
+                    if($rank > 0 or $rank <= 10)
+                    {
+                        // [old=1-10][new=1-10][new < old]
+                        if($rank < $keyword->latestranking)
+                        {
+                            $keyword->latestranking = $rank;
+                            $bool = $keyword->save();
+                            if(!$bool) throw new Exception("update--keyword--fail");
+                            return 1;
+                        }
+                        else return 1; // [odd=1-10][new=1-10][new > old]
+                    }
+                    else return 1; // [odd=1-10][new=10+]
+                }
+                // [old=10+]
+                else
+                {
+                    // [old=10+][new=1-10]
+                    if($rank > 0 or $rank <= 10)
+                    {
+                        $keyword->latestranking = $rank;
+                        $keyword->detectiondate = $current_time; // 检测时间
+                        $keyword->standarddate = $current_time;// 达标时间
+                        $keyword->standardstatus = '已达标';// 达标状态
+                        $keyword->latestconsumption = $keyword->price; // 最新消费
+
+//                    // [method A]
+//                    $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+//                    $keyword->standard_days_1 = $keyword->standard_days_1 + 1;// 达标天数+1
+//                    $keyword->standard_days_2 = $keyword->standard_days_2 + 1;// 达标天数+1
+//                    $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+//                    $keyword->consumption_total = $keyword->consumption_total + $keyword->price; // 累计消费+price
+
+                        // [method B]
+                        $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+                        $detect_standard_count = $query_detect->count('*');
+                        $detect_standard_consumption_sum = $detect_standard_count * $keyword->price;
+
+                        $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+                        $keyword->standard_days_1 = $detect_standard_count;// 达标天数+1
+                        $keyword->standard_days_2 = $$detect_standard_count;// 达标天数+1
+                        $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+                        $keyword->consumption_total = $detect_standard_consumption_sum; // 累计消费+price
+
+                        if(!$keyword->firststandarddate)
+                        {
+                            // 如果关键词是首次达标，则需要冻结该关键词90天，90天内不能解冻，并且冻结30天的费用
+                            $keyword->firststandarddate = $current_time;// 首次达标时间
+
+                            // 冻结费用
+                            $freeze_funds = $keyword->price * 30;
+                            $keyword->freezefunds = $freeze_funds;
+
+                            // 冻结关键词90天，90天之后的日期:允许解冻日期
+                            $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
+                            $keyword->unfreezedate = $unfreeze_date;
+                        }
+
+                        $bool = $keyword->save();
+                        if(!$bool) throw new Exception("update--keyword--fail");
+                    }
+                    // [old=10+][new=10+]
+                    else
+                    {
+                        // [old=10+][new=10+][new < old]
+                        if($rank > 0 and ($rank < $keyword->latestranking))
+                        {
+                            $keyword->latestranking = $rank;
+                            $bool = $keyword->save();
+                            if(!$bool) throw new Exception("update--keyword--fail");
+                            return 1;
+                        }
+                        else return 1; // [old=10+][new=10+][new > old]
+                    }
+                }
+            }
+
+            // [Condition B] 未检测
+            if(date("Y-m-d",strtotime($keyword->standarddate)) != $current_date)
+            {
+
+                // 第一次检测，初始排名+随机10-15
+                if(!$keyword->detectiondate)
+                {
+                    $keyword->initialranking = $rank + rand(10,15);
+                }
+
+                if($rank > 0 and $rank <= 10)
+                {
+                    $keyword->latestranking = $rank;
+                    $keyword->detectiondate = $current_time; // 检测时间
+                    $keyword->standarddate = $current_time;// 达标时间
+                    $keyword->standardstatus = '已达标';// 达标状态
+                    $keyword->latestconsumption = $keyword->price; // 最新消费
+
+//                    // [method A]
+//                    $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+//                    $keyword->standard_days_1 = $keyword->standard_days_1 + 1;// 达标天数+1
+//                    $keyword->standard_days_2 = $keyword->standard_days_2 + 1;// 达标天数+1
+//                    $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+//                    $keyword->consumption_total = $keyword->consumption_total + $keyword->price; // 累计消费+price
+
+                    // [method B]
+                    $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+                    $detect_standard_count = $query_detect->count('*');
+                    $detect_standard_consumption_sum = $detect_standard_count * $keyword->price;
+
+                    $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+                    $keyword->standard_days_1 = $detect_standard_count;// 达标天数+1
+                    $keyword->standard_days_2 = $$detect_standard_count;// 达标天数+1
+                    $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+                    $keyword->consumption_total = $detect_standard_consumption_sum; // 累计消费+price
+
+                    if(!$keyword->firststandarddate)
+                    {
+                        // 如果关键词是首次达标，则需要冻结该关键词90天，90天内不能解冻，并且冻结30天的费用
+                        $keyword->firststandarddate = $current_time;// 首次达标时间
+
+                        // 冻结费用
+                        $freeze_funds = $keyword->price * 30;
+                        $keyword->freezefunds = $freeze_funds;
+
+                        // 冻结关键词90天，90天之后的日期:允许解冻日期
+                        $unfreeze_date = date("Y-m-d H:i:s",strtotime("+90 day"));
+                        $keyword->unfreezedate = $unfreeze_date;
+                    }
+                }
+                else
+                {
+                    $keyword->latestranking = $rank;
+                    $keyword->detectiondate = $current_time; // 检测时间
+                    $keyword->standardstatus = '未达标';// 达标状态
+                    $keyword->latestconsumption = 0; // 最新消费
+                }
+
+                $bool = $keyword->save();
+                if(!$bool) throw new Exception("update--keyword--fail");
+            }
+
+
+            // 【STEP 3】添加【消费记录表】 & 更新用户（资产）表
 
             // 添加扣费记录 & 更新用户表资产数据
             if($rank > 0 and $rank <= 10)

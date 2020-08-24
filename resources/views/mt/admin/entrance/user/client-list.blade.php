@@ -37,6 +37,7 @@
                         <th>站点</th>
                         <th>关键词</th>
                         <th>资产总额</th>
+                        <th>累计消费</th>
                         <th>累计消费1(keyword)</th>
                         <th>累计消费2(expense)</th>
                         <th></th>
@@ -53,6 +54,7 @@
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="agentname" /></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -205,8 +207,17 @@
                         },
                         {
                             'width':"64px",
-                            "title": "累计消费1 (keyword)",
+                            "title": "累计消费1(keyword)",
                             "data": "fund_expense",
+                            'orderable': false,
+                            render: function(data, type, row, meta) {
+                                return data;
+                            }
+                        },
+                        {
+                            'width':"64px",
+                            "title": "累计消费1(keyword)",
+                            "data": "fund_expense_1",
                             'orderable': false,
                             render: function(data, type, row, meta) {
                                 return data;
@@ -227,7 +238,7 @@
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return row.fund_expense_2 - row.fund_expense;
+                                return row.fund_expense_2 - row.fund_expense_1;
                             }
                         },
                         {
