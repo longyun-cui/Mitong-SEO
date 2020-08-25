@@ -364,6 +364,7 @@ class IndexController extends Controller
 
         $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
+        $price = $keyword->price;
 
 
         // 判断是否重复记录
@@ -412,7 +413,6 @@ class IndexController extends Controller
                     $DetectRecord->save();
                 }
             }
-
 
 
             // 【STEP 2】更新【关键词表】
@@ -504,7 +504,6 @@ class IndexController extends Controller
             // [Condition B] 未检测
             if(date("Y-m-d",strtotime($keyword->detectiondate)) != $current_date)
             {
-
                 // 第一次检测，初始排名+随机10-15
                 if(!$keyword->detectiondate)
                 {
@@ -587,20 +586,22 @@ class IndexController extends Controller
                         $DetectRecord->expense_id = $ExpenseRecord->id;
                         $DetectRecord->save();
 
-                        $keyword_owner = User::find($keyword->createuserid);
-                        $keyword_owner->fund_expense = $keyword_owner->fund_expense + $keyword->price;
-                        $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 + $keyword->price;
-                        $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 + $keyword->price;
-                        $keyword_owner->fund_balance = $keyword_owner->fund_balance - $keyword->price;
-                        if($keyword_owner->fund_frozen >= $keyword->price)
+                        $keyword_owner = User::find($keyword->createuserid)->lockForUpdate();
+
+                        $keyword_owner->fund_expense = $keyword_owner->fund_expense + $price;
+                        $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 + $price;
+                        $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 + $price;
+                        $keyword_owner->fund_balance = $keyword_owner->fund_balance - $price;
+                        if($keyword_owner->fund_frozen >= $price)
                         {
-                            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $keyword->price;
+                            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $price;
                         }
                         else
                         {
                             $keyword_owner->fund_frozen = 0;
-                            $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword->price - $keyword_owner->fund_frozen);
+                            $keyword_owner->fund_available = $keyword_owner->fund_available - ($price - $keyword_owner->fund_frozen);
                         }
+
                         $keyword_owner->save();
                     }
                     else throw new Exception("update--expense-record--fail");
@@ -626,46 +627,6 @@ class IndexController extends Controller
             return response_fail([],$msg);
         }
 
-
-
-
-
-
-/*
-
-
-
-        $return = $this->receive_keywords_rank($keyword_id,$keyword_keyword,$keyword_type,$dataRankLast,$keyword_website);
-        $return = json_decode($return,true);
-        if($return['ret'] == 1)
-        {
-            $data['reviewopinion'] = "";
-            $model_keyword->where('id=1')->save($data);
-            echo 1;
-        }
-        else echo 2;
-
-//        if(count($data))
-//        {
-//            $nowTimeA = $data[0]['updateTime'];
-//            $nowTimeB = time();
-//            $ts = $nowTimeB-strtotime($nowTimeA);
-//            $param = $ts/3600;
-//
-//            if($param<0.2){
-//                echo 11 ;
-//            }else{
-//                $ra = $Dao->execute("UPDATE `ts_keyword` set initialranking = '{$dataRankFirst}', latestranking = '{$dataRankLast}', detectiondate = '{$dataUpdateTime}', updateTime = '{$dataUpdateTime}' WHERE taskId = '{$dataTaskId}'");
-//
-//                if($ra)
-//                {
-//                    echo 1;
-//                }
-//                else echo 2;
-//            }
-//        }
-//        else echo 3;
-*/
     }
 
     /**
