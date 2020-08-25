@@ -11,6 +11,7 @@
 @endsection
 
 @section('content')
+{{--用户信息--}}
 <div class="row" style="display:none;">
     <div class="col-md-4">
         <!-- Widget: user widget style 1 -->
@@ -83,6 +84,39 @@
 </div>
 
 
+{{--消费统计--}}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN PORTLET-->
+        <div class="box box-info">
+
+            <div class="box-header with-border" style="margin:16px 0;">
+                <h3 class="box-title">消费统计</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
+                        <i class="fa fa-times"></i></button>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="echart-browse" style="width:100%;height:320px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box-footer">
+            </div>
+
+        </div>
+        <!-- END PORTLET-->
+    </div>
+</div>
+
+
 {{--关键词优化--}}
 <div class="row">
     <div class="col-md-12">
@@ -141,8 +175,6 @@
 </div>
 
 
-
-
 {{--代理商概览--}}
 <div class="row">
     <div class="col-md-12">
@@ -166,7 +198,6 @@
         </div>
     </div>
 </div>
-
 
 
 {{--客户概览--}}
@@ -198,41 +229,6 @@
 </div>
 
 
-{{--消费统计--}}
-<div class="row">
-    <div class="col-md-12">
-        <!-- BEGIN PORTLET-->
-        <div class="box box-info">
-
-            <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">消费统计</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                        <i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                        <i class="fa fa-times"></i></button>
-                </div>
-            </div>
-
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="echart-browse" style="width:100%;height:320px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="box-footer">
-            </div>
-
-        </div>
-        <!-- END PORTLET-->
-    </div>
-</div>
-
-
-
-
 <div class="box">
     <div class="box-header with-border">
         <h3 class="box-title">Title</h3>
@@ -251,7 +247,6 @@
         Footer
     </div>
 </div>
-
 @endsection
 
 

@@ -321,10 +321,7 @@ class IndexController extends Controller
 
         if(count($display_order))
         {
-
             $resule = DB::update($sql);
-//            $Dao = M('keyword');
-//            $Dao->query("$sql");
         }
     }
 
@@ -594,6 +591,8 @@ class IndexController extends Controller
 
                         $keyword_owner = User::find($keyword->createuserid);
                         $keyword_owner->fund_expense = $keyword_owner->fund_expense + $keyword->price;
+                        $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 + $keyword->price;
+                        $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 + $keyword->price;
                         $keyword_owner->fund_balance = $keyword_owner->fund_balance - $keyword->price;
                         if($keyword_owner->fund_frozen >= $keyword->price)
                         {
