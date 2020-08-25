@@ -565,9 +565,7 @@ class IndexController extends Controller
             }
 
 
-            // 【STEP 3】添加【消费记录表】 & 更新用户（资产）表
-
-            // 添加扣费记录 & 更新用户表资产数据
+            // 【STEP 3】添加【消费记录表】 & 更新【用户-资产表】
             if($rank > 0 and $rank <= 10)
             {
                 $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$current_date)->first();
@@ -601,7 +599,7 @@ class IndexController extends Controller
                         else
                         {
                             $keyword_owner->fund_frozen = 0;
-                            $keyword_owner->fund_available = $keyword_owner->fund_available - $keyword->price;
+                            $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword->price - $keyword_owner->fund_frozen);
                         }
                         $keyword_owner->save();
                     }
@@ -624,6 +622,7 @@ class IndexController extends Controller
             $msg = '操作失败，请重试！';
             $msg = $e->getMessage();
 //            exit($e->getMessage());
+            echo 2;
             return response_fail([],$msg);
         }
 
