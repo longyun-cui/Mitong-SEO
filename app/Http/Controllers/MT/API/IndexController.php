@@ -38,7 +38,7 @@ class IndexController extends Controller
         $query = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate','<',$date)
-            ->orderby('id','desc');
+            ->orderby('id','asc');
 
         $limit = request("limit",0);
         if($limit) $query->limit($limit);
@@ -606,7 +606,7 @@ class IndexController extends Controller
                         $DetectRecord->expense_id = $ExpenseRecord->id;
                         $DetectRecord->save();
 
-                        $keyword_owner = User::find($keyword->createuserid)->lockForUpdate();
+                        $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
 
                         $keyword_owner->fund_expense = $keyword_owner->fund_expense + $price;
                         $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 + $price;
