@@ -359,14 +359,18 @@ class IndexController extends Controller
         $temp_data['content'] = $xParam;
         $bool_0 = $temp->fill($temp_data)->save();
 //        echo 1;
-        return 1;
+//        return 1;
 
         $time = date('Y-m-d H:i:s');
         $current_time = date('Y-m-d H:i:s');
         $current_date = date('Y-m-d');
 
-        $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
-        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
+        $keyword = SEOKeyword::where('taskId',$dataTaskId)->lockForUpdate()->first();
+        if(!$keyword)
+        {
+            return 1;
+//            return response_error([],"该关键词不存在，刷新页面重试！");
+        }
         $price = $keyword->price;
 
 
