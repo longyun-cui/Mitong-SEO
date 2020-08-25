@@ -341,9 +341,9 @@ class IndexController extends Controller
         $xParam = request("xParam",'');
         $xSign = request("xSign",'');
 
-//        $temp = new Temp;
-//        $temp_data['content'] = $xParam;
-//        $bool_0 = $temp->fill($temp_data)->save();
+        $temp = new Temp;
+        $temp_data['content'] = $xParam;
+        $bool_0 = $temp->fill($temp_data)->save();
 
 
         $xParam_decode = json_decode($xParam,true);
