@@ -372,7 +372,8 @@ class IndexController extends Controller
         {
             if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
             {
-                return 1;
+                echo 1;
+                return false;
             }
         }
 
@@ -431,14 +432,22 @@ class IndexController extends Controller
                             $keyword->latestranking = $rank;
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
-                            return 1;
+                            echo 1;
+                            return false;
                         }
-                        else return 1; // [odd=1-10][new=1-10][new > old]
+                        else // [odd=1-10][new=1-10][new > old]
+                        {
+                            echo 1;
+                            return false;
+                        }
                     }
-                    else return 1; // [odd=1-10][new=10+]
+                    else // [odd=1-10][new=10+]
+                    {
+                        echo 1;
+                        return false;
+                    }
                 }
-                // [old=10+]
-                else
+                else // [old=10+]
                 {
                     // [old=10+][new=1-10]
                     if($rank > 0 or $rank <= 10)
@@ -485,8 +494,7 @@ class IndexController extends Controller
                         $bool = $keyword->save();
                         if(!$bool) throw new Exception("update--keyword--fail");
                     }
-                    // [old=10+][new=10+]
-                    else
+                    else // [old=10+][new=10+]
                     {
                         // [old=10+][new=10+][new < old]
                         if($rank > 0 and ($rank < $keyword->latestranking))
@@ -494,9 +502,14 @@ class IndexController extends Controller
                             $keyword->latestranking = $rank;
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
-                            return 1;
+                            echo 1;
+                            return false;
                         }
-                        else return 1; // [old=10+][new=10+][new > old]
+                        else // [old=10+][new=10+][new > old]
+                        {
+                            echo 1;
+                            return false;
+                        }
                     }
                 }
             }
@@ -614,7 +627,8 @@ class IndexController extends Controller
             }
 
             DB::commit();
-            return 1;
+            echo 1;
+            return false;
 //            return response_success([]);
         }
         catch (Exception $e)
