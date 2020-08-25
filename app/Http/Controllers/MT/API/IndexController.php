@@ -519,24 +519,24 @@ class IndexController extends Controller
                     $keyword->standardstatus = '已达标';// 达标状态
                     $keyword->latestconsumption = $keyword->price; // 最新消费
 
-//                    // [method A]
-//                    $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
-//                    $keyword->standard_days_1 = $keyword->standard_days_1 + 1;// 达标天数+1
-//                    $keyword->standard_days_2 = $keyword->standard_days_2 + 1;// 达标天数+1
-//                    $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
-//                    $keyword->consumption_total = $keyword->consumption_total + $keyword->price; // 累计消费+price
-
-                    // [method B]
-                    $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
-                    $detect_standard_count = $query_detect->count('*');
-                    $detect_standard_consumption_sum = $detect_standard_count * $keyword->price;
-
+                    // [method A]
                     $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+                    $keyword->standard_days_1 = $keyword->standard_days_1 + 1;// 达标天数+1
+                    $keyword->standard_days_2 = $keyword->standard_days_2 + 1;// 达标天数+1
                     $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+                    $keyword->consumption_total = $keyword->consumption_total + $keyword->price; // 累计消费+price
 
-                    $keyword->standard_days_1 = $detect_standard_count;// 统计达标天数
-                    $keyword->standard_days_2 = $$detect_standard_count;// 统计达标天数
-                    $keyword->consumption_total = $detect_standard_consumption_sum; // 统计累计消费
+//                    // [method B]
+//                    $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+//                    $detect_standard_count = $query_detect->count('*');
+//                    $detect_standard_consumption_sum = $detect_standard_count * $keyword->price;
+//
+//                    $keyword->standarddays = $keyword->standarddays + 1;// 达标天数+1
+//                    $keyword->totalconsumption = $keyword->totalconsumption + $keyword->price; // 累计消费+price
+//
+//                    $keyword->standard_days_1 = $detect_standard_count;// 统计达标天数
+//                    $keyword->standard_days_2 = $$detect_standard_count;// 统计达标天数
+//                    $keyword->consumption_total = $detect_standard_consumption_sum; // 统计累计消费
 
                     if(!$keyword->firststandarddate)
                     {

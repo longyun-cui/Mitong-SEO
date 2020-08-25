@@ -12,10 +12,11 @@ class SEOKeyword extends Model
         'taskId', 'updateTime', 'reviewopinion',
         'cartid', 'siteid', 'sitename', 'website', 'keywordid', 'keyword', 'searchengine', 'price', 'unit', 'unit2', 'keywordstatus',
         'keywordstatus', 'standardstatus', 'is_detect', 'detectiondate',
+        'initialranking', 'latestranking', 'latestconsumption',
         'standarddays',  'standard_days', 'standard_days_1', 'standard_days_2',
-        'initialranking', 'latestranking', 'latestconsumption', 'totalconsumption', 'consumption_total',
-        'reviewdate', 'reviewuserid', 'reviewusername',
+        'totalconsumption', 'consumption_total',
         'firststandarddate', 'standarddate', 'optimizetime', 'cooperationstopdate', 'freezefunds', 'unfreezedate', 'unfreezetime',
+        'reviewdate', 'reviewuserid', 'reviewusername',
         'status', 'readpriv', 'writepriv', 'notes', 'reguser', 'regtime', 'moduser', 'modtime'
     ];
 
