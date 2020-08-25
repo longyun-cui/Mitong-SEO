@@ -345,6 +345,9 @@ class IndexController extends Controller
         $temp_data['content'] = $xParam;
         $bool_0 = $temp->fill($temp_data)->save();
 
+//        echo 1;
+        return 1;
+
 
         $xParam_decode = json_decode($xParam,true);
 
@@ -433,18 +436,18 @@ class IndexController extends Controller
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
                             echo 1;
-                            return false;
+                            return 1;
                         }
                         else // [odd=1-10][new=1-10][new > old]
                         {
                             echo 1;
-                            return false;
+                            return 1;
                         }
                     }
                     else // [odd=1-10][new=10+]
                     {
                         echo 1;
-                        return false;
+                        return 1;
                     }
                 }
                 else // [old=10+]
@@ -503,12 +506,12 @@ class IndexController extends Controller
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
                             echo 1;
-                            return false;
+                            return 1;
                         }
                         else // [old=10+][new=10+][new > old]
                         {
                             echo 1;
-                            return false;
+                            return 1;
                         }
                     }
                 }
@@ -628,7 +631,7 @@ class IndexController extends Controller
 
             DB::commit();
             echo 1;
-            return false;
+            return 1;
 //            return response_success([]);
         }
         catch (Exception $e)
