@@ -341,13 +341,6 @@ class IndexController extends Controller
         $xParam = request("xParam",'');
         $xSign = request("xSign",'');
 
-        $temp = new Temp;
-        $temp_data['content'] = $xParam;
-        $bool_0 = $temp->fill($temp_data)->save();
-
-//        echo 1;
-        return 1;
-
 
         $xParam_decode = json_decode($xParam,true);
 
@@ -358,12 +351,19 @@ class IndexController extends Controller
         $dataUpdateTime = $xParam_decode["Value"]["UpdateTime"];
 
         $rank = $dataRankLast;
+//        dd($rank);
+//        dd($dataTaskId);
+
+        $temp = new Temp;
+        $temp_data['title'] = $dataTaskId;
+        $temp_data['content'] = $xParam;
+        $bool_0 = $temp->fill($temp_data)->save();
+//        echo 1;
+        return 1;
 
         $time = date('Y-m-d H:i:s');
         $current_time = date('Y-m-d H:i:s');
         $current_date = date('Y-m-d');
-
-//        dd($dataTaskId);
 
         $keyword = SEOKeyword::where('taskId',$dataTaskId)->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
@@ -375,8 +375,8 @@ class IndexController extends Controller
         {
             if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
             {
-                echo 1;
-                return false;
+//                echo 1;
+                return 1;
             }
         }
 
@@ -435,18 +435,18 @@ class IndexController extends Controller
                             $keyword->latestranking = $rank;
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
-                            echo 1;
+//                            echo 1;
                             return 1;
                         }
                         else // [odd=1-10][new=1-10][new > old]
                         {
-                            echo 1;
+//                            echo 1;
                             return 1;
                         }
                     }
                     else // [odd=1-10][new=10+]
                     {
-                        echo 1;
+//                        echo 1;
                         return 1;
                     }
                 }
@@ -505,12 +505,12 @@ class IndexController extends Controller
                             $keyword->latestranking = $rank;
                             $bool = $keyword->save();
                             if(!$bool) throw new Exception("update--keyword--fail");
-                            echo 1;
+//                            echo 1;
                             return 1;
                         }
                         else // [old=10+][new=10+][new > old]
                         {
-                            echo 1;
+//                            echo 1;
                             return 1;
                         }
                     }
@@ -630,7 +630,7 @@ class IndexController extends Controller
             }
 
             DB::commit();
-            echo 1;
+//            echo 1;
             return 1;
 //            return response_success([]);
         }
