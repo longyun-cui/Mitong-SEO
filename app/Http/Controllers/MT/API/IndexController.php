@@ -356,6 +356,7 @@ class IndexController extends Controller
 
         $temp = new Temp;
         $temp_data['title'] = $dataTaskId;
+        $temp_data['subtitle'] = $rank;
         $temp_data['content'] = $xParam;
         $bool_0 = $temp->fill($temp_data)->save();
 //        echo 1;

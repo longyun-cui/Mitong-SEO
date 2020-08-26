@@ -1565,8 +1565,8 @@ class IndexRepository {
     // 【关键词】审核
     public function operate_business_keyword_review($post_data)
     {
-        $mine = Auth::guard('admin')->user();
-        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
 
         $id = $post_data["id"];
         if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
@@ -1579,15 +1579,24 @@ class IndexRepository {
         $keyword = SEOKeyword::find($id);
         if($keyword)
         {
+            $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+            if($keyword_owner)
+            {
+                if($keyword_owner->fund_available < ($keyword_price * 30))
+                {
+                    return response_error([],'用户可用余额不足！');
+                }
+            }
+            else return response_error([],'用户不存在，刷新页面试试！');
         }
-        else return response_error([],'账户不存在，刷新页面试试');
+        else return response_error([],'关键词不存在，刷新页面试试！');
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $keyword_data["reviewuserid"] = $mine->id;
-            $keyword_data["reviewusername"] = $mine->username;
+            $keyword_data["reviewuserid"] = $me->id;
+            $keyword_data["reviewusername"] = $me->username;
             $keyword_data["reviewdate"] = $current_time;
             $keyword_data["keywordstatus"] = $keyword_status;
             $keyword_data["price"] = $keyword_price;
@@ -1596,11 +1605,31 @@ class IndexRepository {
             if($bool)
             {
             }
-            else throw new Exception("update--site--fail");
+            else throw new Exception("update--keyword--fail");
+
+            $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
+            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
+            $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
+            $keyword_owner->save();
 
             $cart = SEOCart::find($keyword->cartid);
             $cart->price = $keyword_price;
             $cart->save();
+
+            $freeze = new FundFreezeRecord;
+            $freeze_date["owner_id"] = $keyword->createuserid;
+            $freeze_date["siteid"] = $keyword->siteid;
+            $freeze_date["keywordid"] = $keyword->id;
+            $freeze_date["freezefunds"] = $keyword_price * 30;
+            $freeze_date["createuserid"] = $me->id;
+            $freeze_date["createusername"] = $me->username;
+            $freeze_date["reguser"] = $me->username;
+            $freeze_date["regtime"] = time();
+            $bool_1 = $freeze->fill($freeze_date)->save();
+            if($bool_1)
+            {
+            }
+            else throw new Exception("insert--freeze--fail");
 
             DB::commit();
 

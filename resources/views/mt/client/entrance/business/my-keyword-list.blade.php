@@ -41,19 +41,19 @@
                 <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>关键词</th>
-                        <th>站点</th>
-                        <th>搜索引擎</th>
-                        <th>创建时间</th>
-                        <th>单价</th>
-                        <th>初始排名</th>
-                        <th>最新排名</th>
-                        <th>检测时间</th>
-                        <th>最新消费</th>
-                        <th>达标天数</th>
-                        <th>累计消费</th>
-                        <th>状态</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
@@ -164,23 +164,26 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
-                        'width':"32px",
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "",
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
-                        'width':"96px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "",
+                        "title": "站点",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -188,9 +191,10 @@
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': false,
-                        'sWidth':"72px",
                         render: function(data, type, row, meta) {
                             if(data = "baidu") return '百度PC';
                             else if(data = "baidu_mobile") return '百度移动';
@@ -201,10 +205,21 @@
                         }
                     },
                     {
-                        "data": "createtime",
-                        'orderable': false,
+                        "width": "48px",
                         "className": "text-center",
-                        'width':"64px",
+                        "title": "价格",
+                        "data": "price",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "96px",
+                        "title": "创建时间",
+                        "data": "createtime",
+                        "className": "text-center",
+                        'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data);
@@ -215,36 +230,44 @@
                         }
                     },
                     {
-                        "title":"价格",
-                        "data": "price",
-                        'orderable': false,
+                        "width": "64px",
                         "className": "text-center",
-                        'width':"48px",
-                        render: function(data, type, row, meta) {
-                            return parseInt(data)+'元/天';
-                        }
-                    },
-                    {
+                        "title": "初始排名",
                         "data": "initialranking",
                         'orderable': false,
-                        "className": "text-center",
-                        'width':"54px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "data": "latestranking",
-                        'orderable': false,
+                        "width": "64px",
                         "className": "text-center",
-                        'width':"54px",
+                        "title": "最新排名",
+                        "data": "latestranking",
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             if((data > 0) && (data <= 10)) return '<samll class="text-red"><b>'+data+'</b></samll>';
                             else return data;
                         }
                     },
                     {
-                        "title":"最新消费",
+                        "width": "96px",
+                        "className": "text-center",
+                        "title": "检测时间",
+                        "data": "detectiondate",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
+                        }
+                    },
+                    {
+                        "width": "64px",
+                        "title": "最新消费",
                         "data": "latestconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -252,21 +275,8 @@
                         }
                     },
                     {
-                        "title":"检测时间",
-                        "data": "detectiondate",
-                        'orderable': false,
-                        "className": "text-center",
-                        'width':"72px",
-                        render: function(data, type, row, meta) {
-//                            return data;
-                            var $date = new Date(data);
-                            var $year = $date.getFullYear();
-                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
-                            var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
+                        "width": "64px",
+                        "title": "达标天数",
                         "data": "standarddays",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -274,6 +284,8 @@
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "累计消费",
                         "data": "totalconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -281,6 +293,8 @@
                         }
                     },
                     {
+                        "width": "72px",
+                        "title": "状态",
                         "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -290,7 +304,7 @@
                         }
                     },
                     {
-                        'data': 'id',
+                        "data": "id",
                         'orderable': false,
                         render: function(value) {
                             var html =
@@ -301,7 +315,7 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-data-detail-link" data-id="'+value+'" >历史数据</a>';
+                                '<a class="btn btn-xs bg-navy item-data-detail-link" data-id="'+value+'" >历史数据</a>';
                             return html;
                         }
                     }

@@ -75,7 +75,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>客户</th>
                         <th>关键词</th>
                         <th>站点</th>
@@ -198,42 +198,46 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "36px",
                         "title": "ID",
                         "data": "id",
                         'orderable': false,
-                        'width': "24px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "72px",
+                        "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return row.creator == null ? '未知' : row.creator.username;
                         }
                     },
                     {
+                        "width": "72px",
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "72px",
+                        "title": "站点",
                         "data": "website",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': true,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
                             if(data = "baidu") return '百度PC';
                             else if(data = "baidu_mobile") return '百度移动';
@@ -244,6 +248,7 @@
                         }
                     },
                     {
+                        "width": "64px",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {

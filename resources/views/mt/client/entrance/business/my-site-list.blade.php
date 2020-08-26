@@ -39,11 +39,11 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>站点名称</th>
-                        <th>website</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
@@ -53,18 +53,20 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success">搜索</button>
-                                <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">重置</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </div>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            {{--<div class="btn-group">--}}
+                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                                    {{--<span class="caret"></span>--}}
+                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                                {{--</button>--}}
+                                {{--<ul class="dropdown-menu" role="menu">--}}
+                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li class="divider"></li>--}}
+                                    {{--<li><a href="#">Separated link</a></li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
                         </td>
                     </tr>
                     </thead>
@@ -124,6 +126,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "",
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -131,6 +135,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "站点名称",
                         "data": "sitename",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -138,6 +144,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "Website",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -145,6 +153,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "状态",
                         "data": "sitestatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -154,14 +164,23 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "创建时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
-                        'data': 'id',
+                        "width": "",
+                        "title": "操作",
+                        "data": 'id',
                         'orderable': false,
                         render: function(value) {
                             var html =
@@ -171,7 +190,7 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>';
                             return html;
                         }
                     }

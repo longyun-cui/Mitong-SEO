@@ -78,8 +78,7 @@ class IndexRepository {
     {
         $mine = Auth::guard("client")->user();
         $query = SEOSite::select('id','createuserid','createusername','sitestatus','sitename','website','ftp','createtime')
-            ->where('createuserid',$mine->id)
-            ->orderby("id","desc");
+            ->where('createuserid',$mine->id);
 
         $total = $query->count();
 
@@ -117,8 +116,7 @@ class IndexRepository {
 //        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','website','sitename','keyword','searchengine','price','createtime','initialrangking','latestranking')
         $query = SEOKeyword::select('*')
             ->with('site')
-            ->where('createuserid',$mine->id)
-            ->orderby("id","desc");
+            ->where('createuserid',$mine->id);
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
@@ -160,8 +158,7 @@ class IndexRepository {
         $mine = Auth::guard("client")->user();
 //        $query = SEOKeyword::select('id','createuserid','createusername','createtime','cartstatus','keyword','searchengine','price')
         $query = SEOCart::select('*')
-            ->where(['createuserid'=>$mine->id,'cartstatus'=>'未购买'])
-            ->orderby("id","desc");
+            ->where(['createuserid'=>$mine->id,'cartstatus'=>'未购买']);
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['cartstatus'])) $query->where('cartstatus', $post_data['cartstatus']);
