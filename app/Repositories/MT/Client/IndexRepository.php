@@ -78,6 +78,9 @@ class IndexRepository {
     {
         $mine = Auth::guard("client")->user();
         $query = SEOSite::select('id','createuserid','createusername','sitestatus','sitename','website','ftp','createtime')
+            ->withCount([
+                    'keywords'=>function($query){ $query->where(["keywordstatus"=>"优化中","status"=>1]); }
+                ])
             ->where('createuserid',$mine->id);
 
         $total = $query->count();

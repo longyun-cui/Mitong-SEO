@@ -262,7 +262,12 @@
                         "data": "searchengine",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            if(data == "baidu") return '百度PC';
+                            else if(data == "baidu_mobile") return '百度移动';
+                            else if(data == "sougou") return '搜狗';
+                            else if(data == "360") return '360';
+                            else if(data == "shenma") return '神马';
+                            else return data;
                         }
                     },
                     {
@@ -308,8 +313,8 @@
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
 //                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
-                                '<a class="btn btn-xs item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+                                '<a class="btn btn-xs bg-primary item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             return html;
                         }
                     }

@@ -14,7 +14,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4" style="display:none;">
         <!-- Widget: user widget style 1 -->
         <div class="box box-widget widget-user">
             <!-- Add the bg color to the header using any of the bg-* classes -->
@@ -102,126 +102,79 @@
     </div>
 </div>
 
+
+
+{{--财务概览--}}
 <div class="row">
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-aqua">
-            <div class="inner">
-                <h3>{{ $user_data->fund->totalfunds or '' }}元</h3>
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>财务概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        资金总额 <span class="text-red" style="font-size:24px;">{{ $user_data->fund_total or 0 }}</span> 个
+                    </span>
 
-                <p>总资金</p>
+                    <span style="margin-right:12px;">
+                        资金总额 <span class="text-red font-24px">{{ $user_data->fund_total or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        累计消费 <span class="text-red font-24px">{{ $user_data->fund_expense or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资金余额 <span class="text-red font-24px">{{ $user_data->fund_balance or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        可用金额 <span class="text-red font-24px">{{ $user_data->fund_available or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        冻结金额 <span class="text-red font-24px">{{ $user_data->fund_frozen or 0 }}</span> 元
+                    </span>
+                </div>
             </div>
-            <div class="icon">
-                <i class="ion ion-bag"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <h3>{{ $expense_funds or '' }}元</h3>
-
-                <p>累计消费</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6 _none">
-        <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <h3>44<sup style="font-size: 20px">%</sup></h3>
-
-                <p>累计消费</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <h3>{{ $user_data->fund->balancefunds or '' }}元</h3>
-
-                <p>资金余额</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
 </div>
 
+
+{{--关键词优化--}}
 <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>关键词优化</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        站点数 <span class="text-red" style="font-size:24px;">{{ $user_data->sites_count or '' }}</span> 个
+                    </span>
 
-            <div class="info-box-content">
-                <span class="info-box-text">站点数</span>
-                <span class="info-box-number">{{ $user_data->sites_count or '' }}个</span>
+                    <span style="margin-right:12px;">
+                        关键词数 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        优化关键词数 <span class="text-red" style="font-size:24px;">{{ $user_data->keywords_count or '' }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        关键词数 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日上词 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日消费 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                    </span>
+                </div>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">关键词数</span>
-                <span class="info-box-number">{{ $user_data->keywords_count or '' }}个</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">最新达标</span>
-                <span class="info-box-number">760</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">最新消费</span>
-                <span class="info-box-number">2,000</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
 </div>
 @endsection
 

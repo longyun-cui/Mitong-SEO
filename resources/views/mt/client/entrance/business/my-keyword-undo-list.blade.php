@@ -39,14 +39,14 @@
                     <table class='table table-striped table-bordered' id='datatable_ajax'>
                         <thead>
                         <tr role='row' class='heading'>
-                            <th>id</th>
-                            <th>id</th>
-                            <th>关键词</th>
-                            <th>搜索引擎</th>
-                            <th style="min-width:120px;">站点</th>
-                            <th>创建时间</th>
-                            <th>单价</th>
-                            <th>状态</th>
+                            <th>选择</th>
+                            <th>ID</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th>历史数据</th>
                         </tr>
                         <tr>
@@ -155,6 +155,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "",
+                        "title": "选择",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -162,6 +164,7 @@
                         }
                     },
                     {
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -169,6 +172,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -176,13 +181,8 @@
                         }
                     },
                     {
-                        "data": "searchengine",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
-                    {
+                        "width": "128px",
+                        "title": "站点",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -191,13 +191,37 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "搜索引擎",
+                        "data": "searchengine",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+//                            return data;
+                            if(data == "baidu") return '百度PC';
+                            else if(data == "baidu_mobile") return '百度移动';
+                            else if(data == "sougou") return '搜狗';
+                            else if(data == "360") return '360';
+                            else if(data == "shenma") return '神马';
+                            else return data;
+                        }
+                    },
+                    {
+                        "width": "",
+                        "title": "创建时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
+//                            var $date = new Date(data);
+//                            var $year = $date.getFullYear();
+//                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+//                            var $day = ('00'+($date.getDate())).slice(-2);
+//                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
+                        "width": "",
+                        "title": "价格",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -205,6 +229,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "状态",
                         "data": "cartstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -214,7 +240,9 @@
                         }
                     },
                     {
-                        'data': 'id',
+                        "width": "",
+                        "title": "操作",
+                        "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var html =

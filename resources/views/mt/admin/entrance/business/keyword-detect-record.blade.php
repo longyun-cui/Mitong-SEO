@@ -387,11 +387,11 @@
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if(data = "baidu") return '百度PC';
-                            else if(data = "baidu_mobile") return '百度移动';
-                            else if(data = "sougou") return '搜狗';
-                            else if(data = "360") return '360';
-                            else if(data = "shenma") return '神马';
+                            if(data == "baidu") return '百度PC';
+                            else if(data == "baidu_mobile") return '百度移动';
+                            else if(data == "sougou") return '搜狗';
+                            else if(data == "360") return '360';
+                            else if(data == "shenma") return '神马';
                             else return data;
                         }
                     },

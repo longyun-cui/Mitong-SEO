@@ -191,50 +191,53 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
+                        "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "",
                         "data": "createuserid",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return row.creator == null ? '未知' : row.creator.username;
                         }
                     },
                     {
+                        "width": "72px",
                         "data": "keyword",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "72px",
                         "data": "website",
                         'orderable': false,
-                        'width':"72px",
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "72px",
                         "data": "searchengine",
                         'orderable': true,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
-                            if(data = "baidu") return '百度PC';
-                            else if(data = "baidu_mobile") return '百度移动';
-                            else if(data = "sougou") return '搜狗';
-                            else if(data = "360") return '360';
-                            else if(data = "shenma") return '神马';
+                            if(data == "baidu") return '百度PC';
+                            else if(data == "baidu_mobile") return '百度移动';
+                            else if(data == "sougou") return '搜狗';
+                            else if(data == "360") return '360';
+                            else if(data == "shenma") return '神马';
                             else return data;
                         }
                     },
                     {
+                        "width": "72px",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -247,13 +250,15 @@
                         }
                     },
                     {
+                        "width": "48px",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'元/天';
+                            return parseInt(data);
                         }
                     },
                     {
+                        "width": "64px",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -261,6 +266,7 @@
                         }
                     },
                     {
+                        "width": "64px",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -269,6 +275,7 @@
                         }
                     },
                     {
+                        "width": "72px",
                         "data": "detectiondate",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -284,6 +291,7 @@
                         }
                     },
                     {
+                        "width": "56px",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -291,6 +299,7 @@
                         }
                     },
                     {
+                        "width": "56px",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -298,6 +307,7 @@
                         }
                     },
                     {
+                        "width": "56px",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -305,17 +315,25 @@
                         }
                     },
                     {
+                        "width": "64px",
                         "data": "keywordstatus",
                         'orderable': false,
-                        'width':"64px",
                         render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
-                            else return data;
+                            if(row.status == 1)
+                            {
+                                if(data == '优化中') return '<small class="label bg-primary">优化中</small>';
+                                else if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
+                                else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                                else return data;
+                            }
+                            else
+                            {
+                                return '<small class="label bg-navy">已删除</small>';
+                            }
                         }
                     },
                     {
-                        'data': 'id',
+                        "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var html =
@@ -325,9 +343,9 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                '<a class="btn btn-xs item-data-detail-link" data-id="'+data+'" >数据详情</a>';
+                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>';
                             return html;
                         }
                     }

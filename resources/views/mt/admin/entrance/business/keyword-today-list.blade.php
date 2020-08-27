@@ -207,7 +207,7 @@
                         }
                     },
                     {
-                        "width": "72px",
+                        "width": "",
                         "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
@@ -239,16 +239,17 @@
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if(data = "baidu") return '百度PC';
-                            else if(data = "baidu_mobile") return '百度移动';
-                            else if(data = "sougou") return '搜狗';
-                            else if(data = "360") return '360';
-                            else if(data = "shenma") return '神马';
+                            if(data == "baidu") return '百度PC';
+                            else if(data == "baidu_mobile") return '百度移动';
+                            else if(data == "sougou") return '搜狗';
+                            else if(data == "360") return '360';
+                            else if(data == "shenma") return '神马';
                             else return data;
                         }
                     },
                     {
-                        "width": "64px",
+                        "width": "72px",
+                        "title": "创建时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -261,13 +262,17 @@
                         }
                     },
                     {
+                        "width": "48px",
+                        "title": "价格",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'元/天';
+                            return parseInt(data);
                         }
                     },
                     {
+                        "width": "54px",
+                        "title": "初始排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -275,6 +280,8 @@
                         }
                     },
                     {
+                        "width": "54px",
+                        "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -283,6 +290,8 @@
                         }
                     },
                     {
+                        "width": "72px",
+                        "title": "检测日期",
                         "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -295,6 +304,8 @@
                         }
                     },
                     {
+                        "width": "56px",
+                        "title": "最新消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -302,6 +313,8 @@
                         }
                     },
                     {
+                        "width": "56px",
+                        "title": "达标天数",
                         "data": "standarddays",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -309,6 +322,8 @@
                         }
                     },
                     {
+                        "width": "56px",
+                        "title": "累计消费",
                         "data": "totalconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -316,6 +331,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "状态",
                         "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -325,7 +342,9 @@
                         }
                     },
                     {
-                        'data': 'id',
+                        "width": "",
+                        "title": "操作",
+                        "data": 'id',
                         'orderable': false,
                         render: function(value) {
                             var html =
@@ -336,7 +355,7 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-data-detail-link" data-id="'+value+'" >数据详情</a>';
+                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >数据详情</a>';
                             return html;
                         }
                     }
