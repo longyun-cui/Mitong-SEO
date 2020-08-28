@@ -23,3 +23,5 @@ table.dataTable thead > tr > th { padding:8px 4px; }
 table.dataTable .text-center { text-align:center; }
 table.dataTable .text-left { text-align:left; }
 table.dataTable .text-right { text-align:right; }
+
+#item-content-body .select2-container--classic .select2-selection--single { border-radius:0; }

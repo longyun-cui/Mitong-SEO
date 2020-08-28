@@ -14,7 +14,7 @@
     <div class="row">
         <div class="col-md-12">
             <!-- BEGIN PORTLET-->
-            <div class="box box-info">
+            <div class="box box-info" id="item-content-body">
 
                 <div class="box-header with-border" style="margin:16px 0;">
                     <h3 class="box-title">内容列表</h3>
@@ -94,14 +94,31 @@
 
                 <div class="box-footer">
                     <div class="row" style="margin:16px 0;">
+                        <div class="col-md-offset-0 col-md-6 col-sm-8 col-xs-12">
+                            {{--<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>--}}
+                            {{--<button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>--}}
+                            <div class="input-group">
+                                <span class="input-group-addon"><input type="checkbox" id="check-all"></span>
+                                <select name="bulk-site" class="form-control form-filter select2-site" id="bulk-site" style="min-width:100%;"></select>
+                                <span class="btn input-group-addon" id="bulk-buy-submit"><i class="fa fa-check"></i> 批量购买</span>
+                                <span class="btn input-group-addon" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    <div class="row" style="margin:16px 0;">
                         <div class="col-md-offset-0 col-md-9">
                             <button type="button" onclick="" class="btn btn-primary _none"><i class="fa fa-check"></i> 提交</button>
                             <button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>
                         </div>
                     </div>
                 </div>
+
             </div>
             <!-- END PORTLET-->
+
         </div>
     </div>
 @endsection
@@ -130,7 +147,7 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/client/business/my-keyword-undo-list') }}",
+                    'url': "{{ url('/client/business/my-keyword-cart-list') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -155,15 +172,16 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "",
+                        "width": "48px",
                         "title": "选择",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return '<label><div class="icheckbox_minimal-blue" aria-checked="false" aria-disabled="false" style="position: relative;"><input type="checkbox" class="minimal"></div></label>';
+                            return '<label><input type="checkbox" name="bulk-cart-id" class="minimal" value="'+data+'"></label>';
                         }
                     },
                     {
+                        "width": "64px",
                         "title": "ID",
                         "data": "id",
                         'orderable': false,
@@ -181,7 +199,7 @@
                         }
                     },
                     {
-                        "width": "128px",
+                        "width": "192px",
                         "title": "站点",
                         "data": "id",
                         'orderable': false,
@@ -191,7 +209,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "96px",
                         "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': false,
@@ -252,8 +270,8 @@
                                 {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
                                 {{--'<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+--}}
-                                '<a class="btn btn-xs item-buy-submit" data-id="'+data+'" >购买</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+                                '<a class="btn btn-xs bg-primary item-buy-submit" data-id="'+data+'" >购买</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             return html;
                         }
                     }
@@ -380,7 +398,16 @@
                 window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
-        // 【购买】
+
+
+
+        // 【批量选择】全选or反选
+        $("#item-content-body").on('click', '#check-all', function () {
+            $('input[name="bulk-cart-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
+        });
+
+
+        // 【购买】【购物车】【关键词】
         $("#item-main-body").on('click', ".item-buy-submit", function() {
             var that = $(this);
             layer.msg('确定要"购买"么？', {
@@ -396,15 +423,44 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            location.href = "{{ url('/client/business/my-keyword-list') }}";
+                            else location.href = "{{ url('/client/business/my-keyword-list') }}";
                         },
                         'json'
                     );
                 }
             });
         });
+        // 【批量购买】【购物车】【关键词】
+        $("#item-content-body").on('click', '#bulk-buy-submit', function() {
+            var $checked = [];
+            $('input[name="bulk-cart-id"]:checked').each(function() {
+                $checked.push($(this).val());
+            });
 
-        // 【删除】
+            layer.msg('确定要"批量购买"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/client/business/keyword-buy-bulk') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            bulk_cart_id:$checked,
+                            bulk_site_id:$('#bulk-site').find("option:selected").val()
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.href = "{{ url('/client/business/my-keyword-list') }}";
+                        },
+                        'json'
+                    );
+                }
+            });
+
+        });
+
+
+        // 【删除】【购物车】【关键词】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
             layer.msg('确定要"删除"么？', {
@@ -412,7 +468,7 @@
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/client/business/keyword-delete-undo') }}",
+                        "{{ url('/client/business/keyword-cart-delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
                             id:that.attr('data-id')
@@ -426,6 +482,36 @@
                 }
             });
         });
+        // 【批量删除】【购物车】【关键词】
+        $("#item-content-body").on('click', '#bulk-delete-submit', function() {
+            var $checked = [];
+            $('input[name="bulk-cart-id"]:checked').each(function() {
+                $checked.push($(this).val());
+            });
+
+            layer.msg('确定要"批量删除"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/client/business/keyword-cart-delete-bulk') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            bulk_cart_id:$checked
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+
+        });
+
+
+
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
@@ -449,7 +535,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

@@ -30,16 +30,20 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/my-site-list', $controller.'@view_my_site_list');
         Route::match(['get','post'], '/business/my-keyword-list', $controller.'@view_my_keyword_list');
         Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
-        Route::match(['get','post'], '/business/my-keyword-undo-list', $controller.'@view_my_keyword_undo_list');
+        Route::match(['get','post'], '/business/my-keyword-cart-list', $controller.'@view_my_keyword_cart_list');
         Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
 
         Route::match(['get','post'], '/business/site-create', $controller.'@operate_business_site_create');
         Route::match(['get','post'], '/business/site-edit', $controller.'@operate_business_site_edit');
         Route::match(['get','post'], '/business/site-delete', $controller.'@operate_business_site_delete');
 
-        Route::match(['get','post'], '/business/keyword-add-undo', $controller.'@operate_keyword_add_undo');
-        Route::match(['get','post'], '/business/keyword-delete-undo', $controller.'@operate_keyword_delete_undo');
+        Route::match(['get','post'], '/business/keyword-cart-add', $controller.'@operate_keyword_cart_add');
+        Route::match(['get','post'], '/business/keyword-cart-delete', $controller.'@operate_keyword_cart_delete');
+        Route::match(['get','post'], '/business/keyword-cart-delete-bulk', $controller.'@operate_keyword_cart_delete_bulk');
+
         Route::match(['get','post'], '/business/keyword-buy', $controller.'@operate_keyword_buy');
+        Route::match(['get','post'], '/business/keyword-buy-bulk', $controller.'@operate_keyword_buy_bulk');
+
         Route::match(['get','post'], '/business/select2_sites', $controller.'@operate_business_select2_sites');
 
 

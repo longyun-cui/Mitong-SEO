@@ -157,20 +157,26 @@ class IndexController extends Controller
         if(request()->isMethod('get'))
         {
             return view('mt.admin.entrance.business.site-list')
-                ->with(['sidebar_business_site_active'=>'active','sidebar_business_site_list_active'=>'active']);
+                ->with([
+                    'sidebar_business_site_active'=>'active',
+                    'sidebar_business_site_list_active'=>'active'
+                ]);
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_site_list_datatable(request()->all());
     }
 
     // 返回【待审核站点列表】视图
-    public function view_business_site_undo_list()
+    public function view_business_site_todo_list()
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.business.site-undo-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_site_undo_active'=>'active']);
+            return view('mt.admin.entrance.business.site-todo-list')
+                ->with([
+                    'sidebar_business_keyword_active'=>'active',
+                    'sidebar_business_site_todo_active'=>'active'
+                ]);
         }
-        else if(request()->isMethod('post')) return $this->repo->get_business_site_undo_list_datatable(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_site_todo_list_datatable(request()->all());
     }
 
     // 返回【关键词列表】视图
@@ -188,14 +194,17 @@ class IndexController extends Controller
     }
 
     // 返回【待审核关键词列表】视图
-    public function view_business_keyword_undo_list()
+    public function view_business_keyword_todo_list()
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.business.keyword-undo-list')
-                ->with(['sidebar_business_keyword_active'=>'active','sidebar_business_keyword_undo_active'=>'active']);
+            return view('mt.admin.entrance.business.keyword-todo-list')
+                ->with([
+                    'sidebar_business_keyword_active'=>'active',
+                    'sidebar_business_keyword_todo_active'=>'active'
+                ]);
         }
-        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_undo_list_datatable(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_todo_list_datatable(request()->all());
     }
 
     // 返回【关键词检测记录】视图
@@ -226,26 +235,47 @@ class IndexController extends Controller
     {
         return $this->repo->operate_business_site_review(request()->all());
     }
+    // 批量审核【站点】
+    public function operate_business_site_review_bulk()
+    {
+        return $this->repo->operate_business_site_review_bulk(request()->all());
+    }
+
 
     // 审核【关键词】
     public function operate_business_keyword_review()
     {
         return $this->repo->operate_business_keyword_review(request()->all());
     }
+    // 批量审核【关键词】
+    public function operate_business_keyword_review_bulk()
+    {
+        return $this->repo->operate_business_keyword_review_bulk(request()->all());
+    }
 
 
 
 
     // 删除【待选站点】
-    public function operate_business_site_delete_undo()
+    public function operate_business_site_todo_delete()
     {
-        return $this->repo->operate_business_site_delete_undo(request()->all());
+        return $this->repo->operate_business_site_todo_delete(request()->all());
+    }
+    // 批量删除【待选站点】
+    public function operate_business_site_todo_delete_bulk()
+    {
+        return $this->repo->operate_business_site_todo_delete_bulk(request()->all());
     }
 
-    // 删除【待选关坚持】
-    public function operate_business_keyword_delete_undo()
+    // 删除【待选关键词】
+    public function operate_business_keyword_todo_delete()
     {
-        return $this->repo->operate_business_keyword_delete_undo(request()->all());
+        return $this->repo->operate_business_keyword_todo_delete(request()->all());
+    }
+    // 批量删除【待选关坚持】
+    public function operate_business_keyword_todo_delete_bulk()
+    {
+        return $this->repo->operate_business_keyword_todo_delete_bulk(request()->all());
     }
 
 

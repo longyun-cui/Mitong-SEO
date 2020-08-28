@@ -78,18 +78,18 @@
                 </div>
 
 
-                {{--站点名--}}
+                {{--站点名称--}}
                 <div class="form-group">
-                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 站点名</label>
+                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 站点名称</label>
                     <div class="col-md-8 ">
-                        <input type="text" class="form-control" name="sitename" placeholder="站点名" value="{{ $data->sitename or '' }}">
+                        <input type="text" class="form-control" name="sitename" placeholder="站点名称" value="{{ $data->sitename or '' }}">
                     </div>
                 </div>
                 {{--站点地址--}}
                 <div class="form-group">
                     <label class="control-label col-md-2"><sup class="text-red">*</sup> 站点地址</label>
                     <div class="col-md-8 ">
-                        <input type="text" class="form-control" name="website" placeholder="真实姓名" value="{{ $data->website or '' }}">
+                        <input type="text" class="form-control" name="website" placeholder="站点地址，例如：www.baidu.com" value="{{ $data->website or '' }}">
                     </div>
                 </div>
                 {{--FTP--}}

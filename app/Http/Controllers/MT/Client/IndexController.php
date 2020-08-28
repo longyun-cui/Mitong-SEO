@@ -58,15 +58,15 @@ class IndexController extends Controller
         else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
     }
 
-    // 返回【待处理关键词】视图
-    public function view_my_keyword_undo_list()
+    // 返回【关键词购物车】视图
+    public function view_my_keyword_cart_list()
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.client.entrance.business.my-keyword-undo-list')
-                ->with(['sidebar_business_active'=>'active','sidebar_business_my_keyword_undo_list_active'=>'active']);
+            return view('mt.client.entrance.business.my-keyword-cart-list')
+                ->with(['sidebar_business_active'=>'active','sidebar_business_my_keyword_cart_list_active'=>'active']);
         }
-        else if(request()->isMethod('post')) return $this->repo->get_business_my_keyword_undo_list_datatable(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_my_keyword_cart_list_datatable(request()->all());
     }
 
     // 返回【关键词检测记录】视图
@@ -102,25 +102,39 @@ class IndexController extends Controller
 
 
 
-    // 添加【关键词】
-    public function operate_keyword_add_undo()
+    // 添加【关键词】购物车
+    public function operate_keyword_cart_add()
     {
-        return $this->repo->operate_keyword_add_undo(request()->all());
+        return $this->repo->operate_keyword_cart_add(request()->all());
     }
 
-    // 添加【关键词】
-    public function operate_keyword_delete_undo()
+
+    // 删除【关键词】【购物车】
+    public function operate_keyword_cart_delete()
     {
-        return $this->repo->operate_keyword_delete_undo(request()->all());
+        return $this->repo->operate_keyword_cart_delete(request()->all());
     }
 
-    // 添加【关键词】
+    // 批量删除【关键词】【购物车】
+    public function operate_keyword_cart_delete_bulk()
+    {
+        return $this->repo->operate_keyword_cart_delete_bulk(request()->all());
+    }
+
+
+    // 购买【关键词】
     public function operate_keyword_buy()
     {
         return $this->repo->operate_keyword_buy(request()->all());
     }
 
-    // 删除【代理商】
+    // 批量购买【关键词】
+    public function operate_keyword_buy_bulk()
+    {
+        return $this->repo->operate_keyword_buy_bulk(request()->all());
+    }
+
+    // SELECT2【站点】
     public function operate_business_select2_sites()
     {
         return $this->repo->operate_business_select2_sites(request()->all());

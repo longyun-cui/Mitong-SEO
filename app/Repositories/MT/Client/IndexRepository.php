@@ -155,8 +155,8 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【关键词列表】数据
-    public function get_business_my_keyword_undo_list_datatable($post_data)
+    // 返回【关键词购物车列表】数据
+    public function get_business_my_keyword_cart_list_datatable($post_data)
     {
         $mine = Auth::guard("client")->user();
 //        $query = SEOKeyword::select('id','createuserid','createusername','createtime','cartstatus','keyword','searchengine','price')
@@ -822,8 +822,8 @@ class IndexRepository {
 
 
 
-    // 添加【关键词】
-    public function operate_keyword_add_undo($post_data)
+    // 添加【购物车】【关键词】
+    public function operate_keyword_cart_add($post_data)
     {
         $mine = Auth::guard('client')->user();
         if($mine->usergroup != "Service") return response_error([],"你没有操作权限！");
@@ -896,8 +896,9 @@ class IndexRepository {
         }
     }
 
-    // 删除【站点】
-    public function operate_keyword_delete_undo($post_data)
+
+    // 删除【购物车】【关键词】
+    public function operate_keyword_cart_delete($post_data)
     {
         $mine = Auth::guard('client')->user();
         if($mine->usergroup != "Service") return response_error([],"你没有操作权限！");
@@ -933,13 +934,69 @@ class IndexRepository {
             return response_fail([],$msg);
         }
     }
+    // 批量删除【购物车】【关键词】
+    public function operate_keyword_cart_delete_bulk($post_data)
+    {
+        $messages = [
+            'bulk_cart_id.required' => '请选择关键词！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_cart_id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
 
-    // 保存【站点】
+        $me = Auth::guard('client')->user();
+        if($me->usergroup != "Service") return response_error([],"你没有操作权限！");
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $cart_ids = $post_data["bulk_cart_id"];
+            foreach($cart_ids as $key => $cart_id)
+            {
+                if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该关键词不存在，刷新页面试试！");
+
+                $item = SEOCart::find($cart_id);
+                if($item->createuserid != $me->id) return response_error([],"该关键词不是你的，你无权删除！");
+
+                $content = $item->content;
+                $cover_pic = $item->cover_pic;
+
+                // 删除【待选关键词】
+//                $item->pivot_menus()->detach(); // 删除相关目录
+                $bool = $item->delete();
+                if(!$bool) throw new Exception("delete--cart--fail");
+
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+
+
+
+    // 购买【关键词】
     public function operate_keyword_buy($post_data)
     {
         $messages = [
             'id.required' => '参数有误',
-            'website.required' => '请输入站点',
+            'website.required' => '请选择站点',
         ];
         $v = Validator::make($post_data, [
             'id' => 'required',
@@ -950,6 +1007,7 @@ class IndexRepository {
             $messages = $v->errors();
             return response_error([],$messages->first());
         }
+//        dd($post_data);
 
         $cart_id = $post_data["id"];
         if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该待选关键词不存在，刷新页面试试！");
@@ -1019,6 +1077,110 @@ class IndexRepository {
             $cart->cartstatus = "已购买";
             $bool1 = $cart->save();
             if(!$bool1) throw new Exception("update--cart--fail");
+
+            DB::commit();
+            return response_success(['id'=>$site->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 批量购买【关键词】
+    public function operate_keyword_buy_bulk($post_data)
+    {
+        $messages = [
+            'bulk_cart_id.required' => '请选择关键词！',
+            'bulk_site_id.required' => '请输入站点！',
+        ];
+        $v = Validator::make($post_data, [
+          'bulk_cart_id' => 'required',
+            'bulk_site_id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+//        dd($post_data);
+
+        $me = Auth::guard('client')->user();
+        if($me->usergroup != "Service") return response_error([],"你没有操作权限！");
+
+        $site_id = $post_data["bulk_site_id"];
+        $site = SEOSite::find($site_id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面试试！");
+        if($site->createuserid != $me->id) return response_error([],"该站点不是你的，你无权操作！");
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $cart_ids = $post_data["bulk_cart_id"];
+            foreach($cart_ids as $key => $cart_id)
+            {
+                if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该待选关键词不存在，刷新页面试试！");
+
+                $cart = SEOCart::find($cart_id);
+                if($cart->createuserid != $me->id) return response_error([],"该待选关键词不是你的，你无权操作！");
+
+                $current_time = date('Y-m-d H:i:s');
+                $keyword_data["owner_id"] = $me->id;
+                $keyword_data["createuserid"] = $me->id;
+                $keyword_data["createusername"] = $me->username;
+                $keyword_data["createtime"] = $current_time;
+                $keyword_data["keywordstatus"] = "待审核";
+                $keyword_data["status"] = 1;
+                $keyword_data["price"] = $cart->price;
+                $keyword_data["keyword"] = $cart->keyword;
+                $keyword_data["searchengine"] = $cart->searchengine;
+                $keyword_data["siteid"] = $site_id;
+                $keyword_data["sitename"] = $site->sitename;
+                $keyword_data["website"] = $site->website;
+                $keyword_data["cartid"] = $cart_id;
+
+                if(!empty($post_data['custom']))
+                {
+                    $post_data['custom'] = json_encode($post_data['custom']);
+                }
+
+                $keyword = new SEOKeyword;
+                $bool = $keyword->fill($keyword_data)->save();
+                if($bool)
+                {
+                    // 封面图片
+                    if(!empty($post_data["cover"]))
+                    {
+                        // 删除原封面图片
+                        $site_cover_pic = $site->cover_pic;
+                        if(!empty($site_cover_pic) && file_exists(storage_path("resource/" . $site_cover_pic)))
+                        {
+                            unlink(storage_path("resource/" . $site_cover_pic));
+                        }
+
+                        $result = upload_storage($post_data["cover"]);
+                        if($result["result"])
+                        {
+                            $site->cover_pic = $result["local"];
+                            $site->save();
+                        }
+                        else throw new Exception("upload-cover-fail");
+                    }
+
+                }
+                else throw new Exception("insert--keyword--fail");
+
+                $cart->cartstatus = "已购买";
+                $bool1 = $cart->save();
+                if(!$bool1) throw new Exception("update--cart--fail");
+
+            }
 
             DB::commit();
             return response_success(['id'=>$site->id]);

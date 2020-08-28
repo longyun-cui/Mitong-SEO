@@ -321,9 +321,9 @@
                         render: function(data, type, row, meta) {
                             if(row.status == 1)
                             {
-                                if(data == '优化中') return '<small class="label bg-primary">优化中</small>';
-                                else if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                                else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
                                 else return data;
                             }
                             else

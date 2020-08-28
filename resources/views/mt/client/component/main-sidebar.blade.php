@@ -53,9 +53,9 @@
                 </a>
             </li>
 
-            <li class="treeview {{ $sidebar_business_my_keyword_undo_list_active or '' }}">
-                <a href="{{ url('/client/business/my-keyword-undo-list') }}">
-                    <i class="fa fa-text-width text-aqua"></i><span>待选关键词</span>
+            <li class="treeview {{ $sidebar_business_my_keyword_cart_list_active or '' }}">
+                <a href="{{ url('/client/business/my-keyword-cart-list') }}">
+                    <i class="fa fa-shopping-cart text-aqua"></i><span>待选关键词</span>
                 </a>
             </li>
 

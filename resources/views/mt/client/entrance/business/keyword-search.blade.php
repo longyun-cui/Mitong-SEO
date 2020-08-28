@@ -186,7 +186,7 @@
                                             <label for="select_all">全选/反选</label>
                                         </label>
 
-                                        <a class="btn bg-black keyword-all-add-undo">加入清单</a>
+                                        <a class="btn bg-black keyword-cart-all-add">加入清单</a>
 
                                         <button type="button" onclick="" class="btn btn-primary _none"><i class="fa fa-check"></i> 提交</button>
                                         <button type="button" onclick="history.go(-1);" class="btn btn-default _none">返回</button>
@@ -290,9 +290,9 @@
         });
 
         // 添加or编辑
-        $("#keyword-search-result").on('click', '.keyword-add-undo', function() {
+        $("#keyword-search-result").on('click', '.keyword-cart-add', function() {
             var options = {
-                url: "{{ url('/client/business/keyword-add-undo') }}",
+                url: "{{ url('/client/business/keyword-cart-add') }}",
                 type: "post",
                 dataType: "json",
                 // target: "#div2",
@@ -301,7 +301,7 @@
                     else
                     {
                         layer.msg(data.msg);
-                        location.href = "{{ url('/client/business/my-keyword-undo-list') }}";
+                        location.href = "{{ url('/client/business/my-keyword-cart-list') }}";
                     }
                     return false;
                 }
@@ -311,9 +311,9 @@
         });
 
         // 添加or编辑
-        $("#keyword-search-result").on('click', '.keyword-all-add-undo', function() {
+        $("#keyword-search-result").on('click', '.keyword-cart-all-add', function() {
             var options = {
-                url: "{{ url('/client/business/keyword-add-undo') }}",
+                url: "{{ url('/client/business/keyword-cart-add') }}",
                 type: "post",
                 dataType: "json",
                 // target: "#div2",
@@ -322,7 +322,7 @@
                     else
                     {
                         layer.msg(data.msg);
-                        location.href = "{{ url('/client/business/my-keyword-undo-list') }}";
+                        location.href = "{{ url('/client/business/my-keyword-cart-list') }}";
                     }
                     return false;
                 }

@@ -58,8 +58,8 @@
                     <i class="fa fa-sitemap"></i><span>站点列表</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_business_site_undo_active or '' }}">
-                <a href="{{ url('/admin/business/site-undo') }}">
+            <li class="treeview {{ $sidebar_business_site_todo_active or '' }}">
+                <a href="{{ url('/admin/business/site-todo') }}">
                     <i class="fa fa-sitemap"></i><span>待审核站点</span>
                 </a>
             </li>
@@ -78,8 +78,8 @@
                     <i class="fa fa-text-width"></i><span>今日优化关键词</span>
                 </a>
             </li>
-            <li class="treeview {{ $sidebar_business_keyword_undo_active or '' }}">
-                <a href="{{ url('/admin/business/keyword-undo') }}">
+            <li class="treeview {{ $sidebar_business_keyword_todo_active or '' }}">
+                <a href="{{ url('/admin/business/keyword-todo') }}">
                     <i class="fa fa-text-width"></i><span>待审核关键词</span>
                 </a>
             </li>

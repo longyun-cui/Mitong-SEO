@@ -62,20 +62,24 @@ Route::group([], function () {
 
 
         Route::match(['get','post'], '/business/site-list', $controller.'@view_business_site_list');
-        Route::match(['get','post'], '/business/site-undo', $controller.'@view_business_site_undo_list');
+        Route::match(['get','post'], '/business/site-todo', $controller.'@view_business_site_todo_list');
         Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
         Route::match(['get','post'], '/business/keyword-today', $controller.'@view_business_keyword_today_list');
-        Route::match(['get','post'], '/business/keyword-undo', $controller.'@view_business_keyword_undo_list');
+        Route::match(['get','post'], '/business/keyword-todo', $controller.'@view_business_keyword_todo_list');
         Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
 
         Route::match(['get','post'], '/business/keyword-detect-create-rank', $controller.'@operate_business_keyword_detect_create_rank');
         Route::match(['get','post'], '/business/keyword-detect-set-rank', $controller.'@operate_business_keyword_detect_set_rank');
 
         Route::match(['get','post'], '/business/site-review', $controller.'@operate_business_site_review');
+        Route::match(['get','post'], '/business/site-review-bulk', $controller.'@operate_business_site_review_bulk');
         Route::match(['get','post'], '/business/keyword-review', $controller.'@operate_business_keyword_review');
+        Route::match(['get','post'], '/business/keyword-review-bulk', $controller.'@operate_business_keyword_review_bulk');
 
-        Route::match(['get','post'], '/business/site-delete-undo', $controller.'@operate_business_site_delete_undo');
-        Route::match(['get','post'], '/business/keyword-delete-undo', $controller.'@operate_business_keyword_delete_undo');
+        Route::match(['get','post'], '/business/site-todo-delete', $controller.'@operate_business_site_todo_delete');
+        Route::match(['get','post'], '/business/site-todo-delete-bulk', $controller.'@operate_business_site_todo_delete_bulk');
+        Route::match(['get','post'], '/business/keyword-todo-delete', $controller.'@operate_business_keyword_todo_delete');
+        Route::match(['get','post'], '/business/keyword-todo-delete-bulk', $controller.'@operate_business_keyword_todo_delete_bulk');
 
 
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');

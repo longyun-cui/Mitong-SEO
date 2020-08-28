@@ -36,15 +36,15 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>站点名称</th>
-                        <th>website</th>
-                        <th>关键词数</th>
-                        <th>今日达标关键词</th>
-                        <th>达标消费</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
@@ -131,6 +131,8 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
+                        "title": "ID",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -138,6 +140,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -145,6 +149,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "站点",
                         "data": "sitename",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -152,6 +158,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "Website",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -159,6 +167,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "关键词数",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -172,6 +182,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "今日达标关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -184,6 +196,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "达标消费",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -197,18 +211,10 @@
                         }
                     },
                     {
-                        "data": "sitestatus",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
-                            else return data;
-                        }
-                    },
-                    {
+                        "width": "80px",
+                        "title": "创建时间",
                         'data': 'createtime',
                         'orderable': true,
-                        'width':"80px",
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data);
@@ -219,7 +225,19 @@
                         }
                     },
                     {
-                        'data': 'id',
+                        "width": "",
+                        "title": "状态",
+                        "data": "sitestatus",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                            else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                            else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
+                            else return data;
+                        }
+                    },
+                    {
+                        "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var html =
@@ -229,8 +247,8 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             return html;
                         }
                     }
