@@ -226,6 +226,12 @@ class IndexController extends Controller
         return $this->repo->operate_business_keyword_detect_set_rank(request()->all());
     }
 
+    // 返回【关键词检测记录】视图
+    public function operate_business_keyword_detect_set_rank_bulk()
+    {
+        return $this->repo->operate_business_keyword_detect_set_rank_bulk(request()->all());
+    }
+
 
 
 

@@ -18,20 +18,29 @@
             <div class="callout callout-green">
                 {{--<h4>关键词概览</h4>--}}
                 <div>
-                    <span>关键词</span>
-                    <span class="text-red" style="font-size:20px;">{{ $data['keyword'] or '' }}</span>
-                    <span style="margin-right:12px;"></span>
+                    <span style="margin-right:12px;">
+                        客户 <span class="text-red font-18px">{{ $data['creator']['username'] or '' }}</span>
+                    </span>
 
-                    <span>达标</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['standarddays'] or 0 }}</span>
-                    <span style="margin-right:12px;">天</span>
+                    <span style="margin-right:12px;">
+                        关键词 <span class="text-red font-20px">{{ $data['keyword'] or '' }}</span>
+                    </span>
 
-                    <span>累计消费</span>
-                    <span class="text-red" style="font-size:24px;">￥{{ intval($data['totalconsumption']) }}</span>
-                    <span style="margin-right:12px;">元</span>
+                    <span style="margin-right:12px;">
+                        单价 <span class="text-red font-20px">{{ intval($data['price']) }}</span> 元/天
+                    </span>
 
-                    <span>首次达标时间</span>
-                    <span class="text-red" style="font-size:20px;">{{ $data['firststandarddate'] or '' }}</span>
+                    <span style="margin-right:12px;">
+                        达标 <span class="text-red font-20px">{{ $data['standarddays'] or 0 }}</span> 天
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        累计消费 <span class="text-red font-20px">￥{{ intval($data['totalconsumption']) }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        首次达标时间 <span class="text-red font-20px">{{ $data['firststandarddate'] or '' }}</span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -122,13 +131,13 @@
 
             <div class="box-footer">
                 <div class="row" style="margin:16px 0;">
-                    <div class="col-md-offset-0 col-md-3 col-sm-4 col-xs-6">
+                    <div class="col-md-offset-0 col-md-4 col-sm-8 col-xs-12">
                         {{--<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>--}}
                         {{--<button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>--}}
                         <div class="input-group">
                             <span class="input-group-addon"><input type="checkbox" id="check-all"></span>
-                            <input type="text" class="form-control" name="rank" id="rank" placeholder="指定排名">
-                            <span class="input-group-addon" id="set-rank-submit"><i class="fa fa-check"></i>提交</span>
+                            <input type="text" class="form-control" name="bulk-detect-rank" id="bulk-detect-rank" placeholder="指定排名">
+                            <span class="input-group-addon" id="set-rank-bulk-submit"><i class="fa fa-check"></i>提交</span>
                         </div>
                     </div>
                 </div>
@@ -190,7 +199,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-2">指定排名</label>
                                 <div class="col-md-8 ">
-                                    <input type="text" class="form-control" name="detect-create-rank" placeholder="指定排名" value="">
+                                    <input type="text" class="form-control detect-create-rank" name="detect-create-rank" placeholder="指定排名" value="">
                                 </div>
                             </div>
                             {{--备注--}}
@@ -279,7 +288,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-2">指定排名</label>
                                 <div class="col-md-8 ">
-                                    <input type="text" class="form-control" name="detect-set-rank" placeholder="指定排名" value="">
+                                    <input type="text" class="form-control detect-set-rank" name="detect-set-rank" placeholder="指定排名" value="">
                                 </div>
                             </div>
                             {{--备注--}}
@@ -357,7 +366,7 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return '<label><input type="checkbox" name="detect-record" class="minimal" value="'+data+'"></label>';
+                            return '<label><input type="checkbox" name="bulk-detect-record-id" class="minimal" value="'+data+'"></label>';
                         }
                     },
                     {
@@ -570,25 +579,26 @@
 
 
 
-        // 全选or反选
+
+        // 【批量选择】全选or反选
         $("#item-content-body").on('click', '#check-all', function () {
-            $('input[name="detect-record"]').prop('checked',this.checked);//checked为true时为默认显示的状态
+            $('input[name="bulk-detect-record-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
         });
 
-        // 批量修改排名
-        $("#item-content-body").on('click', '#set-rank-submit', function() {
+        // 【批量修改】【排名】
+        $("#item-content-body").on('click', '#set-rank-bulk-submit', function() {
             var $checked = [];
-            $('input[name="detect-record"]:checked').each(function() {
+            $('input[name="bulk-detect-record-id"]:checked').each(function() {
                 $checked.push($(this).val());
             });
 
             $.post(
-                "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                "{{ url('/admin/business/keyword-detect-set-rank-bulk') }}",
                 {
                     _token: $('meta[name="_token"]').attr('content'),
-//                    detect_record:$('input[name="detect-record"]').serialize(),
-                    detect_record:$checked,
-                    rank:$("#rank").val()
+                    operate: "detect-set-rank-bulk",
+                    bulk_detect_id: $checked,
+                    bulk_detect_rank:$("#bulk-detect-rank").val()
                 },
                 function(data){
                     if(!data.success) layer.msg(data.msg);
@@ -643,7 +653,19 @@
             $('.detect-set-id').html(that.attr('data-id'));
             $('.detect-set-date').html(that.attr('data-date'));
             $('.detect-set-original-rank').html(that.attr('data-rank'));
+            $('input[name=detect-set-rank]').val('');
             $('#modal-set-body').modal('show');
+        });
+        // 【修改排名】取消
+        $("#modal-set-body").on('click', "#item-detect-set-cancel", function() {
+            var that = $(this);
+            $('input[name=detect-set-id]').val(0);
+            $('.detect-set-keyword').html('');
+            $('.detect-set-id').html(0);
+            $('.detect-set-date').html('');
+            $('.detect-set-original-rank').html('');
+            $('input[name=detect-set-rank]').val('');
+            $('#modal-set-body').modal('hide');
         });
         // 【修改排名】提交
         $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
@@ -671,16 +693,8 @@
                 }
             });
         });
-        // 【修改排名】取消
-        $("#modal-set-body").on('click', "#item-detect-set-cancel", function() {
-            var that = $(this);
-            $('input[name=detect-set-id]').val(0);
-            $('.detect-set-keyword').html('');
-            $('.detect-set-id').html(0);
-            $('.detect-set-date').html('');
-            $('.detect-set-original-rank').html('');
-            $('#modal-set-body').modal('hide');
-        });
+
+
 
 
 
@@ -718,7 +732,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

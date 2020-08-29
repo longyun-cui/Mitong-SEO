@@ -70,6 +70,7 @@ Route::group([], function () {
 
         Route::match(['get','post'], '/business/keyword-detect-create-rank', $controller.'@operate_business_keyword_detect_create_rank');
         Route::match(['get','post'], '/business/keyword-detect-set-rank', $controller.'@operate_business_keyword_detect_set_rank');
+        Route::match(['get','post'], '/business/keyword-detect-set-rank-bulk', $controller.'@operate_business_keyword_detect_set_rank_bulk');
 
         Route::match(['get','post'], '/business/site-review', $controller.'@operate_business_site_review');
         Route::match(['get','post'], '/business/site-review-bulk', $controller.'@operate_business_site_review_bulk');
