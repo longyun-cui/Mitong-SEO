@@ -275,6 +275,14 @@
                         }
                     },
                     {
+                        "width": "56px",
+                        "data": "latestconsumption",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data);
+                        }
+                    },
+                    {
                         "width": "72px",
                         "data": "detectiondate",
                         'orderable': true,
@@ -288,14 +296,6 @@
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
                             return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "56px",
-                        "data": "latestconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            return parseInt(data);
                         }
                     },
                     {
@@ -328,7 +328,7 @@
                             }
                             else
                             {
-                                return '<small class="label bg-navy">已删除</small>';
+                                return '<small class="btn-xs bg-navy">已删除</small>';
                             }
                         }
                     },

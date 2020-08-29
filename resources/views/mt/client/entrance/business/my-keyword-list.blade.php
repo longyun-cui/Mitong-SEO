@@ -251,6 +251,15 @@
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "最新消费",
+                        "data": "latestconsumption",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data);
+                        }
+                    },
+                    {
                         "width": "96px",
                         "className": "text-center",
                         "title": "检测时间",
@@ -263,15 +272,6 @@
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
                             return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "最新消费",
-                        "data": "latestconsumption",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return parseInt(data);
                         }
                     },
                     {

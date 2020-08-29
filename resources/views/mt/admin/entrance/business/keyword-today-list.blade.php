@@ -290,6 +290,15 @@
                         }
                     },
                     {
+                        "width": "56px",
+                        "title": "最新消费",
+                        "data": "latestconsumption",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data);
+                        }
+                    },
+                    {
                         "width": "72px",
                         "title": "检测日期",
                         "data": "detectiondate",
@@ -305,18 +314,9 @@
                     },
                     {
                         "width": "56px",
-                        "title": "最新消费",
-                        "data": "latestconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "56px",
                         "title": "达标天数",
                         "data": "standarddays",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return parseInt(data);
                         }
@@ -325,7 +325,7 @@
                         "width": "56px",
                         "title": "累计消费",
                         "data": "totalconsumption",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return parseInt(data);
                         }
