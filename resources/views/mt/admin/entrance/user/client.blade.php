@@ -32,7 +32,7 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $user_data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                        达标消费 <span class="text-red font-24px">{{ $user_data['keyword_standard_cost_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
