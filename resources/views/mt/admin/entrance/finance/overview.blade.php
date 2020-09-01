@@ -131,7 +131,7 @@
                         "data": "count",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            return parseInt(data).toLocaleString();
                         }
                     },
                     {
@@ -139,7 +139,7 @@
                         "data": "sum",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            return parseInt(data).toLocaleString();
                         }
                     },
 //                    {

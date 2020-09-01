@@ -216,7 +216,7 @@
                         }
                     },
                     {
-                        "width": "72px",
+                        "width": "",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -295,7 +295,8 @@
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {
@@ -318,7 +319,8 @@
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {
@@ -327,11 +329,12 @@
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "状态",
                         "data": "keywordstatus",
                         'orderable': false,

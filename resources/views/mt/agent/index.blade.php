@@ -31,23 +31,45 @@
                     <li>
                         <a href="javascript:void(0);">
                             【全称】{{ Auth::guard('agent')->user()->truename }}
-                            <span class="pull-right badge bg-blue">31</span>
+                            <span class="pull-right badge bg-blue _none">31</span>
                         </a>
                     </li>
                     <li>
                         <a href="javascript:void(0);">
                             【电话】{{ Auth::guard('agent')->user()->mobileno }}
-                            <span class="pull-right badge bg-aqua">5</span>
+                            <span class="pull-right badge bg-aqua _none">5</span>
                         </a>
                     </li>
-                    <li><a href="javascript:void(0);">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>
-                    <li><a href="javascript:void(0);">Followers <span class="pull-right badge bg-red">842</span></a></li>
+                    <li>
+                        <a href="javascript:void(0);">
+                            【邮箱】{{ Auth::guard('agent')->user()->email }}
+                            {{--<span class="pull-right badge bg-aqua">5</span>--}}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);">
+                            【微信】{{ Auth::guard('agent')->user()->wechatid }}
+                            {{--<span class="pull-right badge bg-green">0</span>--}}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);">
+                            【QQ】{{ Auth::guard('agent')->user()->QQnumber }}
+                            {{--<span class="pull-right badge bg-red">0</span>--}}
+                        </a>
+                    </li>
+                    <li class="_none">
+                        <a href="javascript:void(0);">Completed Projects <span class="pull-right badge bg-green">12</span></a>
+                    </li>
+                    <li class="_none">
+                        <a href="javascript:void(0);">Followers <span class="pull-right badge bg-red">842</span></a>
+                    </li>
                 </ul>
             </div>
         </div>
         <!-- /.widget-user -->
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 _none">
         <!-- Widget: user widget style 1 -->
         <div class="box box-widget widget-user">
             <!-- Add the bg color to the header using any of the bg-* classes -->
@@ -92,126 +114,78 @@
     </div>
 </div>
 
+
+
+{{--财务概览--}}
 <div class="row">
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-aqua">
-            <div class="inner">
-                <h3>9<sup style="font-size: 20px">个</sup></h3>
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>财务概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        资金总额 <span class="text-red" style="font-size:24px;">{{ $agent_data->fund_total or '' }}</span> 元
+                    </span>
 
-                <p>客户</p>
+                    <span style="margin-right:12px;" class="_none">
+                        支出总额 <span class="text-red font-24px">{{ $agent_data->fund_balance or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资金余额 <span class="text-red font-24px">{{ $agent_data->fund_balance or 0 }}</span> 元
+                    </span>
+                </div>
             </div>
-            <div class="icon">
-                <i class="ion ion-bag"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-green">
-            <div class="inner">
-                <h3>1<sup style="font-size: 20px">个</sup></h3>
-
-                <p>子代理</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-yellow">
-            <div class="inner">
-                <h3>44</h3>
-
-                <p>User Registrations</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-red">
-            <div class="inner">
-                <h3>65</h3>
-
-                <p>Unique Visitors</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
 </div>
 
+
+{{--关键词优化--}}
+<div class="row _none">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>二级代理</h4>
+                <div>
+                    @if(Auth::guard('agent')->user()->usergroup == "Agent" and Auth::guard('agent')->user()->isopen_subagent == 1)
+                    <span style="margin-right:12px;">
+                        二级代理 <span class="text-red" style="font-size:24px;">{{ $user_data->sites_count or '' }}</span> 个
+                    </span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{--关键词优化--}}
 <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>客户概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        客户 <span class="text-red font-24px">{{ $agent_data->clients_count or '' }}</span> 个
+                    </span>
 
-            <div class="info-box-content">
-                <span class="info-box-text">总资金</span>
-                <span class="info-box-number">{{ $user_data->fund->totalfunds or '' }} <small>元</small></span>
+                    <span style="margin-right:12px;">
+                        优化关键词数 <span class="text-red" style="font-size:24px;">{{ $agent_data->keywords_count or '' }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日上词 <span class="text-red font-24px">{{ $agent_data->keyword_standard_count or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日消费 <span class="text-red font-24px">{{ $agent_data->keyword_standard_cost_sum or 0 }}</span> 元
+                    </span>
+                </div>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">总支出</span>
-                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }} <small>元</small></span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">资金余额</span>
-                <span class="info-box-number">{{ $user_data->fund->balancefunds or '' }} <small>元</small></span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">New Members</span>
-                <span class="info-box-number">2,000 <small>元</small></span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
 </div>
 @endsection
 

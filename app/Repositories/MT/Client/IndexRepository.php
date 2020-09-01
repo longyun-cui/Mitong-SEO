@@ -24,11 +24,41 @@ class IndexRepository {
     // 返回【主页】视图
     public function view_client_index()
     {
-        $client = Auth::guard("client")->user();
-        $client_id = $client->id;
-        $expense_funds = ExpenseRecord::where('ownuserid',$client_id)->sum('price');
+        $me = Auth::guard("client")->user();
+        $me_id = $me->id;
+        $index_data = $me;
+
+
+        /*
+         * 关键词
+         */
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$me_id)->count();
+        $index_data->keyword_count = $keyword_count;
+
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$me_id)
+            ->count();
+        $index_data->keyword_detect_count = $keyword_detect_count;
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$me_id)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+        $index_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
+        $index_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+
+
         return view('mt.client.index')
-            ->with(['expense_funds'=>$expense_funds]);
+            ->with(['index_data'=>$index_data]);
     }
 
 

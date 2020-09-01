@@ -47,6 +47,12 @@ class User extends Authenticatable
     }
 
     // 名下代理商
+    function children()
+    {
+        return $this->hasMany('App\Models\MT\User','pid','id');
+    }
+
+    // 名下代理商
     function agents()
     {
         return $this->hasMany('App\Models\MT\User','pid','id');
@@ -80,6 +86,18 @@ class User extends Authenticatable
     function keywords()
     {
         return $this->hasMany('App\Models\MT\SEOKeyword','createuserid','id');
+    }
+
+    function children_keywords()
+    {
+        return $this->hasManyThrough(
+            'App\Models\MT\SEOKeyword',
+            'App\Models\MT\User',
+            'pid', // 用户表外键...
+            'createuserid', // 文章表外键...
+            'id', // 国家表本地键...
+            'id' // 用户表本地键...
+        );
     }
 
 

@@ -24,7 +24,46 @@ class IndexRepository {
     // 返回（后台）主页视图
     public function view_agent_index()
     {
-        return view('mt.agent.index');
+        $me = Auth::guard("agent")->user();
+        $agent = User::select('*')
+            ->with([
+                'clients'=>function($query) { $query->where('usergroup','Service'); }
+            ])
+            ->withCount([
+                'clients'=>function($query) { $query->where('usergroup','Service'); },
+                'children_keywords'
+            ])
+            ->find($me->id);
+//        dd($agent->toArray());
+
+        $agent->fund_total = number_format($agent->fund_total);
+        $agent->fund_balance = number_format($agent->fund_balance);
+
+
+        // 客户ID
+        $client_ids = User::select('id') ->where(['pid'=>$me->id,'usergroup'=>'Service'])->get()->pluck('id')->toArray();
+//        dd($client_ids);
+
+        // 今日优化关键词
+        $keywords_count = SEOKeyword::where(['status'=>1,'keywordstatus'=>'优化中'])->whereIn("createuserid",$client_ids)->count();
+        $agent->keywords_count = $keywords_count;
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->whereIn("createuserid",$client_ids)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+//        dd($keyword_standard_data);
+        $agent->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
+        $agent->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+
+        $agent_data = $agent;
+        return view('mt.agent.index')->with(['agent_data'=>$agent_data]);
     }
 
 

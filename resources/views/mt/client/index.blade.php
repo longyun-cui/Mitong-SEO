@@ -157,19 +157,19 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        优化关键词数 <span class="text-red" style="font-size:24px;">{{ $user_data->keywords_count or '' }}</span> 个
+                        优化关键词数 <span class="text-red" style="font-size:24px;">{{ $index_data->keyword_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        关键词数 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                        检测关键词数 <span class="text-red font-24px">{{ $index_data->keyword_detect_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        今日上词 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                        今日上词 <span class="text-red font-24px">{{ $index_data->keyword_standard_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        今日消费 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                        今日消费 <span class="text-red font-24px">{{ $index_data->keyword_standard_cost_sum or 0 }}</span> 元
                     </span>
                 </div>
             </div>

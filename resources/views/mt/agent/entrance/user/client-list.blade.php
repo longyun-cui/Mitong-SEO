@@ -316,12 +316,12 @@
 //                                    '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    '<a class="btn btn-xs item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
+                                    '<a class="btn btn-xs bg-primary item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                    '<a class="btn btn-xs item-password-submit" data-id="'+data+'">密码</a>'+
-                                    '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                    '<a class="btn btn-xs item-login-submit" data-id="'+data+'">登录</a>';
+                                    '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
+                                    '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+data+'">密码</a>'+
+                                    '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                    '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+data+'">登录</a>';
                                 return html;
                             }
                         }

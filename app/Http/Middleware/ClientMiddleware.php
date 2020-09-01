@@ -35,8 +35,8 @@ class ClientMiddleware
             $user_id = $user->id;
             $user_data = User::with('ep','parent','fund')
                 ->withCount([
-                    'sites'=>function ($query) { $query->where('sitestatus','优化中'); },
-                    'keywords'=>function ($query) { $query->where('keywordstatus','优化中'); }
+                    'sites'=>function ($query) { $query->where(['status'=>1,'sitestatus'=>'优化中']); },
+                    'keywords'=>function ($query) { $query->where(['status'=>1,'keywordstatus'=>'优化中']); }
                 ])
                 ->find($user_id);
             view()->share('user_data', $user_data);

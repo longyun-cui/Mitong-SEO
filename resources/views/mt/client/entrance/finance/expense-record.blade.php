@@ -55,6 +55,8 @@
                         <td></td>
                         <td></td>
                         {{--<td>--}}
+                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>--}}
+                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>--}}
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}

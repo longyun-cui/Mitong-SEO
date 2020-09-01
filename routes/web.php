@@ -12,8 +12,12 @@ require __DIR__.'/frontend.php';
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+/*
+ * TEST
+ */
+Route::group(['namespace' => 'MT\Root'], function () {
+    require(__DIR__ . '/MT/Root/route.php');
 });
 
 

@@ -18,17 +18,21 @@
             <div class="callout callout-green">
                 <h4>今日概览</h4>
                 <div>
-                    <span>优化关键词数</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_num'] or 0 }}</span>
-                    <span style="margin-right:12px;">个</span>
+                    <span style="margin-right:12px;">
+                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
+                    </span>
 
-                    <span>达标关键词数</span>
-                    <span class="text-red" style="font-size:24px;">{{ $data['keyword_standard_num'] or 0 }}</span>
-                    <span style="margin-right:12px;">个</span>
+                    <span style="margin-right:12px;">
+                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
+                    </span>
 
-                    <span>达标消费</span>
-                    <span class="text-red" style="font-size:24px;">￥{{ $data['keyword_standard_cost'] or 0 }}</span>
-                    <span style="margin-right:12px;">元</span>
+                    <span style="margin-right:12px;">
+                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                    </span>
                 </div>
             </div>
         </div>
@@ -279,7 +283,8 @@
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {
@@ -303,7 +308,8 @@
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {
@@ -311,7 +317,8 @@
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
                         }
                     },
                     {

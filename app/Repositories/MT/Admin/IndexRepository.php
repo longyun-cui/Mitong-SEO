@@ -158,7 +158,7 @@ class IndexRepository {
             ->with('ep','parent','fund')
             ->withCount([
                 'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
-                'clients'
+                'clients'=>function ($query) { $query->where('usergroup','Service'); }
             ])
             ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2']);
 
@@ -935,28 +935,37 @@ class IndexRepository {
     // 返回【关键词】视图
     public function show_business_keyword_list()
     {
+        $data = [];
+
         $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1]);
 
+        // 优化关键词总数
         $keyword_count = $query->count('*');
         $data['keyword_count'] = $keyword_count;
 
-        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"))->where('latestranking','>',0)->where('latestranking','<=',10);
+        // 检测关键词总数
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"));
+        $keyword_detect_count = $query_1->count("*");
+        $data['keyword_detect_count'] = $keyword_detect_count;
 
-        $keyword_standard_count = $query_1->count("*");
+        // 已达标关键词总数
+        $query_2 = $query->whereDate('standarddate',date("Y-m-d"))->where('standardstatus','已达标');
+        $keyword_standard_count = $query_2->count("*");
         $data['keyword_standard_count'] = $keyword_standard_count;
 
-        $keyword_standard_fund_sum = $query_1->sum('latestconsumption');
+        // 已达标关键词消费
+        $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
 
 
         $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
         $keyword_standard_fund_sum_1 = $query_detect->count('*');
-        $data['keyword_standard_fund_sum_1'] = $keyword_standard_fund_sum_1;
+        $data['keyword_standard_sum_by_detect'] = $keyword_standard_fund_sum_1;
 
 
         $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
-        $keyword_standard_fund_sum_2 = $query_detect->count('*');
-        $data['keyword_standard_fund_sum_2'] = $keyword_standard_fund_sum_2;
+        $keyword_standard_fund_sum_2 = $query_expense->count('*');
+        $data['keyword_standard_sum_by_expense'] = $keyword_standard_fund_sum_2;
 
         return view('mt.admin.entrance.business.keyword-list')
             ->with([
@@ -1013,18 +1022,22 @@ class IndexRepository {
 
         $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1]);
 
+        // 优化关键词总数
         $keyword_count = $query->count('*');
         $data['keyword_count'] = $keyword_count;
 
+        // 检测关键词总数
         $query_1 = $query->whereDate('detectiondate',date("Y-m-d"));
         $keyword_detect_count = $query_1->count("*");
         $data['keyword_detect_count'] = $keyword_detect_count;
 
+        // 已达标关键词总数
         $query_2 = $query->whereDate('standarddate',date("Y-m-d"))->where('standardstatus','已达标');
-        $keyword_standard_count = $query_1->count("*");
+        $keyword_standard_count = $query_2->count("*");
         $data['keyword_standard_count'] = $keyword_standard_count;
 
-        $keyword_standard_fund_sum = $query_1->sum('latestconsumption');
+        // 已达标关键词消费
+        $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
 
 
