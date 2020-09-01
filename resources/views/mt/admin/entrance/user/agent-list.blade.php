@@ -265,7 +265,7 @@
                             else if(row.usergroup == "Agent2")
                             {
                                 if(row.parent) {
-                                    return '<a target="_blank" href="/item/'+data+'">'+row.parent.username+'</a>';
+                                    return '<a target="_blank" href="/admin/user/agent?id='+row.parent.id+'">'+row.parent.username+'</a>';
                                 }
                                 else return '上级代理参数有误';
                             }
