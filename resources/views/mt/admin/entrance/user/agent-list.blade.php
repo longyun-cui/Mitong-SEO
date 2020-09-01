@@ -256,7 +256,7 @@
 
                                     if(row.agents_count && row.agents_count > 0)
                                     {
-                                        return '<a target="_blank" href="/admin/user/agent/sub-agent-list?id='+data+'">'+row.agents_count+'</a>';
+                                        return '<a target="_blank" href="/admin/user/agent?id='+data+'">'+row.agents_count+'</a>';
                                     }
                                     else return '-';
                                 }
@@ -281,7 +281,7 @@
                         render: function(data, type, row, meta) {
                             if(row.clients_count && row.clients_count > 0)
                             {
-                                return '<a target="_blank" href="/admin/user/agent/client-list?id='+data+'">'+row.clients_count+'</a>';
+                                return '<a target="_blank" href="/admin/user/agent?id='+data+'">'+row.clients_count+'</a>';
                             }
                             else return '-';
 
