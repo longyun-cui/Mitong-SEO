@@ -24,15 +24,15 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
+                        检测 <span class="text-red font-24px">{{ $user_data['keyword_detect_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
+                        达标 <span class="text-red font-24px">{{ $user_data['keyword_standard_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                        达标消费 <span class="text-red font-24px">{{ $user_data['keyword_standard_fund_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
