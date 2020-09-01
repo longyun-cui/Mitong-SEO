@@ -160,7 +160,8 @@ class IndexRepository {
                 'agents'=>function ($query) { $query->where('usergroup','Agent2'); },
                 'clients'=>function ($query) { $query->where('usergroup','Service'); }
             ])
-            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2']);
+            ->where(['userstatus'=>'正常','status'=>1])
+            ->whereIn('usergroup',['Agent','Agent2']);
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
 
@@ -202,7 +203,8 @@ class IndexRepository {
 //            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('parent','ep','fund')
             ->withCount(['sites','keywords'])
-            ->where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Service']);
+            ->where(['userstatus'=>'正常','status'=>1])
+            ->whereIn('usergroup',['Service']);
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
 
@@ -369,6 +371,171 @@ class IndexRepository {
             return response_fail([],$msg);
         }
 
+    }
+
+
+
+
+    // 返回【代理商详情】视图
+    public function view_user_agent($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $user = User::find($id);
+        if($user)
+        {
+            if(!in_array($user->usergroup,['Agent','Agent2'])) return response_error([],"该用户不存在，刷新页面试试！");
+        }
+
+
+        $user->fund_total = number_format($user->fund_total);
+        $user->fund_balance = number_format($user->fund_balance);
+
+        return view('mt.admin.entrance.user.agent')
+            ->with([
+                'user_data'=>$user
+            ]);
+    }
+
+    // 返回【客户详情】视图
+    public function view_user_client($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $user = User::find($id);
+        if($user)
+        {
+            if($user->usergroup != 'Service') return response_error([],"该用户不存在，刷新页面试试！");
+        }
+
+        $user_data = $user;
+
+
+        /*
+         * 关键词
+         */
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$id)->count();
+        $user_data->keyword_count = $keyword_count;
+
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->count();
+        $user_data->keyword_detect_count = $keyword_detect_count;
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+        $user_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
+        $user_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+
+
+        return view('mt.admin.entrance.user.client')
+            ->with([
+                'user_data'=>$user_data
+            ]);
+    }
+
+    // 返回【客户列表】数据
+    public function get_user_agent_client_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+        $id = $post_data["id"];
+        $query = User::select('*')
+            ->with('parent','ep','fund')
+            ->withCount(['sites','keywords'])
+            ->where('pid',$id)
+            ->where(['userstatus'=>'正常','status'=>1])
+            ->whereIn('usergroup',['Service']);
+
+        if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+//            $v->fund_total = number_format($v->fund_total);
+//            $v->fund_expense = number_format($v->fund_expense);
+//            $v->fund_balance = number_format($v->fund_balance);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 返回【关键词】列表
+    public function get_user_client_keyword_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+        $id = $post_data["id"];
+        $query = SEOKeyword::select('*')->with('creator')->where('createuserid',$id);
+
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
     }
 
 

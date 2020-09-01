@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','客户列表 - 管理员后台 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','【代理商】'.$user_data->username.' - 管理员后台 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','客户列表')
+@section('header','【代理商】'.$user_data->username)
 @section('description','搜索引擎智能营销系统-米同科技')
 
 @section('breadcrumb')
@@ -11,13 +11,33 @@
 @endsection
 
 @section('content')
-<div class="row">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="callout callout-green">
+                    <h4>财务概览</h4>
+                    <div>
+                        <span style="margin-right:12px;">
+                            资产总额 <span class="text-red font-24px">{{ $user_data->fund_total or 0 }}</span> 元
+                        </span>
+
+                        <span style="margin-right:12px;">
+                            资产余额 <span class="text-red font-24px">{{ $user_data->fund_balance or 0 }}</span> 元
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">内容列表</h3>
+                <h3 class="box-title">客户列表</h3>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
                         <i class="fa fa-minus"></i></button>
@@ -112,7 +132,7 @@
                     "serverSide": true,
                     "searching": false,
                     "ajax": {
-                        'url': "{{ url('/admin/user/client-list') }}",
+                        'url': "{{ url('/admin/user/agent/client-list?id='.request('id')) }}",
                         "type": 'POST',
                         "dataType" : 'json',
                         "data": function (d) {

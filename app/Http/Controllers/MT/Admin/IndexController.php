@@ -29,13 +29,6 @@ class IndexController extends Controller
     }
 
 
-    // 返回主页视图
-    public function test()
-    {
-        $this->repo->test();
-    }
-
-
 
 
     // 返回【代理商列表】视图
@@ -73,6 +66,45 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get')) return $this->repo->view_user_agent_edit();
         else if (request()->isMethod('post')) return $this->repo->operate_user_agent_save(request()->all());
+    }
+
+
+
+
+
+    // 返回【代理商详情】
+    public function view_user_agent()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_agent(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+    // 返回【客户详情】
+    public function view_user_client()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+
+    // 返回【代理商详情】【客户列表】
+    public function view_user_agent_client_list()
+    {
+        if(request()->isMethod('get'))
+        {
+//            return view('mt.admin.entrance.user.agent-list')->with(['sidebar_agent_list_active'=>'active menu-open']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_user_agent_client_list_datatable(request()->all());
+    }
+
+    // 返回【客户详情】【关键词列表】
+    public function view_user_client_keyword_list()
+    {
+        if(request()->isMethod('get'))
+        {
+//            return view('mt.admin.entrance.user.client-list')->with(['sidebar_client_list_active'=>'active menu-open']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_user_client_keyword_list_datatable(request()->all());
     }
 
 

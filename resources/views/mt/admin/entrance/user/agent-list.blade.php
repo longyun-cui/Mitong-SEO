@@ -230,7 +230,7 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return '<a target="_blank" href="/item/'+data+'">'+row.username+'</a>';
+                            return '<a target="_blank" href="/admin/user/agent?id='+data+'">'+row.username+'</a>';
                         }
                     },
                     {

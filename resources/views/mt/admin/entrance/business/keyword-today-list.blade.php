@@ -319,7 +319,7 @@
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
                             else return parseInt(data);
                         }
                     },
@@ -329,7 +329,7 @@
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
                             else return parseInt(data);
                         }
                     },

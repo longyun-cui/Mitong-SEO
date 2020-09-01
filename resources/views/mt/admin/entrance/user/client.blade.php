@@ -1,8 +1,9 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','【客户】'.$user_data->username.' - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','关键词列表')
+
+@section('header','【客户】'.$user_data->username)
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -19,7 +20,7 @@
                 <h4>今日概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
+                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $user_data['keyword_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -36,10 +37,9 @@
                 </div>
             </div>
         </div>
-        <!-- /.box -->
     </div>
-    <!-- /.col -->
 </div>
+
 
 <div class="row">
     <div class="col-md-12">
@@ -47,7 +47,7 @@
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">内容列表</h3>
+                <h3 class="box-title">关键词列表</h3>
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
@@ -169,7 +169,7 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/keyword-list') }}",
+                    'url': "{{ url('/admin/user/client/keyword-list?id='.request('id')) }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
