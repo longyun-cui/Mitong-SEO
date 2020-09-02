@@ -183,6 +183,13 @@ class IndexController extends Controller
     /*
      * 业务系统
      */
+
+    // 返回【关键词查询】视图
+    public function operate_keyword_search()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
+        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
+    }
     // 返回【站点列表】视图
     public function view_business_site_list()
     {

@@ -83,6 +83,11 @@
                     <i class="fa fa-text-width"></i><span>待审核关键词</span>
                 </a>
             </li>
+            <li class="treeview {{ $sidebar_business_keyword_search_active or '' }}">
+                <a href="{{ url('/admin/business/keyword-search') }}">
+                    <i class="fa fa-search"></i><span>关键词查询</span>
+                </a>
+            </li>
 
 
 

@@ -256,7 +256,7 @@
                     {
                         "width": "48px",
                         "data": "price",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return parseInt(data);
                         }

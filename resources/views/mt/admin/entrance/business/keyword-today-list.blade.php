@@ -265,7 +265,7 @@
                         "width": "48px",
                         "title": "价格",
                         "data": "price",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return parseInt(data);
                         }
