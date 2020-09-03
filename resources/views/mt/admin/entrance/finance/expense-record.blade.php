@@ -42,7 +42,9 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th>操作</th>
+                        <th></th>
+                        <th></th>
+                        <th class="_none">操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -51,8 +53,10 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="createtime" /></td>
-                        <td>
+                        <td></td>
+                        <td class="_none">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
@@ -136,6 +140,16 @@
                         }
                     },
                     {
+                        "width": "64px",
+                        "title": "检测ID",
+                        "data": "detect_id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "width": "",
                         "title": "客户",
                         "data": "id",
                         'orderable': false,
@@ -144,7 +158,7 @@
                         }
                     },
                     {
-                        "width": "160px",
+                        "width": "",
                         "title": "关键词",
                         "data": "id",
                         'orderable': false,
@@ -153,7 +167,7 @@
                         }
                     },
                     {
-                        "width": "160px",
+                        "width": "",
                         "title": "站点",
                         "data": "id",
                         'orderable': false,
@@ -190,6 +204,20 @@
                     },
                     {
                         "width": "64px",
+                        "title": "达标时间",
+                        "data": "standarddate",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
+                        }
+                    },
+                    {
+                        "width": "96px",
                         "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,
@@ -203,6 +231,9 @@
                         }
                     },
                     {
+                        "class": "_none",
+                        "width": "",
+                        "title": "操作",
                         'data': 'id',
                         'orderable': false,
                         render: function(value) {
@@ -211,9 +242,10 @@
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                '';
                             return html;
                         }
                     }

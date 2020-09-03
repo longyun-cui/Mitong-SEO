@@ -84,6 +84,7 @@
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
                                 <option value ="合作停">合作停</option>
+                                <option value ="已删除">已删除</option>
                             </select>
                         </td>
                         <td>
@@ -298,9 +299,17 @@
                         "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
-                            else return data;
+                            if(row.status == 1)
+                            {
+                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
+                                else return data;
+                            }
+                            else
+                            {
+                                return '<small class="btn-xs bg-navy">已删除</small>';
+                            }
                         }
                     },
                     {

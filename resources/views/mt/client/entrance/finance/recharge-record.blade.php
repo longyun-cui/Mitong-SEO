@@ -19,14 +19,6 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-
-                <div class="caption">
-                    <i class="icon-pin font-blue"></i>
-                    <span class="caption-subject font-blue sbold uppercase"></span>
-                    <a href="{{url(config('common.org.admin.prefix').'/item/create')}}">
-                        <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加内容</button>
-                    </a>
-                </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
                         <i class="fa fa-minus"></i></button>
@@ -40,13 +32,13 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>充值源</th>
                         <th>充值对象</th>
                         <th>充值金额</th>
                         <th>说明</th>
                         <th>记录时间</th>
-                        <th>操作</th>
+                        <th class="_none">操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -55,7 +47,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>
+                        <td class="_none">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
@@ -130,7 +122,6 @@
                 "columns": [
                     {
                         "width": "64px",
-                        "className": "text-center",
                         "title": "ID",
                         "data": "id",
                         'orderable': false,
@@ -139,6 +130,7 @@
                         }
                     },
                     {
+                        "className": "text-center",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -154,7 +146,6 @@
                     },
                     {
                         "width": "96px",
-                        "className": "text-center",
                         "title": "充值金额",
                         "data": "amount",
                         'orderable': false,
@@ -171,7 +162,6 @@
                     },
                     {
                         "width": "128px",
-                        "className": "text-center",
                         "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,
@@ -185,7 +175,10 @@
                         }
                     },
                     {
-                        'data': 'id',
+                        "className": "_none",
+                        "width": "128px",
+                        "title": "记录时间",
+                        "data": 'id',
                         'orderable': false,
                         render: function(value) {
                             var html =

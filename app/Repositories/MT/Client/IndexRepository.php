@@ -154,7 +154,17 @@ class IndexRepository {
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
         if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
-        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus']);
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
 
         $total = $query->count();
 

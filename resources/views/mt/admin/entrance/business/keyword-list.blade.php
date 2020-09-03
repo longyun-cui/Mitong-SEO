@@ -74,8 +74,8 @@
                         <th>单价</th>
                         <th>初始排名</th>
                         <th>最新排名</th>
-                        <th>检测时间</th>
                         <th>最新消费</th>
+                        <th>检测时间</th>
                         <th>达标天数</th>
                         <th>累计消费</th>
                         <th>状态</th>
@@ -110,6 +110,7 @@
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
                                 <option value ="合作停">合作停</option>
+                                <option value ="已删除">已删除</option>
                             </select>
                         </td>
                         <td>
@@ -205,6 +206,7 @@
                     },
                     {
                         "width": "",
+                        "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -213,6 +215,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -221,6 +224,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "站点",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -229,6 +233,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -242,6 +247,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "关键词",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -255,6 +261,7 @@
                     },
                     {
                         "width": "48px",
+                        "title": "单价",
                         "data": "price",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -263,6 +270,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "初始排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -271,6 +279,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -280,6 +289,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "最新消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -289,6 +299,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "检测时间",
                         "data": "detectiondate",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -305,6 +316,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "达标天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -314,6 +326,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "累计消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {

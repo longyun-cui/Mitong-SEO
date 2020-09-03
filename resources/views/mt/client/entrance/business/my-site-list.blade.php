@@ -201,7 +201,9 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs bg-navy item-work-submit" data-id="'+value+'" >工单</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                '';
                             return html;
                         }
                     }
