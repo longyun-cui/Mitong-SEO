@@ -212,7 +212,7 @@
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : row.creator.username;
+                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
                         }
                     },
                     {
@@ -221,7 +221,27 @@
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            if(row.searchengine == "baidu")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "baidu_mobile")
+                            {
+                                return '<a target="_blank" href="https://m.baidu.com/ssid=fd5379616e677a696c676c8223/from=1012971h/s?&ie=utf-8&word='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "sougou")
+                            {
+                                return '<a target="_blank" href="https://www.sogou.com/web?ie=utf8&query='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "360")
+                            {
+                                return '<a target="_blank" href="https://www.so.com/s?ie=utf-8&q='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "shenma")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+data+'">'+data+'</a>';
+                            }
+                            else return data;
                         }
                     },
                     {
