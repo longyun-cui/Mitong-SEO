@@ -1027,10 +1027,16 @@ class IndexRepository {
         $query = SEOSite::select('*')->with('creator')
             ->withCount([
                 'keywords',
-                'keywords as keywords_standard_count'=>function ($query) { $query->where('standardstatus','已达标'); },
-                'keywords as consumption_sum'=>function ($query) {
-                    $query->select(DB::raw("sum(price) as consumption_sum"))->where('standardstatus','已达标');
-                }
+                'keywords as standard_today_count'=>function ($query) { $query->where('standardstatus','已达标'); },
+                'keywords as consumption_today_sum'=>function ($query) {
+                    $query->select(DB::raw("sum(price) as consumption_today_sum"))->where('standardstatus','已达标');
+                },
+                'keywords as standard_all_sum'=>function ($query) {
+                    $query->select(DB::raw("sum(standarddays) as standard_all_sum"));
+                },
+                'keywords as consumption_all_sum'=>function ($query) {
+                    $query->select(DB::raw("sum(totalconsumption) as consumption_all_sum"));
+                },
             ]);
 
         $total = $query->count();
@@ -2414,6 +2420,219 @@ class IndexRepository {
 
 
 
+    // 删除【站点】
+    public function operate_business_site_delete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'delete-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["status"] = 0;
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 删除【关键词】
+    public function operate_business_keyword_delete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'delete-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["status"] = 0;
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+    // 删除【站点】
+    public function operate_business_site_stop($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'stop-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["sitestatus"] = "合作停";
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 删除【关键词】
+    public function operate_business_keyword_stop($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'stop-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["keywordstatus"] = "合作停";
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
     // 返回【关键词查询】视图
     public function view_business_keyword_search()
     {
@@ -2990,13 +3209,10 @@ class IndexRepository {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = FundRechargeRecord::select('*')
 //        $query = FundRechargeRecord::select('id','userid','puserid','createuserid','amount','createtime')
-            ->with('user','parent','creator')
-            ->orderby("id","desc");
+            ->with('user','parent','creator');
 
         if(!empty($post_data['creator'])) $query->where('createusername', 'like', "%{$post_data['creator']}%");
 //        {
-//
-//
 //            $query->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
 //        }
 
@@ -3036,8 +3252,7 @@ class IndexRepository {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = ExpenseRecord::select('*')
 //        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
-            ->with('user','site','keyword')
-            ->orderby("id","desc");
+            ->with('user','site','keyword');
 
         if(!empty($post_data['createtime']))
         {
@@ -3078,8 +3293,7 @@ class IndexRepository {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = ExpenseRecord::select('*')
 //        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
-            ->with('user','site','keyword')
-            ->orderby("id","desc");
+            ->with('user','site','keyword');
 
         if(!empty($post_data['createtime']))
         {
@@ -3138,8 +3352,7 @@ class IndexRepository {
     {
         $admin = Auth::guard("admin")->user();
         $query = FundFreezeRecord::select('*')
-            ->with('creator','site','keyword')
-            ->orderby("id","desc");
+            ->with('creator','site','keyword');
 
         $total = $query->count();
 
@@ -3169,10 +3382,6 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
-
-
-
-
 
 
 

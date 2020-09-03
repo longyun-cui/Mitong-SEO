@@ -324,7 +324,7 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs bg-navy item-data-detail-link" data-id="'+value+'" >历史数据</a>';
+                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >历史数据</a>';
                             return html;
                         }
                     }

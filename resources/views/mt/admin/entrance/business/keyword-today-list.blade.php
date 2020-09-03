@@ -305,6 +305,7 @@
                         "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            if(!data) return '--';
 //                            return data;
                             var $date = new Date(data);
                             var $year = $date.getFullYear();

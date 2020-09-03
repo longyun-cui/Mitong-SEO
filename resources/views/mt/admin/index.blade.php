@@ -87,7 +87,6 @@
 {{--消费统计--}}
 <div class="row">
     <div class="col-md-12">
-        <!-- BEGIN PORTLET-->
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
@@ -112,7 +111,6 @@
             </div>
 
         </div>
-        <!-- END PORTLET-->
     </div>
 </div>
 

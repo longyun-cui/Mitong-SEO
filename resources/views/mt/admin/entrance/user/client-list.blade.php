@@ -395,20 +395,19 @@
             // 【下载二维码】
             $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
                 var that = $(this);
-                window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+                window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
             });
 
             // 【数据分析】
             $("#item-main-body").on('click', ".item-statistics-submit", function() {
                 var that = $(this);
-                window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+                window.open("/statistics/item?id="+that.attr('data-id'));
             });
 
             // 【编辑】
             $("#item-main-body").on('click', ".item-edit-submit", function() {
                 var that = $(this);
-                {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                    window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+                window.location.href = "/admin/user/client-edit?id="+that.attr('data-id');
             });
 
             // 【登录】
@@ -451,6 +450,9 @@
                 });
             });
 
+
+
+
             // 【启用】
             $("#item-main-body").on('click', ".item-enable-submit", function() {
                 var that = $(this);
@@ -473,7 +475,6 @@
                     }
                 });
             });
-
             // 【禁用】
             $("#item-main-body").on('click', ".item-disable-submit", function() {
                 var that = $(this);

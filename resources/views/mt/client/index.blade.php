@@ -112,27 +112,27 @@
                 <h4>财务概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red" style="font-size:24px;">{{ $user_data->fund_total or 0 }}</span> 个
+                        资金总额 <span class="text-red" style="font-size:24px;">{{ number_format((int)$user_data->fund_total) }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red font-24px">{{ $user_data->fund_total or 0 }}</span> 元
+                        资金总额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_total) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        累计消费 <span class="text-red font-24px">{{ $user_data->fund_expense or 0 }}</span> 元
+                        累计消费 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_expense) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金余额 <span class="text-red font-24px">{{ $user_data->fund_balance or 0 }}</span> 元
+                        资金余额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_balance) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        可用金额 <span class="text-red font-24px">{{ $user_data->fund_available or 0 }}</span> 元
+                        可用金额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_available) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        冻结金额 <span class="text-red font-24px">{{ $user_data->fund_frozen or 0 }}</span> 元
+                        冻结金额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_frozen) }}</span> 元
                     </span>
                 </div>
             </div>

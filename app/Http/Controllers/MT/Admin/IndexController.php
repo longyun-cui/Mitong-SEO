@@ -246,6 +246,9 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_todo_list_datatable(request()->all());
     }
 
+
+
+
     // 返回【关键词检测记录】视图
     public function view_business_keyword_detect_record()
     {
@@ -253,19 +256,19 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
     }
 
-    // 返回【关键词检测记录】视图
+    // 添加【关键词检测记录】
     public function operate_business_keyword_detect_create_rank()
     {
         return $this->repo->operate_business_keyword_detect_create_rank(request()->all());
     }
 
-    // 返回【关键词检测记录】视图
+    // 修改【关键词检测记录】
     public function operate_business_keyword_detect_set_rank()
     {
         return $this->repo->operate_business_keyword_detect_set_rank(request()->all());
     }
 
-    // 返回【关键词检测记录】视图
+    // 批量修改【关键词检测记录】
     public function operate_business_keyword_detect_set_rank_bulk()
     {
         return $this->repo->operate_business_keyword_detect_set_rank_bulk(request()->all());
@@ -321,6 +324,32 @@ class IndexController extends Controller
     public function operate_business_keyword_todo_delete_bulk()
     {
         return $this->repo->operate_business_keyword_todo_delete_bulk(request()->all());
+    }
+
+
+
+
+    // 删除【站点】
+    public function operate_business_site_delete()
+    {
+        return $this->repo->operate_business_site_delete(request()->all());
+    }
+    // 删除【关键词】
+    public function operate_business_keyword_delete()
+    {
+        return $this->repo->operate_business_keyword_delete(request()->all());
+    }
+
+
+    // 合作停【站点】
+    public function operate_business_site_stop()
+    {
+        return $this->repo->operate_business_site_stop(request()->all());
+    }
+    // 合作停【关键词】
+    public function operate_business_keyword_stop()
+    {
+        return $this->repo->operate_business_keyword_stop(request()->all());
     }
 
 

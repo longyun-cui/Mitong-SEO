@@ -34,14 +34,14 @@ class IndexRepository {
          */
         // 今日优化关键词
         $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$me_id)->count();
-        $index_data->keyword_count = $keyword_count;
+        $index_data->keyword_count = number_format((int)$keyword_count);
 
         // 今日检测关键词
         $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
             ->whereDate('detectiondate',date("Y-m-d"))
             ->where('createuserid',$me_id)
             ->count();
-        $index_data->keyword_detect_count = $keyword_detect_count;
+        $index_data->keyword_detect_count = number_format((int)$keyword_detect_count);
 
         // 今日达标关键词
         $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
@@ -53,8 +53,8 @@ class IndexRepository {
                     \DB::raw('SUM(price) as keyword_standard_cost_sum')
                 )
             );
-        $index_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
-        $index_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+        $index_data->keyword_standard_count = number_format((int)$keyword_standard_data->keyword_standard_count);
+        $index_data->keyword_standard_cost_sum = number_format((int)$keyword_standard_data->keyword_standard_cost_sum);
 
 
         return view('mt.client.index')
@@ -1258,6 +1258,63 @@ class IndexRepository {
 
 
 
+
+    /*
+     * 财务系统
+     */
+    // 返回【财务概览】视图
+    public function show_finance_overview()
+    {
+        $me = Auth::guard("client")->user();
+
+
+        $this_month = date('Y-m');
+        $this_month_year = date('Y');
+        $this_month_month = date('m');
+        $last_month = date('Y-m',strtotime('last month'));
+        $last_month_year = date('Y',strtotime('last month'));
+        $last_month_month = date('m',strtotime('last month'));
+
+        $query1 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$this_month_year)
+            ->whereMonth('standarddate',$this_month_month)
+            ->where('ownuserid',$me->id);
+        $count1 = $query1->count("*");
+        $sum1 = $query1->sum("price");
+        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $query2 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$last_month_year)
+            ->whereMonth('standarddate',$last_month_month)
+            ->where('ownuserid',$me->id);
+        $count2 = $query2->count("*");
+        $sum2 = $query2->sum("price");
+        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $consumption_data[0]['month'] = $this_month;
+        $consumption_data[0]['data'] = $data1->keyBy('day');
+        $consumption_data[1]['month'] = $last_month;
+        $consumption_data[1]['data'] = $data2->keyBy('day');
+
+        return view('mt.client.entrance.finance.overview')
+            ->with([
+                'sidebar_finance_active'=>'active',
+                'sidebar_finance_overview_active'=>'active',
+                'consumption_data'=>$consumption_data
+            ]);
+    }
 
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)

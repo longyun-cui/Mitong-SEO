@@ -36,7 +36,7 @@
 
             <div class="box-body datatable-body" id="item-main-body">
                 <!-- datatable start -->
-                <table class='table table-striped table-bordered' id='datatable_ajax'>
+                <table class='table table-striped- table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
                         <th>ID</th>
@@ -45,9 +45,11 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -155,23 +157,12 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "96px",
                         "title": "优化关键词数",
                         "data": "keywords_count",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return '<a target="_blank" href="/client/business/site/keyword-list?id='+row.id+'">'+data+'</a>';
-                        }
-                    },
-                    {
-                        "width": "",
-                        "title": "状态",
-                        "data": "sitestatus",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
-                            else return data;
                         }
                     },
                     {
@@ -189,11 +180,41 @@
                         }
                     },
                     {
+                        "width": "96px",
+                        "title": "状态",
+                        "data": "sitestatus",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
+                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                            else return data;
+                        }
+                    },
+                    {
+                        "width": "72px",
+                        "title": "工单",
+                        "data": 'id',
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return '<a class="btn btn-xs bg-navy item-work-submit" data-id="'+data+'" >工单</a>';
+                        }
+                    },
+                    {
                         "width": "",
                         "title": "操作",
                         "data": 'id',
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
+                            if(row.sitestatus == "待审核")
+                            {
+                                var $edit_html = '<a class="btn btn-xs bg-navy item-edit-link" data-id="'+data+'" >编辑</a>';
+                                var $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
+                            }
+                            else
+                            {
+                                var $edit_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >编辑</a>';
+                                var $delete_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >删除</a>';
+                            }
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -201,8 +222,8 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-work-submit" data-id="'+value+'" >工单</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                $edit_html+
+                                $delete_html+
                                 '';
                             return html;
                         }
@@ -294,8 +315,7 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/client/business/site-edit?id="+that.attr('data-id');
+            window.location.href = "/client/business/site-edit?id="+that.attr('data-id');
         });
 
         // 【删除】
@@ -325,6 +345,9 @@
             });
         });
 
+
+
+
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -347,7 +370,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

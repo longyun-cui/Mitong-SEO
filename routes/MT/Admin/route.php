@@ -90,6 +90,12 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/keyword-todo-delete', $controller.'@operate_business_keyword_todo_delete');
         Route::match(['get','post'], '/business/keyword-todo-delete-bulk', $controller.'@operate_business_keyword_todo_delete_bulk');
 
+        Route::match(['get','post'], '/business/site-delete', $controller.'@operate_business_site_delete');
+        Route::match(['get','post'], '/business/keyword-delete', $controller.'@operate_business_keyword_delete');
+
+        Route::match(['get','post'], '/business/site-stop', $controller.'@operate_business_site_stop');
+        Route::match(['get','post'], '/business/keyword-stop', $controller.'@operate_business_keyword_stop');
+
 
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/overview-month', $controller.'@view_finance_overview_month');

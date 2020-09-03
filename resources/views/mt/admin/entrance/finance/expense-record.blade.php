@@ -134,7 +134,7 @@
                         "width": "64px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
@@ -194,12 +194,12 @@
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "价格",
+                        "width": "72px",
+                        "title": "消费金额",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            return '<span class="text-blue">'+data+'元</span>';
                         }
                     },
                     {

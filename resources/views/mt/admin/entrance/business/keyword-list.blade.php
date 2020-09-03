@@ -65,20 +65,20 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>关键词</th>
-                        <th>站点</th>
-                        <th>搜索引擎</th>
-                        <th>创建时间</th>
-                        <th>单价</th>
-                        <th>初始排名</th>
-                        <th>最新排名</th>
-                        <th>最新消费</th>
-                        <th>检测时间</th>
-                        <th>达标天数</th>
-                        <th>累计消费</th>
-                        <th>状态</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
@@ -261,7 +261,7 @@
                     },
                     {
                         "width": "48px",
-                        "title": "单价",
+                        "title": "价格",
                         "data": "price",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -303,6 +303,7 @@
                         "data": "detectiondate",
                         'orderable': true,
                         render: function(data, type, row, meta) {
+                            if(!data) return '--';
 //                            return data;
 //                            newDate = new Date(data);
 //                            return newDate.toLocaleDateString('chinese',{hour12:false});
@@ -336,6 +337,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "状态",
                         "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -353,6 +355,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "操作",
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -466,9 +470,9 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/item/edit?id="+that.attr('data-id');
+            window.location.href = "/item/edit?id="+that.attr('data-id');
         });
+
 
         // 【数据详情】
         $("#item-main-body").on('click', ".item-data-detail-link", function() {
@@ -494,16 +498,59 @@
             $('#modal-body').modal('show');
         });
 
+
+
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要删除该"产品"么', {
+            layer.msg('确定要"删除"么？', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-delete') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"delete-keyword",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
                 }
             });
         });
+
+        // 【合作停】
+        $("#item-main-body").on('click', ".item-stop-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"合作停"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-stop') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"stop-keyword",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
@@ -527,7 +574,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

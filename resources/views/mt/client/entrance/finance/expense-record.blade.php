@@ -39,13 +39,14 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>站点</th>
-                        <th>关键词</th>
-                        <th>价格</th>
-                        <th>记录时间</th>
-                        {{--<th>操作</th>--}}
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="_none">操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -54,9 +55,10 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        {{--<td>--}}
-                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>--}}
-                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>--}}
+                        <td></td>
+                        <td class="_none">
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
@@ -69,7 +71,7 @@
                                     {{--<li><a href="#">Separated link</a></li>--}}
                                 {{--</ul>--}}
                             {{--</div>--}}
-                        {{--</td>--}}
+                        </td>
                     </tr>
                     </thead>
                     <tbody>
@@ -128,13 +130,17 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "72px",
+                        "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
+                        "width": "192px",
+                        "title": "用户",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -142,13 +148,8 @@
                         }
                     },
                     {
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
-                        }
-                    },
-                    {
+                        "width": "",
+                        "title": "关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -156,34 +157,68 @@
                         }
                     },
                     {
-                        "data": "price",
+                        "width": "",
+                        "title": "站点",
+                        "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data+'元';
+                            return row.site == null ? '未知' : row.site.website;
                         }
                     },
                     {
+                        "width": "96px",
+                        "title": "搜索引擎",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(row.keyword == null) return '未知';
+                            else {
+                                var $engine = row.keyword.searchengine;
+                                if($engine = "baidu") return '百度PC';
+                                else if($engine = "baidu_mobile") return '百度移动';
+                                else if($engine = "sougou") return '搜狗';
+                                else if($engine = "360") return '360';
+                                else if($engine = "shenma") return '神马';
+                                else return $engine;
+                            }
+                        }
+                    },
+                    {
+                        "width": "96px",
+                        "title": "消费金额",
+                        "data": "price",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return '<span class="text-blue">'+data+'元</span>';
+                        }
+                    },
+                    {
+                        "width": "",
+                        "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
-                    {{--{--}}
-                        {{--'data': 'id',--}}
-                        {{--'orderable': false,--}}
-                        {{--render: function(value) {--}}
-                            {{--var html =--}}
-                                {{--'<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+--}}
-                                {{--'<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+--}}
-                                {{--'<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+--}}
-                                {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
-                                {{--'<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';--}}
-                            {{--return html;--}}
-                        {{--}--}}
-                    {{--}--}}
+                    {
+                        "className": "_none",
+                        "width": "",
+                        "title": "操作",
+                        "data": 'id',
+                        'orderable': false,
+                        render: function(value) {
+                            var html =
+                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                                '<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+
+                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                            return html;
+                        }
+                    }
                 ],
                 "drawCallback": function (settings) {
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});

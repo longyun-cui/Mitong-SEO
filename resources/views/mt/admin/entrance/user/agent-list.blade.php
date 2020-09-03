@@ -495,8 +495,7 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/admin/user/agent-edit?id="+that.attr('data-id');
+            window.location.href = "/admin/user/agent-edit?id="+that.attr('data-id');
         });
 
 
@@ -705,6 +704,9 @@
                 }
             });
         });
+
+
+
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {

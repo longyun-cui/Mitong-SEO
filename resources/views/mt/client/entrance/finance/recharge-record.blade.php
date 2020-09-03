@@ -124,13 +124,15 @@
                         "width": "64px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
                         "className": "text-center",
+                        "width": "192px",
+                        "title": "充值源",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -138,6 +140,8 @@
                         }
                     },
                     {
+                        "width": "192px",
+                        "title": "充值对象",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -148,13 +152,6 @@
                         "width": "96px",
                         "title": "充值金额",
                         "data": "amount",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
-                    {
-                        "data": "puserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
@@ -175,9 +172,18 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "说明",
+                        "data": "puserid",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
                         "className": "_none",
-                        "width": "128px",
-                        "title": "记录时间",
+                        "width": "",
+                        "title": "操作",
                         "data": 'id',
                         'orderable': false,
                         render: function(value) {

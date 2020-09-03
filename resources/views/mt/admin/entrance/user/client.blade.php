@@ -65,12 +65,12 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
-                        <th>客户</th>
-                        <th>关键词</th>
-                        <th>站点</th>
-                        <th>搜索引擎</th>
-                        <th>创建时间</th>
+                        <th>ID</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>单价</th>
                         <th>初始排名</th>
                         <th>最新排名</th>
@@ -205,6 +205,7 @@
                     },
                     {
                         "width": "",
+                        "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -213,6 +214,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -221,6 +223,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "站点",
                         "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -229,6 +232,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -242,6 +246,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "创建时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -255,6 +260,7 @@
                     },
                     {
                         "width": "48px",
+                        "title": "价格",
                         "data": "price",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -263,6 +269,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "初始排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -271,6 +278,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -280,6 +288,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "最新消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -289,6 +298,7 @@
                     },
                     {
                         "width": "72px",
+                        "title": "检测时间",
                         "data": "detectiondate",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -305,6 +315,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "达标天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -314,6 +325,7 @@
                     },
                     {
                         "width": "56px",
+                        "title": "累计消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -323,6 +335,7 @@
                     },
                     {
                         "width": "64px",
+                        "title": "状态",
                         "data": "keywordstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -340,6 +353,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "操作",
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -453,8 +468,7 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/item/edit?id="+that.attr('data-id');
+            window.location.href = "/admin/user/edit?id="+that.attr('data-id');
         });
 
         // 【数据详情】
@@ -462,7 +476,6 @@
             var that = $(this);
             window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
         });
-
         // 【数据详情】
         $("#item-main-body").on('click', ".item-data-detail-show", function() {
             var that = $(this);
@@ -481,16 +494,59 @@
             $('#modal-body').modal('show');
         });
 
+
+
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要删除该"产品"么', {
+            layer.msg('确定要"删除"么？', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-delete') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"delete-keyword",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
                 }
             });
         });
+
+        // 【合作停】
+        $("#item-main-body").on('click', ".item-stop-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"合作停"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/keyword-stop') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"stop-keyword",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
@@ -514,7 +570,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

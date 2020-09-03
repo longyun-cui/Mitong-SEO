@@ -45,9 +45,13 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -145,7 +149,7 @@
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : row.creator.username;
+                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
                         }
                     },
                     {
@@ -183,29 +187,70 @@
                     },
                     {
                         "width": "",
-                        "title": "今日达标关键词",
+                        "title": "今日达标",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             if(row.keywords_standard_count)
                             {
-                                if(row.keywords_standard_count > 0) return '<span class="text-blue">'+row.keywords_standard_count+'</span>';
-                                else row.keywords_standard_count;
+                                if(row.standard_today_count > 0)
+                                {
+                                    return '<span class="text-blue">'+row.standard_today_count.toLocaleString()+'</span>';
+                                }
+                                else return parseInt(row.standard_today_count).toLocaleString();
                             }
                             else return 0;
                         }
                     },
                     {
                         "width": "",
-                        "title": "达标消费",
+                        "title": "今日消费",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return row.consumption_sum == null ? 0 : row.consumption_sum;
-                            if(row.consumption_sum)
+                            if(row.consumption_today_sum)
                             {
-                                if(row.consumption_sum > 0) return '<span class="text-blue">'+parseInt(row.consumption_sum)+'元</span>';
-                                else parseInt(row.consumption_sum);
+                                if(row.consumption_today_sum > 0)
+                                {
+                                    return '<span class="text-blue">'+parseInt(row.consumption_today_sum).toLocaleString()+'</span>';
+                                }
+                                else return parseInt(row.consumption_today_sum).toLocaleString();
+                            }
+                            else return 0;
+                        }
+                    },
+                    {
+                        "width": "",
+                        "title": "累计达标",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(row.standard_all_sum)
+                            {
+                                if(row.standard_all_sum > 0)
+                                {
+                                    return '<span class="text-blue">'+row.standard_all_sum.toLocaleString()+'</span>';
+                                }
+                                else return parseInt(row.standard_all_sum).toLocaleString();
+                            }
+                            else return 0;
+                        }
+                    },
+                    {
+                        "width": "",
+                        "title": "累计消费",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+//                            return row.consumption_sum == null ? 0 : row.consumption_sum;
+                            if(row.consumption_all_sum)
+                            {
+                                if(row.consumption_all_sum > 0)
+                                {
+                                    return '<span class="text-blue">'+parseInt(row.consumption_all_sum).toLocaleString()+'</span>';
+                                }
+                                else return parseInt(row.consumption_all_sum);
                             }
                             else return 0;
                         }
@@ -230,10 +275,17 @@
                         "data": "sitestatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
-                            else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
-                            else return data;
+                            if(row.status == 1)
+                            {
+                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
+                                else return data;
+                            }
+                            else
+                            {
+                                return '<small class="btn-xs bg-navy">已删除</small>';
+                            }
                         }
                     },
                     {
@@ -328,33 +380,34 @@
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+            window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
         });
 
         // 【数据分析】
         $("#item-main-body").on('click', ".item-statistics-submit", function() {
             var that = $(this);
-            window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+            window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要删除该"产品"么', {
+            layer.msg('确定要"删除"么？', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/item/delete') }}",
+                        "{{ url('/admin/business/site-delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
+                            operate:"delete-site",
                             id:that.attr('data-id')
                         },
                         function(data){
@@ -366,6 +419,33 @@
                 }
             });
         });
+
+        // 【合作停】
+        $("#item-main-body").on('click', ".item-stop-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"合作停"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/site-stop') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"stop-site",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
@@ -389,7 +469,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

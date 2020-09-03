@@ -149,8 +149,7 @@ class IndexController extends Controller
     // 返回【财务概览】视图
     public function view_finance_overview()
     {
-        return view('mt.client.entrance.finance.overview')
-            ->with(['sidebar_finance_active'=>'active','sidebar_finance_overview_active'=>'active']);
+        return $this->repo->show_finance_overview();
     }
 
     // 返回【财务概览】视图
