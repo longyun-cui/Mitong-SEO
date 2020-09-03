@@ -3074,7 +3074,7 @@ class IndexRepository {
                 'sidebar_finance_overview_active'=>'active'
             ]);
     }
-    // 返回【消费记录】数据
+    // 返回【财务概览】数据
     public function get_finance_overview_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -3137,8 +3137,7 @@ class IndexRepository {
         return view('mt.admin.entrance.finance.overview-month')
             ->with([
                 'data'=>$data,
-                'sidebar_finance_active'=>'active',
-                'sidebar_finance_overview_active'=>'active'
+                'sidebar_finance_active'=>'active'
             ]);
     }
     // 返回【月份财务】数据

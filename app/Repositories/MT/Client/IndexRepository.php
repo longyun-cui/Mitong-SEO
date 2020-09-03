@@ -28,6 +28,45 @@ class IndexRepository {
         $me_id = $me->id;
         $index_data = $me;
 
+        $this_month = date('Y-m');
+        $this_month_year = date('Y');
+        $this_month_month = date('m');
+        $last_month = date('Y-m',strtotime('last month'));
+        $last_month_year = date('Y',strtotime('last month'));
+        $last_month_month = date('m',strtotime('last month'));
+
+        $query1 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$this_month_year)
+            ->whereMonth('standarddate',$this_month_month)
+            ->where('ownuserid',$me->id);
+        $count1 = $query1->count("*");
+        $sum1 = $query1->sum("price");
+        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $query2 = ExpenseRecord::select('id','price','standarddate','createtime')
+            ->whereYear('standarddate',$last_month_year)
+            ->whereMonth('standarddate',$last_month_month)
+            ->where('ownuserid',$me->id);
+        $count2 = $query2->count("*");
+        $sum2 = $query2->sum("price");
+        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%e') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))->get();
+
+        $consumption_data[0]['month'] = $this_month;
+        $consumption_data[0]['data'] = $data1->keyBy('day');
+        $consumption_data[1]['month'] = $last_month;
+        $consumption_data[1]['data'] = $data2->keyBy('day');
 
         /*
          * 关键词
@@ -58,7 +97,10 @@ class IndexRepository {
 
 
         return view('mt.client.index')
-            ->with(['index_data'=>$index_data]);
+            ->with([
+                'index_data'=>$index_data,
+                'consumption_data'=>$consumption_data
+            ]);
     }
 
 
@@ -1267,54 +1309,143 @@ class IndexRepository {
     {
         $me = Auth::guard("client")->user();
 
-
-        $this_month = date('Y-m');
-        $this_month_year = date('Y');
-        $this_month_month = date('m');
-        $last_month = date('Y-m',strtotime('last month'));
-        $last_month_year = date('Y',strtotime('last month'));
-        $last_month_month = date('m',strtotime('last month'));
-
-        $query1 = ExpenseRecord::select('id','price','standarddate','createtime')
-            ->whereYear('standarddate',$this_month_year)
-            ->whereMonth('standarddate',$this_month_month)
-            ->where('ownuserid',$me->id);
-        $count1 = $query1->count("*");
-        $sum1 = $query1->sum("price");
-        $data1 = $query1->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
-            ->select(DB::raw("
-                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
-                    DATE_FORMAT(standarddate,'%e') as day,
-                    sum(price) as sum,
-                    count(*) as count
-                "))->get();
-
-        $query2 = ExpenseRecord::select('id','price','standarddate','createtime')
-            ->whereYear('standarddate',$last_month_year)
-            ->whereMonth('standarddate',$last_month_month)
-            ->where('ownuserid',$me->id);
-        $count2 = $query2->count("*");
-        $sum2 = $query2->sum("price");
-        $data2 = $query2->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
-            ->select(DB::raw("
-                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
-                    DATE_FORMAT(standarddate,'%e') as day,
-                    sum(price) as sum,
-                    count(*) as count
-                "))->get();
-
-        $consumption_data[0]['month'] = $this_month;
-        $consumption_data[0]['data'] = $data1->keyBy('day');
-        $consumption_data[1]['month'] = $last_month;
-        $consumption_data[1]['data'] = $data2->keyBy('day');
-
         return view('mt.client.entrance.finance.overview')
             ->with([
                 'sidebar_finance_active'=>'active',
-                'sidebar_finance_overview_active'=>'active',
-                'consumption_data'=>$consumption_data
+                'sidebar_finance_overview_active'=>'active'
             ]);
     }
+    // 返回【财务概览】数据
+    public function get_finance_overview_datatable($post_data)
+    {
+        $me = Auth::guard("client")->user();
+
+        $query = ExpenseRecord::select('id','price','standarddate','createtime');
+        $data = $query->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m')"))
+            ->select(
+                DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%Y-%m') as month,
+                    DATE_FORMAT(standarddate,'%d') as day,
+                    sum(price) as sum,
+                    count(*) as count
+                "))
+            ->where("ownuserid",$me->id)
+            ->orderby("month","desc")
+            ->get();
+
+        $list = $data->keyBy('month')->sortByDesc('month');
+        $total = $list->count();
+        $list = collect(array_values($list->toArray()));
+
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : -1;
+
+//        if(isset($post_data['order']))
+//        {
+//            $columns = $post_data['columns'];
+//            $order = $post_data['order'][0];
+//            $order_column = $order['column'];
+//            $order_dir = $order['dir'];
+//
+//            $field = $columns[$order_column]["data"];
+//            $query->orderBy($field, $order_dir);
+//        }
+//        else $query->orderBy("id", "desc");
+//
+//        if($limit == -1) $list = $query->get();
+//        else $list = $query->skip($skip)->take($limit)->get();
+
+//        foreach ($list as $k => $v)
+//        {
+//            $list[$k]->encode_id = encode($v->id);
+//        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+    // 返回【月份财务】视图
+    public function show_finance_overview_month($post_data)
+    {
+        $month = $post_data['month'];
+        $month_arr = explode("-",$month);
+        $_year = $month_arr[0];
+        $_month = $month_arr[1];
+
+        $data = [];
+        return view('mt.client.entrance.finance.overview-month')
+            ->with([
+                'data'=>$data,
+                'sidebar_finance_active'=>'active'
+            ]);
+    }
+    // 返回【月份财务】数据
+    public function get_finance_overview_month_datatable($post_data)
+    {
+        $me = Auth::guard("client")->user();
+
+        $month = $post_data['month'];
+        $month_arr = explode("-",$month);
+        $_year = $month_arr[0];
+        $_month = $month_arr[1];
+
+        $query = ExpenseRecord::select('id','price','standarddate')->whereYear('standarddate',$_year)->whereMonth('standarddate',$_month);
+        $list = $query->groupBy(DB::raw("STR_TO_DATE(standarddate,'%Y-%m-%d')"))
+            ->select(
+                DB::raw("
+                    STR_TO_DATE(standarddate,'%Y-%m-%d') as date,
+                    DATE_FORMAT(standarddate,'%Y-%m') as month,
+                    DATE_FORMAT(standarddate,'%d') as day,
+                    DATE_FORMAT(standarddate,'%e') as day_0,
+                    sum(price) as sum,
+                    count(*) as count
+                "))
+            ->where("ownuserid",$me->id)
+            ->orderby("day","desc")
+            ->get();
+
+
+//        $list = $data->groupBy(function ($item, $key) {
+//            return date("Y-m-d",strtotime($item['createtime']));
+//        });
+
+//        $list = $data->keyBy('month')->sortByDesc('month');
+        $total = $list->count();
+        $list = collect(array_values($list->toArray()));
+
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : -1;
+
+//        if(isset($post_data['order']))
+//        {
+//            $columns = $post_data['columns'];
+//            $order = $post_data['order'][0];
+//            $order_column = $order['column'];
+//            $order_dir = $order['dir'];
+//
+//            $field = $columns[$order_column]["data"];
+//            $query->orderBy($field, $order_dir);
+//        }
+//        else $query->orderBy("id", "desc");
+//
+//        if($limit == -1) $list = $query->get();
+//        else $list = $query->skip($skip)->take($limit)->get();
+
+//        foreach ($list as $k => $v)
+//        {
+//            $list[$k]->encode_id = encode($v->id);
+//        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+
 
     // 返回【充值记录】数据
     public function get_finance_recharge_record_datatable($post_data)
