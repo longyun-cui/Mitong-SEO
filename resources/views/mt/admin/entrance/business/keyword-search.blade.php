@@ -175,14 +175,6 @@
                                 <!-- datatable end -->
                             </div>
 
-                            <script type="text/javascript">
-                                $(function() {
-                                    $("#select_all").click(function() {
-                                        $('input[name="check[]"]').prop("checked",this.checked);
-                                    });
-                                });
-                            </script>
-
                         </div>
 
                         {{--</form>--}}
