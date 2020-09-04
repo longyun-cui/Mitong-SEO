@@ -37,7 +37,10 @@ class IndexController extends Controller
         $date = date('Y-m-d');
         $query = SEOKeyword::select('id','keyword','website','searchengine')
             ->where(['keywordstatus'=>'优化中','status'=>1])
-            ->whereDate('detectiondate','<',$date)
+//            ->whereDate('detectiondate','<',$date)
+            ->where(function ($query) use ($date) {
+                $query->whereDate('detectiondate','<',$date)->orWhere('detectiondate','')->orWhere('detectiondate',NULL);
+            })
             ->orderby('id','asc');
 
         $limit = request("limit",0);
