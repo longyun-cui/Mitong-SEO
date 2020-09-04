@@ -18,14 +18,6 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-
-                <div class="caption">
-                    <i class="icon-pin font-blue"></i>
-                    <span class="caption-subject font-blue sbold uppercase"></span>
-                    <a href="{{url(config('common.org.admin.prefix').'/item/create')}}">
-                        <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加内容</button>
-                    </a>
-                </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
                         <i class="fa fa-minus"></i></button>
@@ -140,7 +132,7 @@
                     },
                     {
                         "width": "192px",
-                        "title": "用户",
+                        "title": "客户",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -153,7 +145,28 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.keyword == null ? '未知' : row.keyword.keyword;
+//                            return row.keyword == null ? '未知' : row.keyword.keyword;
+                            if(row.keyword.searchengine == "baidu")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "baidu_mobile")
+                            {
+                                return '<a target="_blank" href="https://m.baidu.com/ssid=fd5379616e677a696c676c8223/from=1012971h/s?&ie=utf-8&word='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "sougou")
+                            {
+                                return '<a target="_blank" href="https://www.sogou.com/web?ie=utf8&query='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "360")
+                            {
+                                return '<a target="_blank" href="https://www.so.com/s?ie=utf-8&q='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "shenma")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else return data;
                         }
                     },
                     {

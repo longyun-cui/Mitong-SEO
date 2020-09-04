@@ -54,7 +54,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="createtime" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup form_datetime" name="standarddate" style="width:120px;"/></td>
                         <td></td>
                         <td class="_none">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
@@ -113,7 +113,7 @@
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
-                        d.createtime = $('input[name="createtime"]').val();
+                        d.standarddate = $('input[name="standarddate"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -154,7 +154,7 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.user == null ? '未知' : row.user.username;
+                            return row.user == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.user.id+'">'+row.user.username+'</a>';
                         }
                     },
                     {
@@ -163,7 +163,28 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.keyword == null ? '未知' : row.keyword.keyword;
+//                            return row.keyword == null ? '未知' : row.keyword.keyword;
+                            if(row.keyword.searchengine == "baidu")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "baidu_mobile")
+                            {
+                                return '<a target="_blank" href="https://m.baidu.com/ssid=fd5379616e677a696c676c8223/from=1012971h/s?&ie=utf-8&word='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "sougou")
+                            {
+                                return '<a target="_blank" href="https://www.sogou.com/web?ie=utf8&query='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "360")
+                            {
+                                return '<a target="_blank" href="https://www.so.com/s?ie=utf-8&q='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else if(row.keyword.searchengine == "shenma")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+row.keyword.keyword+'">'+row.keyword.keyword+'</a>';
+                            }
+                            else return data;
                         }
                     },
                     {
@@ -217,7 +238,7 @@
                         }
                     },
                     {
-                        "width": "96px",
+                        "width": "128px",
                         "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,

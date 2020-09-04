@@ -3253,9 +3253,9 @@ class IndexRepository {
 //        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
             ->with('user','site','keyword');
 
-        if(!empty($post_data['createtime']))
+        if(!empty($post_data['standarddate']))
         {
-            $query->whereDate('createtime', $post_data['createtime']);
+            $query->whereDate('standarddate', $post_data['standarddate']);
         }
 
         $total = $query->count();
