@@ -313,8 +313,8 @@
 //                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                    '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+value+'">密码</a>'+
+                                    '<a class="btn btn-xs btn-default disabled item-edit-submit-" data-id="'+value+'">编辑</a>'+
+                                    '<a class="btn btn-xs btn-default disabled item-password-submit-" data-id="'+value+'">密码</a>'+
                                     '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
                                     '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+value+'">登录</a>';
                                 return html;
