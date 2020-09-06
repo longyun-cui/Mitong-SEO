@@ -51,7 +51,9 @@ class IndexController extends Controller
         {
             $query = SEOKeyword::select('id','keyword','website','searchengine')
                 ->where(['keywordstatus'=>'优化中','status'=>1])
-                ->where('latestranking','<=',0)->where('latestranking','>',10)
+                ->where(function ($query) use ($date) {
+                    $query->where('latestranking','<=',0)->orWhere('latestranking','>',10);
+                })
                 ->orderby('id','asc');
         }
         else
@@ -70,7 +72,7 @@ class IndexController extends Controller
         $limit = request("limit",0);
         if($limit) $query->limit($limit);
         $data = $query->get()->toArray();
-//        dd($data);
+        dd($data);
 
         foreach ($data as $value)
         {
