@@ -505,7 +505,7 @@ class IndexController extends Controller
 //                    }
                 }
 
-                DB::commit();
+//                DB::commit();
 //            echo 1;
 //                return 1;
 //            return response_success([]);
@@ -516,8 +516,8 @@ class IndexController extends Controller
                 $msg = '操作失败，请重试！';
                 $msg = $e->getMessage();
 //            exit($e->getMessage());
-                echo 2;
-                return response_fail([],$msg);
+                echo $msg;
+//                return response_fail([],$msg);
             }
 
 
