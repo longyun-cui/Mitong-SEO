@@ -72,7 +72,7 @@ class IndexController extends Controller
         $limit = request("limit",0);
         if($limit) $query->limit($limit);
         $data = $query->get()->toArray();
-        dd($data);
+//        dd($data);
 
         foreach ($data as $value)
         {
