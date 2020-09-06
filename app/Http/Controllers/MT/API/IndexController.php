@@ -368,7 +368,7 @@ class IndexController extends Controller
 
             $rank = $temp->subtitle;
             $keyword = SEOKeyword::where('taskId',$temp->title)->first();
-            if(!$keyword)
+            if($keyword)
             {
                 echo "keyword.id=".$keyword->id."--";
 
