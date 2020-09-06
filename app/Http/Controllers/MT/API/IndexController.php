@@ -357,7 +357,41 @@ class IndexController extends Controller
 
     public function receive_test()
     {
+        $current_time = date('Y-m-d H:i:s');
+        $current_date = date('Y-m-d');
+
         $temp_list = Temp::where('subtitle','>',0)->where('subtitle','<=',10)->get();
+        foreach ($temp_list as $k => $temp)
+        {
+            echo "temp.id=".$temp->id."--";
+
+            $rank = $temp->subtitle;
+            $keyword = SEOKeyword::where('taskId',$temp->title)->lockForUpdate()->first();
+            if(!$keyword)
+            {
+                echo "keyword.id=".$keyword->id."--";
+
+                // 判断是否重复记录
+                if(date("Y-m-d",strtotime($keyword->detectiondate)) == $current_date)
+                {
+                    if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
+                    {
+                        echo "latestranking <= rank";
+                    }
+                    else
+                    {
+                        echo "latestranking > rank";
+                    }
+                }
+            }
+            else
+            {
+                echo "keyword not exist";
+            }
+
+            echo "<br>";
+
+        }
         dd($temp_list->toArray());
     }
 
