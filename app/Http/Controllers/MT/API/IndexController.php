@@ -364,9 +364,10 @@ class IndexController extends Controller
         foreach ($temp_list as $k => $temp)
         {
             echo "temp.id=".$temp->id."--";
+            echo "temp.title=".$temp->title."--";
 
             $rank = $temp->subtitle;
-            $keyword = SEOKeyword::where('taskId',$temp->title)->lockForUpdate()->first();
+            $keyword = SEOKeyword::where('taskId',$temp->title)->first();
             if(!$keyword)
             {
                 echo "keyword.id=".$keyword->id."--";
