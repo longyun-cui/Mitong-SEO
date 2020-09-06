@@ -355,6 +355,11 @@ class IndexController extends Controller
     }
 
 
+    public function receive_test()
+    {
+        $temp_list = Temp::where('subtitle','>',0)->where('subtitle','<=',10)->get();
+        dd($temp_list->toArray());
+    }
 
 
     /*
