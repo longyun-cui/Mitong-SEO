@@ -427,16 +427,16 @@ class IndexController extends Controller
                             // [old=1-10][new=1-10][new < old]
                             if($rank < $keyword->latestranking)
                             {
-                                echo "[odd=1-10][new=1-10]";
+                                echo "[odd=1-10][new=1-10][new < old]--";
                             }
                             else // [odd=1-10][new=1-10][new > old]
                             {
-                                echo "[odd=1-10][new=1-10][new > old]";
+                                echo "[odd=1-10][new=1-10][new >= old]--";
                             }
                         }
                         else // [odd=1-10][new=10+]
                         {
-                            echo "[odd=1-10][new=10+]";
+                            echo "[odd=1-10][new=10+]--";
                         }
                     }
                     else // [old=10+]
@@ -444,12 +444,19 @@ class IndexController extends Controller
                         // [old=10+][new=1-10]
                         if($rank > 0 and $rank <= 10)
                         {
-                            echo "[old=10+][new=1-10]";
+                            echo "[old=10+][new=1-10]--";
                         }
                         else // [old=10+][new=10+]
                         {
                             // [old=10+][new=10+][new < old]
-                            echo "[old=10+][new=10+][new < old]";
+                            if($rank > 0 and ($rank < $keyword->latestranking))
+                            {
+                                echo "[old=10+][new=10+][new < old]--";
+                            }
+                            else // [old=10+][new=10+][new >= old]
+                            {
+                                echo "[old=10+][new=10+][new >= old]--";
+                            }
                         }
                     }
                 }
@@ -651,7 +658,7 @@ class IndexController extends Controller
 //                            echo 1;
                             return 1;
                         }
-                        else // [odd=1-10][new=1-10][new > old]
+                        else // [odd=1-10][new=1-10][new >= old]
                         {
 //                            echo 1;
                             return 1;
