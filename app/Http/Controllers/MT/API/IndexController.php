@@ -357,6 +357,7 @@ class IndexController extends Controller
 
     public function receive_test()
     {
+        $time = date('Y-m-d H:i:s');
         $current_time = date('Y-m-d H:i:s');
         $current_date = date('Y-m-d');
 
@@ -370,6 +371,8 @@ class IndexController extends Controller
             $keyword = SEOKeyword::where('taskId',$temp->title)->first();
             if($keyword)
             {
+                $price = $keyword->price;
+
                 echo "keyword.id=".$keyword->id."--";
 
                 // 判断是否重复记录
@@ -394,10 +397,142 @@ class IndexController extends Controller
                 echo "keyword not exist";
             }
 
+
+
+            DB::beginTransaction();
+            try
+            {
+                // 【STEP 1】添加【检测表】
+                $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('detect_time',$current_date)->first();
+                if(!$DetectRecord)
+                {
+                    echo "detect not exist";
+                }
+                else
+                {
+                    echo "detect exist";
+                }
+
+
+                // 【STEP 2】更新【关键词表】
+                // [Condition A] 已检测
+                if(date("Y-m-d",strtotime($keyword->detectiondate)) == $current_date)
+                {
+                    // [odd=1-10]
+                    if($keyword->latestranking > 0 and $keyword->latestranking <= 10)
+                    {
+                        // [odd=1-10][new=1-10]
+                        if($rank > 0 and $rank <= 10)
+                        {
+                            // [old=1-10][new=1-10][new < old]
+                            if($rank < $keyword->latestranking)
+                            {
+                                echo "[odd=1-10][new=1-10]";
+                            }
+                            else // [odd=1-10][new=1-10][new > old]
+                            {
+                                echo "[odd=1-10][new=1-10][new > old]";
+                            }
+                        }
+                        else // [odd=1-10][new=10+]
+                        {
+                            echo "[odd=1-10][new=10+]";
+                        }
+                    }
+                    else // [old=10+]
+                    {
+                        // [old=10+][new=1-10]
+                        if($rank > 0 and $rank <= 10)
+                        {
+                            echo "[old=10+][new=1-10]";
+                        }
+                        else // [old=10+][new=10+]
+                        {
+                            // [old=10+][new=10+][new < old]
+                            echo "[old=10+][new=10+][new < old]";
+                        }
+                    }
+                }
+
+
+
+                // 【STEP 3】添加【消费记录表】 & 更新【用户-资产表】
+                if($rank > 0 and $rank <= 10)
+                {
+//                    $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$current_date)->first();
+//                    if(!$ExpenseRecord)
+//                    {
+//                        $ExpenseRecord = new ExpenseRecord;
+//                        $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
+//                        $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
+//                        $ExpenseRecord_data['ownuserid'] = $keyword->createuserid;
+//                        $ExpenseRecord_data['standarddate'] = $current_time;
+//                        $ExpenseRecord_data['createtime'] = $time;
+//                        $ExpenseRecord_data['siteid'] = $keyword->siteid;
+//                        $ExpenseRecord_data['keywordid'] = $keyword->id;
+//                        $ExpenseRecord_data['keyword'] = $keyword->keyword;
+//                        $ExpenseRecord_data['price'] = (int)$keyword->price;
+//                        $bool_2 = $ExpenseRecord->fill($ExpenseRecord_data)->save();
+//                        if($bool_2)
+//                        {
+//                            $DetectRecord->expense_id = $ExpenseRecord->id;
+//                            $DetectRecord->save();
+//
+//                            $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+//
+//                            $keyword_owner->fund_expense = $keyword_owner->fund_expense + $price;
+//                            $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 + $price;
+//                            $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 + $price;
+//                            $keyword_owner->fund_balance = $keyword_owner->fund_balance - $price;
+//                            if($keyword_owner->fund_frozen >= $price)
+//                            {
+//                                $keyword_owner->fund_frozen = $keyword_owner->fund_frozen - $price;
+//                            }
+//                            else
+//                            {
+//                                $keyword_owner->fund_frozen = 0;
+//                                $keyword_owner->fund_available = $keyword_owner->fund_available - ($price - $keyword_owner->fund_frozen);
+//                            }
+//
+//                            $keyword_owner->save();
+//                        }
+//                        else throw new Exception("update--expense-record--fail");
+//                    }
+//                    else
+//                    {
+//                        $ExpenseRecord->detect_id = $DetectRecord->id;
+//                        $ExpenseRecord->save();
+//                    }
+                }
+
+                DB::commit();
+//            echo 1;
+                return 1;
+//            return response_success([]);
+            }
+            catch (Exception $e)
+            {
+                DB::rollback();
+                $msg = '操作失败，请重试！';
+                $msg = $e->getMessage();
+//            exit($e->getMessage());
+                echo 2;
+                return response_fail([],$msg);
+            }
+
+
+
+
             echo "<br>";
 
         }
         dd($temp_list->toArray());
+
+
+
+
+
+
     }
 
 
