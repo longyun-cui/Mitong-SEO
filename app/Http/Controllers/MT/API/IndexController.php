@@ -35,13 +35,37 @@ class IndexController extends Controller
     public function morning_send()
     {
         $date = date('Y-m-d');
-        $query = SEOKeyword::select('id','keyword','website','searchengine')
-            ->where(['keywordstatus'=>'优化中','status'=>1])
+
+        $type = request("type",0);
+        if($type == 'init')
+        {
+            $query = SEOKeyword::select('id','keyword','website','searchengine')
+                ->where(['keywordstatus'=>'优化中','status'=>1])
 //            ->whereDate('detectiondate','<',$date)
-            ->where(function ($query) use ($date) {
-                $query->whereDate('detectiondate','<',$date)->orWhere('detectiondate','')->orWhere('detectiondate',NULL);
-            })
-            ->orderby('id','asc');
+                ->where(function ($query) use ($date) {
+                    $query->whereDate('detectiondate','<',$date)->orWhere('detectiondate','')->orWhere('detectiondate',NULL);
+                })
+                ->orderby('id','asc');
+        }
+        else if($type == 'again')
+        {
+            $query = SEOKeyword::select('id','keyword','website','searchengine')
+                ->where(['keywordstatus'=>'优化中','status'=>1])
+                ->where('latestranking','<=',0)->where('latestranking','>',10)
+                ->orderby('id','asc');
+        }
+        else
+        {
+            $query = SEOKeyword::select('id','keyword','website','searchengine')
+                ->where(['keywordstatus'=>'优化中','status'=>1])
+//            ->whereDate('detectiondate','<',$date)
+                ->where(function ($query) use ($date) {
+                    $query->whereDate('detectiondate','<',$date)->orWhere('detectiondate','')->orWhere('detectiondate',NULL);
+                })
+                ->orderby('id','asc');
+        }
+
+
 
         $limit = request("limit",0);
         if($limit) $query->limit($limit);
@@ -1031,6 +1055,112 @@ class IndexController extends Controller
         $list = $this -> combKeywordSearchResults( $arr );
 
         return $list;
+    }
+
+
+
+    /**
+     * 搜索推荐关键词:
+     *
+     * 通过第三方接口搜索关键词
+     *
+     * @accesspublic
+     */
+    public function searchRecommend(){
+
+        $model 		= D( $this->modelName);
+
+        $keywords 		= $_GET['keywords'];
+
+
+        $keyword_arr = explode(',' , $keywords );
+        // 去重空值
+        $keyword_arr = array_filter( $keyword_arr );
+        // 去重操作
+        $keyword_arr = array_values(array_unique( $keyword_arr ));
+
+
+        $list = $model -> searchRecommend( $keyword_arr );
+
+        exit(json_encode($list));
+    }
+    /**
+     * 搜索关键词:根据用户的关键词搜索推荐的关键词
+     *
+     * 通过第三方接口搜索关键词
+     *
+     * @accesspublic
+     */
+    public function searchRecommend_ex( $keyword_arr ){
+
+        //G('begin');
+
+        // 长尾词挖掘配置
+        $KeywordDigOptions 				= C('KeywordDigOptions');
+        // 关键词长度价格指数代码集
+        $KeywordLengthPriceIndexOptions = C('KeywordLengthPriceIndexOptions');
+        $searchengine_keys = array_keys($KeywordLengthPriceIndexOptions);
+
+        //组成字符
+        $keywords 				= implode(',' , $keyword_arr);
+        //关键词搜索
+        //$url_search = $KeywordDigOptions['url']. urlencode($keywords);
+        $url_search = "http://www.baidu.com/s?wd=". urlencode($keywords);;
+        //从http://www.5118.com/seo/words/%E4%BA%92%E8%81%94%E7%BD%91%E4%BF%9D%E9%99%A9
+        $html = file_get_contents( $url_search );
+
+
+        // ...其他代码段
+        //G('end');
+
+        // ...也许这里还有其他代码
+        // 进行统计区间
+        //echo G('begin','end').'s';
+        // 根据特殊的字符进行匹配
+        /*
+        $pattern_all = '/<span class="hoverToHide"><a.*?>(.+?)<\/a><\/span>/is';
+        */
+        $pattern_all = '/<th><a href="(?:.*?)">(.*?)<\/a><\/th>/is';
+        preg_match_all($pattern_all, $html, $results);
+
+        $keyword_arr1 = $results[1];
+
+        //$keyword_arr2 =  array_slice($keyword_arr1,0,20) ;
+
+        if( count($keyword_arr1) > 0 ){
+
+
+            // 截取和去重获取10个关键词
+            foreach ( $keyword_arr1 as $vo ){
+                //dump($vo);
+                $keyword_arr3[] = str_replace(array('<em>','</em>'), '',$vo);
+                //$keyword_temp  = explode(' ',$vo);
+
+            }
+
+
+            // 数组去重
+            $keyword_arr3 = array_unique( $keyword_arr3 );
+            // 在最终的数组去掉关键词
+            $keyword_arr3 = array_diff( $keyword_arr3,$keyword_arr );
+            // 截取前10个元素
+            $keyword_arr3 =  array_slice($keyword_arr3,0,10) ;
+
+
+            foreach ( $keyword_arr3 as $key => $vo ){
+                $temp['keyword'] = $vo;
+                foreach ( $searchengine_keys as $vo2 ){
+                    $temp[$vo2] = 0;
+                }
+                $temp['isrecommend'] = 1;
+                $arr[] = $temp;
+            }
+
+            $list = $this -> combKeywordSearchResults( $arr );
+        }
+
+        return $list;
+
     }
 
 
