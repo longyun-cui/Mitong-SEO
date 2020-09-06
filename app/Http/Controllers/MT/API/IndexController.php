@@ -461,7 +461,7 @@ class IndexController extends Controller
                 if($keyword->latestranking > 0 and $keyword->latestranking <= 10)
                 {
                     // [odd=1-10][new=1-10]
-                    if($rank > 0 or $rank <= 10)
+                    if($rank > 0 and $rank <= 10)
                     {
                         // [old=1-10][new=1-10][new < old]
                         if($rank < $keyword->latestranking)
@@ -487,7 +487,7 @@ class IndexController extends Controller
                 else // [old=10+]
                 {
                     // [old=10+][new=1-10]
-                    if($rank > 0 or $rank <= 10)
+                    if($rank > 0 and $rank <= 10)
                     {
                         $keyword->latestranking = $rank;
                         $keyword->detectiondate = $current_time; // 检测时间
