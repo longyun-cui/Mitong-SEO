@@ -384,6 +384,10 @@ class IndexController extends Controller
                         echo "latestranking > rank";
                     }
                 }
+                else
+                {
+                    echo date("Y-m-d",strtotime($keyword->detectiondate))."--detectiondate != current_date";
+                }
             }
             else
             {
