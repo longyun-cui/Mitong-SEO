@@ -380,11 +380,11 @@ class IndexController extends Controller
                 {
                     if($keyword->latestranking > 0 and $keyword->latestranking <= $rank)
                     {
-                        echo "latestranking <= rank";
+                        echo "latestranking <= rank--";
                     }
                     else
                     {
-                        echo "latestranking > rank";
+                        echo "latestranking > rank--";
                     }
                 }
                 else
@@ -394,7 +394,7 @@ class IndexController extends Controller
             }
             else
             {
-                echo "keyword not exist";
+                echo "keyword not exist--";
             }
 
 
@@ -406,11 +406,11 @@ class IndexController extends Controller
                 $DetectRecord = SEOKeywordDetectRecord::where(['keywordid'=>$keyword->id])->whereDate('detect_time',$current_date)->first();
                 if(!$DetectRecord)
                 {
-                    echo "detect not exist";
+                    echo "detect not exist--";
                 }
                 else
                 {
-                    echo "detect exist";
+                    echo "detect exist--";
                 }
 
 
@@ -459,9 +459,10 @@ class IndexController extends Controller
                 // 【STEP 3】添加【消费记录表】 & 更新【用户-资产表】
                 if($rank > 0 and $rank <= 10)
                 {
-//                    $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$current_date)->first();
-//                    if(!$ExpenseRecord)
-//                    {
+                    $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$current_date)->first();
+                    if(!$ExpenseRecord)
+                    {
+                        echo "expense not exist--";
 //                        $ExpenseRecord = new ExpenseRecord;
 //                        $ExpenseRecord_data['detect_id'] = $DetectRecord->id;
 //                        $ExpenseRecord_data['owner_id'] = $keyword->createuserid;
@@ -497,12 +498,11 @@ class IndexController extends Controller
 //                            $keyword_owner->save();
 //                        }
 //                        else throw new Exception("update--expense-record--fail");
-//                    }
-//                    else
-//                    {
-//                        $ExpenseRecord->detect_id = $DetectRecord->id;
-//                        $ExpenseRecord->save();
-//                    }
+                    }
+                    else
+                    {
+                        echo "expense exist--";
+                    }
                 }
 
 //                DB::commit();
