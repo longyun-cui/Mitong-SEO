@@ -27,11 +27,13 @@
                 </div>
             </div>
 
-            @foreach($insufficient_clients as $client)
             <div class="box-body">
-                用户 <b class="text-red">{{ $client->username }}</b>  资金余额【<span class="text-red font-20px">{{ $client->fund_balance }}</span>】，余额不足一周消耗，请提醒续费！！
+                @foreach($insufficient_clients as $client)
+                <div>
+                    用户 <b class="text-red">{{ $client->username }}</b>  资金余额【<span class="text-red font-20px">{{ $client->fund_balance }}</span>】，余额不足一周消耗，请提醒续费！！
+                </div>
+                @endforeach
             </div>
-            @endforeach
 
             <div class="box-footer">
                 Footer
