@@ -11,6 +11,38 @@
 @endsection
 
 @section('content')
+{{--用户余额不足--}}
+@if(count($insufficient_clients))
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-info">
+
+            <div class="box-header with-border" style="margin:16px 0;">
+                <h3 class="box-title">用户余额不足提醒</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i></button>
+                </div>
+            </div>
+
+            @foreach($insufficient_clients as $client)
+            <div class="box-body">
+                用户 <b class="text-red">{{ $client->username }}</b>  资金余额【<span class="text-red font-20px">{{ $client->fund_balance }}</span>】，余额不足一周消耗，请提醒续费！！
+            </div>
+            @endforeach
+
+            <div class="box-footer">
+                Footer
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
+
+
 {{--用户信息--}}
 <div class="row" style="display:none;">
     <div class="col-md-4">

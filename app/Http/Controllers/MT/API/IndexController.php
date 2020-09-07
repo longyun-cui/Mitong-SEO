@@ -355,6 +355,8 @@ class IndexController extends Controller
     }
 
 
+
+
     public function receive_test()
     {
         $time = date('Y-m-d H:i:s');
@@ -540,7 +542,7 @@ class IndexController extends Controller
     /*
      *
      */
-    //接受通知 更新关键词排行
+    // 接收通知 更新关键词排行
     public function receive_from_youbangyun()
     {
         header("Content-Type:text/html;charset=UTF-8");

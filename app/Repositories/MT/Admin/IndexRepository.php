@@ -67,6 +67,10 @@ class IndexRepository {
         $consumption_data[1]['data'] = $data2->keyBy('day');
 
 
+        $insufficient_clients = User::where('usergroup','Service')->where('fund_expense_daily','>',0)
+            ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
+
+
 //        $agent_num = User::where(['usergroup'=>'Agent'])->count();
 //        $agent_fund_total_sum = User::where(['usergroup'=>'Agent'])->sum('fund_total');
 //        $agent_fund_balance_sum = User::where(['usergroup'=>'Agent'])->sum('fund_balance');
@@ -138,7 +142,8 @@ class IndexRepository {
         return view('mt.admin.index')
             ->with([
                 'index_data'=>$index_data,
-                'consumption_data'=>$consumption_data
+                'consumption_data'=>$consumption_data,
+                'insufficient_clients'=>$insufficient_clients
             ]);
     }
 
@@ -1063,6 +1068,8 @@ class IndexRepository {
         foreach ($list as $k => $v)
         {
             $list[$k]->encode_id = encode($v->id);
+            $list[$k]->ftp = replace_blank($v->ftp);
+            $list[$k]->managebackground = replace_blank($v->managebackground);
         }
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);

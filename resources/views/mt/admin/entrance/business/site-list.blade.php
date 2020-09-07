@@ -97,6 +97,100 @@
         <!-- END PORTLET-->
     </div>
 </div>
+
+
+<div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">站点详情</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="recharge" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--用户ID--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">用户ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="site-user-id"></span>
+                                </div>
+                            </div>
+                            {{--用户名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">用户名</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="site-username"></span>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-name"></span>
+                                </div>
+                            </div>
+                            {{--站点地址--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点地址</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-website"></span>
+                                </div>
+                            </div>
+                            {{--FTP--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">FTP</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-ftp"></span>
+                                </div>
+                            </div>
+                            {{--管理后台--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">管理后台</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-managebackground"></span>
+                                </div>
+                            </div>
+                            {{--说明--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">说明</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row _none">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-site-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default modal-cancel" id="item-site-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 
@@ -144,7 +238,8 @@
                         }
                     },
                     {
-                        "width": "",
+                        "className": "text-left",
+                        "width": "108px",
                         "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
@@ -153,12 +248,14 @@
                         }
                     },
                     {
-                        "width": "",
+                        "className": "text-center",
+                        "width": "192px",
                         "title": "站点",
                         "data": "sitename",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            return '<span href="javascript:void(0);" class="item-site-show text-blue _pointer" data-user-id="'+row.creator.id+'" data-username="'+row.creator.username+'" data-name="'+data+'" data-website="'+row.website+'" data-ftp="'+row.ftp+'" data-managebackground="'+row.managebackground+'">'+data+'</span>'
                         }
                     },
                     {
@@ -171,7 +268,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "关键词数",
                         "data": "id",
                         'orderable': false,
@@ -186,7 +283,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "今日达标",
                         "data": "id",
                         'orderable': false,
@@ -203,7 +300,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "今日消费",
                         "data": "id",
                         'orderable': false,
@@ -221,7 +318,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "累计达标",
                         "data": "id",
                         'orderable': false,
@@ -238,7 +335,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "累计消费",
                         "data": "id",
                         'orderable': false,
@@ -270,7 +367,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "状态",
                         "data": "sitestatus",
                         'orderable': false,
@@ -289,6 +386,8 @@
                         }
                     },
                     {
+                        "width": "",
+                        "title": "操作",
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -392,8 +491,7 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/item/edit?id="+that.attr('data-id');
+            window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
         // 【删除】
@@ -442,6 +540,20 @@
                     );
                 }
             });
+        });
+
+
+        // 显示【充值】
+        $("#item-main-body").on('click', ".item-site-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.site-user-id').html(that.attr('data-user-id'));
+            $('.site-username').html(that.attr('data-username'));
+            $('.site-name').html(that.attr('data-name'));
+            $('.site-website').html(that.attr('data-website'));
+            $('.site-ftp').html(that.attr('data-ftp'));
+            $('.site-managebackground').html(that.attr('data-managebackground'));
+            $('#modal-body').modal('show');
         });
 
 
