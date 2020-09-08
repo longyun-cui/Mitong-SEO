@@ -36,7 +36,8 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.user.agent-list')->with(['sidebar_agent_list_active'=>'active menu-open']);
+            return view('mt.admin.entrance.user.agent-list')
+                ->with(['sidebar_agent_list_active'=>'active menu-open']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_user_agent_list_datatable(request()->all());
     }
@@ -46,7 +47,8 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get'))
         {
-            return view('mt.admin.entrance.user.client-list')->with(['sidebar_client_list_active'=>'active menu-open']);
+            return view('mt.admin.entrance.user.client-list')
+                ->with(['sidebar_client_list_active'=>'active menu-open']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
     }
@@ -350,6 +352,49 @@ class IndexController extends Controller
     public function operate_business_keyword_stop()
     {
         return $this->repo->operate_business_keyword_stop(request()->all());
+    }
+
+
+
+
+    /*
+     * 工单管理
+     */
+    // 新增【站点工单】
+    public function operate_business_site_work_order_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_site_work_order_create(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->operate_business_site_work_order_save(request()->all());
+    }
+    // 编辑【站点工单】
+    public function operate_business_site_work_order_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_site_work_order_edit(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->operate_business_site_work_order_save(request()->all());
+    }
+
+    // 返回【站点工单】视图
+    public function view_business_site_work_order_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_site_work_order_list(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_site_work_order_datatable(request()->all());
+    }
+
+    // 返回【工单列表】视图
+    public function view_business_work_order_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_work_order_list();
+        else if(request()->isMethod('post')) return $this->repo->get_business_work_order_datatable(request()->all());
+    }
+    // 删除【工单】
+    public function operate_business_work_order_delete()
+    {
+        return $this->repo->operate_business_work_order_delete(request()->all());
+    }
+    // 删除【工单】
+    public function operate_business_work_order_get()
+    {
+        return $this->repo->operate_business_work_order_get(request()->all());
     }
 
 

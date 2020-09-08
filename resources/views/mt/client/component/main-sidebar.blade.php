@@ -89,8 +89,8 @@
             {{--工单管理--}}
             <li class="header">工单管理</li>
 
-            <li class="treeview {{ $sidebar_work_list_active or '' }}">
-                <a href="{{ url('/client/work/work-list') }}">
+            <li class="treeview {{ $sidebar_work_order_list_active or '' }}">
+                <a href="{{ url('/client/business/my-work-order-list') }}">
                     <i class="fa fa-envelope"></i> <span>我的工单</span>
                 </a>
             </li>
@@ -99,9 +99,9 @@
 
 
             {{--留言管理--}}
-            <li class="header">公告&通知管理</li>
+            <li class="header _none">公告&通知管理</li>
 
-            <li class="treeview {{ $sidebar_notice_all_active or '' }}">
+            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
                 <a href="{{ url('/client/work/work-list') }}">
                     <i class="fa fa-envelope"></i> <span>通知列表</span>
                 </a>

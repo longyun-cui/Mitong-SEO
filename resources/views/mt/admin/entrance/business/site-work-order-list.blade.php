@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','站点列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','工单 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','站点列表')
+@section('header','工单')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -14,6 +14,41 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>站点信息</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        用户 <span class="text-red" style="font-size:24px;">{{ $data->creator->username or 0 }}</span>
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        站点名称 <span class="text-red font-24px">{{ $data->sitename or 0 }}</span>
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        Website <span class="text-red font-24px">{{ $data->website or 0 }}</span>
+                    </span>
+
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--检测达标记录 <span class="text-red font-24px">{{ $data['keyword_standard_count_by_detect'] or 0 }}</span> 个--}}
+                    {{--</span>--}}
+
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--消费记录 <span class="text-red font-24px">{{ $data['keyword_standard_count_by_expense'] or 0 }}</span> 个--}}
+                    {{--</span>--}}
+
+                    {{--<span style="margin-right:12px;">--}}
+                        {{--消费统计 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_by_expense'] or 0 }}</span> 元--}}
+                    {{--</span>--}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
         <!-- BEGIN PORTLET-->
         <div class="box box-info">
 
@@ -22,6 +57,9 @@
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
+                    <a href="{{ url('/admin/business/site/work-order-create?site-id='.$data->id) }}">
+                        <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加工单</button>
+                    </a>
                 </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
@@ -42,11 +80,6 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
@@ -56,22 +89,17 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                         <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            <a class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
-                                {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
+                                {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
                                     {{--<span class="caret"></span>--}}
                                     {{--<span class="sr-only">Toggle Dropdown</span>--}}
                                 {{--</button>--}}
                                 {{--<ul class="dropdown-menu" role="menu">--}}
-                                    {{--<li><a href="#">重置</a></li>--}}
+                                    {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
                                     {{--<li class="divider"></li>--}}
                                     {{--<li><a href="#">Separated link</a></li>--}}
                                 {{--</ul>--}}
@@ -108,7 +136,7 @@
                 <div class="box- box-info- form-container">
 
                     <div class="box-header with-border" style="margin:16px 0;">
-                        <h3 class="box-title">站点详情</h3>
+                        <h3 class="box-title">工单详情</h3>
                         <div class="box-tools pull-right">
                         </div>
                     </div>
@@ -117,52 +145,45 @@
                         <div class="box-body">
 
                             {{csrf_field()}}
-                            <input type="hidden" name="operate" value="recharge" readonly>
+                            <input type="hidden" name="operate" value="work-order" readonly>
                             <input type="hidden" name="id" value="0" readonly>
 
                             {{--类别--}}
 
 
-                            {{--用户ID--}}
-                            <div class="form-group _none">
-                                <label class="control-label col-md-2">用户ID</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="site-user-id"></span>
-                                </div>
-                            </div>
                             {{--用户名--}}
                             <div class="form-group">
-                                <label class="control-label col-md-2">用户名</label>
+                                <label class="control-label col-md-2">用户</label>
                                 <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="site-username"></span>
+                                    <span class="work-order-username"></span>
                                 </div>
                             </div>
                             {{--站点名称--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">站点名称</label>
                                 <div class="col-md-8 ">
-                                    <span class="site-name"></span>
+                                    <span class="work-order-name"></span>
                                 </div>
                             </div>
                             {{--站点地址--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">站点地址</label>
                                 <div class="col-md-8 ">
-                                    <span class="site-website"></span>
+                                    <span class="work-order-website"></span>
                                 </div>
                             </div>
                             {{--FTP--}}
                             <div class="form-group">
-                                <label class="control-label col-md-2">FTP</label>
+                                <label class="control-label col-md-2">标题</label>
                                 <div class="col-md-8 ">
-                                    <span class="site-ftp"></span>
+                                    <div><b class="work-order-title"></b></div>
                                 </div>
                             </div>
                             {{--管理后台--}}
                             <div class="form-group">
-                                <label class="control-label col-md-2">管理后台</label>
+                                <label class="control-label col-md-2">内容</label>
                                 <div class="col-md-8 ">
-                                    <span class="site-managebackground"></span>
+                                    <div class="work-order-content"></div>
                                 </div>
                             </div>
                             {{--说明--}}
@@ -207,11 +228,15 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/site-list') }}",
+                    'url': "{{ url('/admin/business/site/work-order-list?site-id='.request('site-id')) }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
+                        d.keyword = $('input[name="keyword"]').val();
+                        d.website = $('input[name="website"]').val();
+                        d.searchengine = $('select[name="searchengine"]').val();
+                        d.latest_ranking = $('select[name="latest_ranking"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -239,127 +264,40 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "108px",
-                        "title": "客户",
-                        "data": "createuserid",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
-                        }
-                    },
-                    {
-                        "className": "text-center",
-                        "width": "192px",
-                        "title": "站点",
-                        "data": "sitename",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return data;
-                            return '<span href="javascript:void(0);" class="item-site-show text-blue _pointer" data-user-id="'+row.creator.id+'" data-username="'+row.creator.username+'" data-name="'+data+'" data-website="'+row.website+'" data-ftp="'+row.ftp+'" data-managebackground="'+row.managebackground+'">'+data+'</span>'
-                        }
-                    },
-                    {
                         "width": "",
-                        "title": "Website",
-                        "data": "website",
+                        "title": "标题",
+                        "data": "title",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "关键词数",
-                        "data": "id",
+                        "width": "160px",
+                        "title": "客户",
+                        "data": "user_id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-//                            return row.keywords_count == null ? 0 : row.keywords_count;
-                            if(row.keywords_count)
-                            {
-                                if(row.keywords_count > 0) return '<span class="text-blue">'+row.keywords_count+'</span>';
-                                else row.keywords_count;
-                            }
-                            else return 0;
+                            return row.user == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.user.id+'">'+row.user.username+'</a>';
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "今日达标",
-                        "data": "id",
+                        "width": "160px",
+                        "title": "站点",
+                        "data": "website",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(row.keywords_standard_count)
-                            {
-                                if(row.standard_today_count > 0)
-                                {
-                                    return '<span class="text-blue">'+row.standard_today_count.toLocaleString()+'</span>';
-                                }
-                                else return parseInt(row.standard_today_count).toLocaleString();
-                            }
-                            else return 0;
+                            return row.site == null ? '未知' : row.site.website;
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "今日消费",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return row.consumption_sum == null ? 0 : row.consumption_sum;
-                            if(row.consumption_today_sum)
-                            {
-                                if(row.consumption_today_sum > 0)
-                                {
-                                    return '<span class="text-blue">'+parseInt(row.consumption_today_sum).toLocaleString()+'</span>';
-                                }
-                                else return parseInt(row.consumption_today_sum).toLocaleString();
-                            }
-                            else return 0;
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "累计达标",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(row.standard_all_sum)
-                            {
-                                if(row.standard_all_sum > 0)
-                                {
-                                    return '<span class="text-blue">'+row.standard_all_sum.toLocaleString()+'</span>';
-                                }
-                                else return parseInt(row.standard_all_sum).toLocaleString();
-                            }
-                            else return 0;
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "累计消费",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return row.consumption_sum == null ? 0 : row.consumption_sum;
-                            if(row.consumption_all_sum)
-                            {
-                                if(row.consumption_all_sum > 0)
-                                {
-                                    return '<span class="text-blue">'+parseInt(row.consumption_all_sum).toLocaleString()+'</span>';
-                                }
-                                else return parseInt(row.consumption_all_sum);
-                            }
-                            else return 0;
-                        }
-                    },
-                    {
-                        "width": "80px",
+                        "width": "72px",
                         "title": "创建时间",
-                        'data': 'createtime',
-                        'orderable': true,
+                        "data": "created_at",
+                        'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return data;
-                            var $date = new Date(data);
+                            var $date = new Date(data*1000);
                             var $year = $date.getFullYear();
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
@@ -369,48 +307,30 @@
                     {
                         "width": "64px",
                         "title": "状态",
-                        "data": "sitestatus",
+                        "data": "active",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(row.status == 1)
-                            {
-                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
-                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
-                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
-                                else return data;
-                            }
-                            else
-                            {
-                                return '<small class="btn-xs bg-navy">已删除</small>';
-                            }
+                            return data;
                         }
                     },
                     {
-                        "width": "",
+                        "width": "192px",
                         "title": "操作",
                         "data": 'id',
                         'orderable': false,
-                        render: function(data, type, row, meta) {
-                            var $work_order_html = '';
-                            if(row.work_order_count > 0)
-                            {
-                                $work_order_html = '<a class="btn btn-xs bg-navy item-work-order-link" data-id="'+data+'" >Ta的工单</a>';
-                            }
-                            else
-                            {
-                                $work_order_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >Ta的工单</a>';
-                            }
+                        render: function(value) {
                             var html =
+                                '<a class="btn btn-xs bg-primary item-work-order-show" data-id="'+value+'" >查看详情</a>'+
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-work-order-create-link" data-id="'+data+'">+工单</a>'+
-                                $work_order_html+
-                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+                                '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+value+'">编辑</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -486,6 +406,14 @@
 <script>
     $(function() {
 
+        // 表格【查询】
+        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+            if(event.keyCode ==13)
+            {
+                $("#filter-submit").click();
+            }
+        });
+
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
             var that = $(this);
@@ -504,17 +432,39 @@
             window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
-        // 跳转【添加工单】
-        $("#item-main-body").on('click', ".item-work-order-create-link", function() {
+
+        // 显示【工单详情】
+        $("#item-main-body").on('click', ".item-work-order-show", function() {
             var that = $(this);
-            window.open("/admin/business/site/work-order-create?site-id="+that.attr('data-id'));
+            var $data = new Object();
+            $.ajax({
+                type:"post",
+                dataType:'json',
+                async:false,
+                url: "{{ url('/admin/business/work-order-get') }}",
+                data: {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:"get-work-order",
+                    id:that.attr('data-id')
+                },
+                success:function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else
+                    {
+                        $data = data.data;
+                    }
+                }
+            });
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.work-order-user-id').html(that.attr('data-user-id'));
+            $('.work-order-username').html(that.attr('data-username'));
+            $('.work-order-name').html(that.attr('data-name'));
+            $('.work-order-website').html(that.attr('data-website'));
+            $('.work-order-title').html($data.title);
+            $('.work-order-content').html($data.content);
+            $('#modal-body').modal('show');
         });
 
-        // 跳转【站点工单】
-        $("#item-main-body").on('click', ".item-work-order-link", function() {
-            var that = $(this);
-            window.open("/admin/business/site/work-order-list?site-id="+that.attr('data-id'));
-        });
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
@@ -524,10 +474,10 @@
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/admin/business/site-delete') }}",
+                        "{{ url('/admin/business/work-order-delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
-                            operate:"delete-site",
+                            operate: "delete-work-order",
                             id:that.attr('data-id')
                         },
                         function(data){
@@ -539,46 +489,6 @@
                 }
             });
         });
-
-        // 【合作停】
-        $("#item-main-body").on('click', ".item-stop-submit", function() {
-            var that = $(this);
-            layer.msg('确定要"合作停"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/site-stop') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:"stop-site",
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-
-        // 显示【站点详情】
-        $("#item-main-body").on('click', ".item-site-show", function() {
-            var that = $(this);
-            $('input[name=id]').val(that.attr('data-id'));
-            $('.site-user-id').html(that.attr('data-user-id'));
-            $('.site-username').html(that.attr('data-username'));
-            $('.site-name').html(that.attr('data-name'));
-            $('.site-website').html(that.attr('data-website'));
-            $('.site-ftp').html(that.attr('data-ftp'));
-            $('.site-managebackground').html(that.attr('data-managebackground'));
-            $('#modal-body').modal('show');
-        });
-
-
 
 
         // 【启用】

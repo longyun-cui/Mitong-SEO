@@ -97,6 +97,15 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/keyword-stop', $controller.'@operate_business_keyword_stop');
 
 
+        Route::match(['get','post'], '/business/site/work-order-create', $controller.'@operate_business_site_work_order_create');
+        Route::match(['get','post'], '/business/site/work-order-edit', $controller.'@operate_business_site_work_order_edit');
+        Route::match(['get','post'], '/business/site/work-order-list', $controller.'@view_business_site_work_order_list');
+
+        Route::match(['get','post'], '/business/work-order-list', $controller.'@view_business_work_order_list');
+        Route::match(['get','post'], '/business/work-order-get', $controller.'@operate_business_work_order_get');
+        Route::match(['get','post'], '/business/work-order-delete', $controller.'@operate_business_work_order_delete');
+
+
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/overview-month', $controller.'@view_finance_overview_month');
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');

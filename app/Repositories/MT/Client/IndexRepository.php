@@ -7,6 +7,7 @@ use App\Models\MT\FundRechargeRecord;
 use App\Models\MT\SEOSite;
 use App\Models\MT\SEOKeyword;
 use App\Models\MT\SEOCart;
+use App\Models\MT\Item;
 
 use App\Repositories\Common\CommonRepository;
 use Response, Auth, Validator, DB, Exception;
@@ -1296,6 +1297,54 @@ class IndexRepository {
                 ->orderBy('id','desc')->get()->toArray();
         }
         return $list;
+    }
+
+
+
+
+    /*
+     * 工单管理
+     */
+    // 返回【工单】视图
+    public function show_business_my_work_order_list()
+    {
+        return view('mt.client.entrance.business.my-work-order-list')
+            ->with(['sidebar_work_order_list_active'=>'active menu-open']);
+    }
+    // 返回【工单】列表
+    public function get_business_my_work_order_datatable($post_data)
+    {
+        $me = Auth::guard("client")->user();
+
+        $query = Item::select('*')->with(['user','site'])->where('category',1)->where('user_id',$me->id);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
     }
 
 

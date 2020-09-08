@@ -33,6 +33,12 @@ class SEOSite extends Model
         return $this->hasMany('App\Models\MT\SEOKeyword','siteid','id');
     }
 
+    // 名下关键词
+    function work_orders()
+    {
+        return $this->hasMany('App\Models\MT\Item','site_id','id');
+    }
+
 
     /**
      * 获得此文章的所有评论。

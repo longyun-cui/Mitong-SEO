@@ -47,6 +47,9 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/select2_sites', $controller.'@operate_business_select2_sites');
 
 
+        Route::match(['get','post'], '/business/my-work-order-list', $controller.'@view_business_my_work_order_list');
+
+
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/overview-month', $controller.'@view_finance_overview_month');
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');

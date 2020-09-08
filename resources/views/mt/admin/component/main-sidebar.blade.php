@@ -127,8 +127,8 @@
             {{--工单管理--}}
             <li class="header">工单管理</li>
 
-            <li class="treeview {{ $sidebar_work_list_active or '' }}">
-                <a href="{{ url('/client/work/work-list') }}">
+            <li class="treeview {{ $sidebar_work_order_list_active or '' }}">
+                <a href="{{ url('/admin/business/work-order-list') }}">
                     <i class="fa fa-envelope"></i> <span>工单列表</span>
                 </a>
             </li>

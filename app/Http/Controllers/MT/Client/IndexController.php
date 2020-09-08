@@ -144,6 +144,19 @@ class IndexController extends Controller
 
 
     /*
+     * 工单管理
+     */
+    // 返回【工单列表】视图
+    public function view_business_my_work_order_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_my_work_order_list();
+        else if(request()->isMethod('post')) return $this->repo->get_business_my_work_order_datatable(request()->all());
+    }
+
+
+
+
+    /*
      * 财务系统
      */
     // 返回【财务概览】视图
