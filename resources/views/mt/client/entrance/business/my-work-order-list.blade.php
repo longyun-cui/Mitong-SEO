@@ -397,7 +397,7 @@
                 type:"post",
                 dataType:'json',
                 async:false,
-                url: "{{ url('/client/business/work-order-get') }}",
+                url: "{{ url('/client/business/my-work-order-get') }}",
                 data: {
                     _token: $('meta[name="_token"]').attr('content'),
                     operate:"get-work-order",

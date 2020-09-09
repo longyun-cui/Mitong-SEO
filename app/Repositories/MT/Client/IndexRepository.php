@@ -1348,6 +1348,37 @@ class IndexRepository {
     }
 
 
+    // 返回【站点】
+    public function operate_business_my_work_order_get($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'get-work-order') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $me = Auth::guard('client')->user();
+        if($me->usertype != "sub") return response_error([],"你没有操作权限");
+
+        $work_order = Item::find($id);
+        return response_success($work_order,"");
+
+    }
+
+
 
 
     /*

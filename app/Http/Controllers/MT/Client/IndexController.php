@@ -152,6 +152,11 @@ class IndexController extends Controller
         if(request()->isMethod('get')) return $this->repo->show_business_my_work_order_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_my_work_order_datatable(request()->all());
     }
+    // 返回【工单】详情
+    public function operate_business_my_work_order_get()
+    {
+        return $this->repo->operate_business_my_work_order_get(request()->all());
+    }
 
 
 

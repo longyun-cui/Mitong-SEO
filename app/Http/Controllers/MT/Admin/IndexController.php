@@ -391,7 +391,7 @@ class IndexController extends Controller
     {
         return $this->repo->operate_business_work_order_delete(request()->all());
     }
-    // 删除【工单】
+    // 返回【工单】详情
     public function operate_business_work_order_get()
     {
         return $this->repo->operate_business_work_order_get(request()->all());
