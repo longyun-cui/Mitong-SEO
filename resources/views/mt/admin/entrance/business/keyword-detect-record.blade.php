@@ -80,6 +80,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
+                        <th>序号</th>
                         <th>选择</th>
                         <th>ID</th>
                         <th></th>
@@ -91,9 +92,8 @@
                         <th>历史数据</th>
                     </tr>
                     <tr>
-                        <td>
-                            {{--<input type="checkbox" class="icheckbox_minimal" id="all_checked">--}}
-                        </td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -137,7 +137,7 @@
                         <div class="input-group">
                             <span class="input-group-addon"><input type="checkbox" id="check-all"></span>
                             <input type="text" class="form-control" name="bulk-detect-rank" id="bulk-detect-rank" placeholder="指定排名">
-                            <span class="input-group-addon" id="set-rank-bulk-submit"><i class="fa fa-check"></i>提交</span>
+                            <span class="input-group-addon btn btn-default" id="set-rank-bulk-submit"><i class="fa fa-check"></i>提交</span>
                         </div>
                     </div>
                 </div>
@@ -362,6 +362,13 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
+                        "title": "序号",
+                        "data": null,
+                        "targets": 0,
+                        'orderable': false
+                    },
+                    {
                         "title": "选择",
                         "data": "id",
                         'orderable': false,
@@ -457,6 +464,11 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
 
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){

@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','今日优化关键词 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','关键词列表')
+@section('header','今日优化关键词')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -75,6 +75,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
+                        <th>序号</th>
                         <th>ID</th>
                         <th>客户</th>
                         <th>关键词</th>
@@ -92,6 +93,7 @@
                         <th>历史数据</th>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
@@ -198,6 +200,13 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
+                        "title": "序号",
+                        "data": null,
+                        "targets": 0,
+                        'orderable': false
+                    },
+                    {
                         "width": "36px",
                         "title": "ID",
                         "data": "id",
@@ -287,7 +296,7 @@
                         "data": "price",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            return '<span class="text-blue">'+parseInt(data)+'</span>';
                         }
                     },
                     {
@@ -305,8 +314,13 @@
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
-                            else return data;
+                            var $gif = '';
+                            if(data < row.initialranking)
+                            {
+                                $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
+                            }
+                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>'+$gif;
+                            else return data+$gif;
                         }
                     },
                     {
@@ -317,21 +331,6 @@
                         render: function(data, type, row, meta) {
                             if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
                             else return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "72px",
-                        "title": "检测日期",
-                        "data": "detectiondate",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(!data) return '--';
-//                            return data;
-                            var $date = new Date(data);
-                            var $year = $date.getFullYear();
-                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
-                            var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
@@ -352,6 +351,21 @@
                         render: function(data, type, row, meta) {
                             if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
                             else return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "72px",
+                        "title": "检测日期",
+                        "data": "detectiondate",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(!data) return '--';
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
@@ -393,6 +407,12 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();

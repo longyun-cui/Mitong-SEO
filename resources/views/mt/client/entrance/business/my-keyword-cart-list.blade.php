@@ -100,8 +100,8 @@
                             <div class="input-group">
                                 <span class="input-group-addon"><input type="checkbox" id="check-all"></span>
                                 <select name="bulk-site" class="form-control form-filter select2-site" id="bulk-site" style="min-width:100%;"></select>
-                                <span class="btn input-group-addon" id="bulk-buy-submit"><i class="fa fa-check"></i> 批量购买</span>
-                                <span class="btn input-group-addon" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
+                                <span class="btn input-group-addon btn btn-default" id="bulk-buy-submit"><i class="fa fa-check"></i> 批量购买</span>
+                                <span class="btn input-group-addon btn btn-default" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
                             </div>
                         </div>
                     </div>

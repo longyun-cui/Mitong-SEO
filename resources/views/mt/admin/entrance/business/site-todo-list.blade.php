@@ -89,8 +89,8 @@
                                 <option value ="优化中">优化中</option>
                                 <option value ="被拒绝">被拒绝</option>
                             </select>
-                            <span class="btn input-group-addon" id="bulk-review-submit"><i class="fa fa-check"></i> 批量审核</span>
-                            <span class="btn input-group-addon" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
+                            <span class="btn input-group-addon btn btn-default" id="bulk-review-submit"><i class="fa fa-check"></i> 批量审核</span>
+                            <span class="btn input-group-addon btn btn-default" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
                         </div>
                     </div>
                 </div>
