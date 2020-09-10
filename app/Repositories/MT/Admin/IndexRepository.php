@@ -1320,6 +1320,80 @@ class IndexRepository {
     }
 
 
+    // 返回【今日关键词】视图
+    public function show_business_keyword_anomaly_list()
+    {
+        $data = [];
+
+        return view('mt.admin.entrance.business.keyword-anomaly-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_keyword_active'=>'active',
+                'sidebar_business_keyword_today_active'=>'active'
+            ]);
+    }
+    // 返回【今日关键词】列表
+    public function get_business_keyword_anomaly_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+        $query = SEOKeyword::select('*')->with('creator')
+            ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标'])
+            ->whereHas('detects',function($query) {
+                $query->whereDate('detect_time',date("Y-m-d",(time()-86400)))->where('rank','>',0)->where('rank','<=',10);
+            });
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+        if(!empty($post_data['latest_ranking']))
+        {
+            if($post_data['latest_ranking'] = 1)
+            {
+                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
+            }
+        }
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
     // 返回【待审核关键词】列表
     public function get_business_keyword_todo_list_datatable($post_data)
     {

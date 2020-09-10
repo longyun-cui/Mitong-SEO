@@ -234,6 +234,13 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
 
+    // 返回【异常关键词列表】视图
+    public function view_business_keyword_anomaly_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_anomaly_list();
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_anomaly_list_datatable(request()->all());
+    }
+
     // 返回【待审核关键词列表】视图
     public function view_business_keyword_todo_list()
     {

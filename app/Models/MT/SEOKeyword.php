@@ -39,6 +39,18 @@ class SEOKeyword extends Model
         return $this->belongsTo('App\Models\MT\SEOSite','siteid','id');
     }
 
+    //
+    function expenses()
+    {
+        return $this->hasMany('App\Models\MT\ExpenseRecord','keywordid','id');
+    }
+
+    //
+    function detects()
+    {
+        return $this->hasMany('App\Models\MT\SEOKeywordDetectRecord','keywordid','id');
+    }
+
 
     /**
      * 获得此文章的所有评论。

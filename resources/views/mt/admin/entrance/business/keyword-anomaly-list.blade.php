@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','今日关键词列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','异常关键词列表 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','今日关键词列表')
+@section('header','异常关键词列表')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
-        <div class="box box-info" id="item-content-body">
+        <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
@@ -36,19 +36,23 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>选择</th>
                         <th>ID</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>操作</th>
+                        <th>客户</th>
+                        <th>关键词</th>
+                        <th>站点</th>
+                        <th>搜索引擎</th>
+                        <th>创建时间</th>
+                        <th>单价</th>
+                        <th>初始排名</th>
+                        <th>最新排名</th>
+                        <th>检测时间</th>
+                        <th>最新消费</th>
+                        <th>达标天数</th>
+                        <th>累计消费</th>
+                        <th>状态</th>
+                        <th>历史数据</th>
                     </tr>
                     <tr>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
@@ -67,8 +71,19 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            <select name="latest_ranking" class="form-control form-filter">
+                                <option value ="0">全部</option>
+                                <option value ="1">已达标</option>
+                            </select>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
@@ -92,25 +107,6 @@
 
             <div class="box-footer">
                 <div class="row" style="margin:16px 0;">
-                    <div class="col-md-offset-0 col-md-6 col-sm-8 col-xs-12">
-                        {{--<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>--}}
-                        {{--<button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>--}}
-                        <div class="input-group">
-                            <span class="input-group-addon"><input type="checkbox" id="check-all"></span>
-                            <select name="bulk-status" class="form-control form-filter" id="bulk-keyword-status" style="min-width:100%;">
-                                <option value ="0">请选择</option>
-                                <option value ="优化中">优化中</option>
-                                <option value ="被拒绝">被拒绝</option>
-                            </select>
-                            <span class="btn input-group-addon" id="bulk-review-submit"><i class="fa fa-check"></i> 批量审核</span>
-                            <span class="btn input-group-addon" id="bulk-delete-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="box-footer">
-                <div class="row" style="margin:16px 0;">
                     <div class="col-md-offset-0 col-md-9">
                         <button type="button" onclick="" class="btn btn-primary _none"><i class="fa fa-check"></i> 提交</button>
                         <button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>
@@ -119,111 +115,6 @@
             </div>
         </div>
         <!-- END PORTLET-->
-    </div>
-</div>
-
-<div class="modal fade" id="modal-body">
-    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
-
-        <div class="row">
-            <div class="col-md-12">
-                <!-- BEGIN PORTLET-->
-                <div class="box- box-info- form-container">
-
-                    <div class="box-header with-border" style="margin:16px 0;">
-                        <h3 class="box-title">代理商充值</h3>
-                        <div class="box-tools pull-right">
-                        </div>
-                    </div>
-
-                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
-                        <div class="box-body">
-
-                            {{csrf_field()}}
-                            <input type="hidden" name="operate" value="review" readonly>
-                            <input type="hidden" name="id" value="0" readonly>
-
-                            {{--类别--}}
-
-
-                            {{--站点ID--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">关键词ID</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-site-id"></span>
-                                </div>
-                            </div>
-                            {{--关键词--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">关键词</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-keyword"></span>
-                                </div>
-                            </div>
-                            {{--站点名称--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点名称</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-site-name"></span>
-                                </div>
-                            </div>
-                            {{--站点--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-website"></span>
-                                </div>
-                            </div>
-                            {{--站点--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">调整价格</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <input type="text" class="form-control review-price" name="review-price" placeholder="调整价格" value="0">
-                                </div>
-                            </div>
-                            {{--审核意见--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">审核结果</label>
-                                <div class="col-md-8 ">
-                                    <select name="keywordstatus" class="form-control form-filter">
-                                        <option value ="0">请选择</option>
-                                        <option value ="优化中">优化中</option>
-                                        <option value ="被拒绝">被拒绝</option>
-                                    </select>
-                                </div>
-                            </div>
-                            {{--备注--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">备注</label>
-                                <div class="col-md-8 ">
-                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
-                                    <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
-                                </div>
-                            </div>
-                            {{--说明--}}
-                            <div class="form-group _none">
-                                <label class="control-label col-md-2">说明</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </form>
-
-                    <div class="box-footer">
-                        <div class="row">
-                            <div class="col-md-8 col-md-offset-2">
-                                <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
-                                <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END PORTLET-->
-            </div>
-        </div>
     </div>
 </div>
 @endsection
@@ -242,7 +133,7 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/keyword-todo') }}",
+                    'url': "{{ url('/admin/business/keyword-anomaly') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -250,6 +141,7 @@
                         d.keyword = $('input[name="keyword"]').val();
                         d.website = $('input[name="website"]').val();
                         d.searchengine = $('select[name="searchengine"]').val();
+                        d.latest_ranking = $('select[name="latest_ranking"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -267,16 +159,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "48px",
-                        "title": "选择",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return '<label><input type="checkbox" name="bulk-keyword-id" class="minimal" value="'+data+'"></label>';
-                        }
-                    },
-                    {
-                        "width": "48px",
+                        "width": "36px",
                         "title": "ID",
                         "data": "id",
                         'orderable': false,
@@ -290,7 +173,7 @@
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : row.creator.username;
+                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
                         }
                     },
                     {
@@ -299,11 +182,31 @@
                         "data": "keyword",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            if(row.searchengine == "baidu")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "baidu_mobile")
+                            {
+                                return '<a target="_blank" href="https://m.baidu.com/ssid=fd5379616e677a696c676c8223/from=1012971h/s?&ie=utf-8&word='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "sougou")
+                            {
+                                return '<a target="_blank" href="https://www.sogou.com/web?ie=utf8&query='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "360")
+                            {
+                                return '<a target="_blank" href="https://www.so.com/s?ie=utf-8&q='+data+'">'+data+'</a>';
+                            }
+                            else if(row.searchengine == "shenma")
+                            {
+                                return '<a target="_blank" href="http://www.baidu.com/#ie=UTF-8&wd='+data+'">'+data+'</a>';
+                            }
+                            else return data;
                         }
                     },
                     {
-                        "width": "",
+                        "width": "72px",
                         "title": "站点",
                         "data": "website",
                         'orderable': false,
@@ -312,10 +215,10 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "64px",
                         "title": "搜索引擎",
                         "data": "searchengine",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             if(data == "baidu") return '百度PC';
                             else if(data == "baidu_mobile") return '百度移动';
@@ -326,38 +229,117 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "72px",
                         "title": "创建时间",
                         "data": "createtime",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
+                        }
+                    },
+                    {
+                        "width": "48px",
+                        "title": "价格",
+                        "data": "price",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "初始排名",
+                        "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "width": "",
-                        "title": "单价",
-                        "data": "price",
-                        'orderable': false,
+                        "width": "54px",
+                        "title": "最新排名",
+                        "data": "latestranking",
+                        'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data)+'元/天';
-                        }
-                    },
-                    {
-                        "width": "",
-                        "title": "状态",
-                        "data": "keywordstatus",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
+                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
                             else return data;
                         }
                     },
                     {
-                        "data": 'id',
+                        "width": "56px",
+                        "title": "最新消费",
+                        "data": "latestconsumption",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
+                            else return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "72px",
+                        "title": "检测日期",
+                        "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            if(!data) return '--';
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
+                        }
+                    },
+                    {
+                        "width": "56px",
+                        "title": "达标天数",
+                        "data": "standarddays",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
+                            else return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "56px",
+                        "title": "累计消费",
+                        "data": "totalconsumption",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
+                            else return parseInt(data);
+                        }
+                    },
+                    {
+                        "width": "64px",
+                        "title": "状态",
+                        "data": "keywordstatus",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            if(row.status == 1)
+                            {
+                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
+                                else return data;
+                            }
+                            else
+                            {
+                                return '<small class="btn-xs bg-navy">已删除</small>';
+                            }
+                        }
+                    },
+                    {
+                        "width": "",
+                        "title": "操作",
+                        "data": 'id',
+                        'orderable': false,
+                        render: function(value) {
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -366,9 +348,7 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-//                                '<a class="btn btn-xs item-show-submit" data-id="'+value+'" >数据详情</a>';
-                                '<a class="btn btn-xs bg-primary item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
+                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >数据详情</a>';
                             return html;
                         }
                     }
@@ -471,105 +451,39 @@
                 window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
-
-
-
-        // 【批量选择】全选or反选
-        $("#item-content-body").on('click', '#check-all', function () {
-            $('input[name="bulk-keyword-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
-        });
-
-        // 【审核】显示
-        $("#item-main-body").on('click', ".item-review-show", function() {
+        // 【数据详情】
+        $("#item-main-body").on('click', ".item-data-detail-link", function() {
             var that = $(this);
-            $('input[name=id]').val(that.attr('data-id'));
-            $('.review-site-id').html(that.attr('data-id'));
-            $('.review-site-name').html(that.attr('data-name'));
-            $('.review-website').html(that.attr('data-website'));
-            $('.review-keyword').html(that.attr('data-keyword'));
-            $('.review-price').val(that.attr('data-price'));
-            $('#modal-body').modal('show');
-        });
-        // 【审核】取消
-        $("#modal-body").on('click', "#item-review-cancel", function() {
-            $('.review-user-id').html('');
-            $('.review-user-name').html('');
-            $('.review-website').html('');
-            $('.review-keyword').html('');
-            $('.review-price').val(0);
-            $('#modal-body').modal('hide');
+            window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
         });
 
-        // 【审核】提交
-        $("#modal-body").on('click', "#item-review-submit", function() {
+        // 【数据详情】
+        $("#item-main-body").on('click', ".item-data-detail-show", function() {
             var that = $(this);
-            layer.msg('确定"审核"么', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-
-                    var options = {
-                        url: "{{ url('/admin/business/keyword-review') }}",
-                        type: "post",
-                        dataType: "json",
-                        // target: "#div2",
-                        success: function (data) {
-                            if(!data.success) layer.msg(data.msg);
-                            else
-                            {
-                                layer.msg(data.msg);
-                                location.reload();
-                            }
-                        }
-                    };
-                    $("#form-edit-modal").ajaxSubmit(options);
-                }
-            });
+            $.post(
+                "{{ url('/item/delete') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    id:that.attr('data-id')
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else location.reload();
+                },
+                'json'
+            );
+            ('#modal-body').modal('show');
         });
 
-        // 【批量审核】【关键词】
-        $("#item-content-body").on('click', '#bulk-review-submit', function() {
-            var $checked = [];
-            $('input[name="bulk-keyword-id"]:checked').each(function() {
-                $checked.push($(this).val());
-            });
-
-            layer.msg('确定要"批量审核"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-review-bulk') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            bulk_keyword_id:$checked,
-                            bulk_keyword_status:$('#bulk-keyword-status').find("option:selected").val()
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else
-                            {
-                                layer.msg(data.msg);
-                                location.reload();
-                            }
-                        },
-                        'json'
-                    );
-                }
-            });
-
-        });
-
-
-        // 【删除】【待审核】【关键词】
+        // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要"删除"么？', {
+            layer.msg('确定要删除该"产品"么', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/admin/business/keyword-todo-delete') }}",
+                        "{{ url('/item/delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
                             id:that.attr('data-id')
@@ -583,36 +497,6 @@
                 }
             });
         });
-        // 【批量删除】【待审核】【关键词】
-        $("#item-content-body").on('click', '#bulk-delete-submit', function() {
-            var $checked = [];
-            $('input[name="bulk-keyword-id"]:checked').each(function() {
-                $checked.push($(this).val());
-            });
-
-            layer.msg('确定要"批量删除"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-todo-delete-bulk') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            bulk_keyword_id:$checked
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-
-        });
-
-
-
 
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
@@ -636,6 +520,7 @@
                 }
             });
         });
+
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

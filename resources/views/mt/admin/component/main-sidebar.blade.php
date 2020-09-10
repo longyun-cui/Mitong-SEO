@@ -78,6 +78,11 @@
                     <i class="fa fa-text-width"></i><span>今日优化关键词</span>
                 </a>
             </li>
+            <li class="treeview {{ $sidebar_business_keyword_anomaly_active or '' }}">
+                <a href="{{ url('/admin/business/keyword-anomaly') }}">
+                    <i class="fa fa-text-width"></i><span>异常关键词</span>
+                </a>
+            </li>
             <li class="treeview {{ $sidebar_business_keyword_todo_active or '' }}">
                 <a href="{{ url('/admin/business/keyword-todo') }}">
                     <i class="fa fa-text-width"></i><span>待审核关键词</span>
