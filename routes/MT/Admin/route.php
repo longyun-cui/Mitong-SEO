@@ -103,6 +103,7 @@ Route::group([], function () {
 
         Route::match(['get','post'], '/business/work-order-list', $controller.'@view_business_work_order_list');
         Route::match(['get','post'], '/business/work-order-get', $controller.'@operate_business_work_order_get');
+        Route::match(['get','post'], '/business/work-order-push', $controller.'@operate_business_work_order_push');
         Route::match(['get','post'], '/business/work-order-delete', $controller.'@operate_business_work_order_delete');
 
 

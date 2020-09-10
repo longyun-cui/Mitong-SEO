@@ -196,7 +196,16 @@
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return '<a class="btn btn-xs bg-navy item-work-submit" data-id="'+data+'" >工单</a>';
+                            var $work_order_html = '';
+                            if(row.work_order_count > 0)
+                            {
+                                $work_order_html = '<a class="btn btn-xs bg-navy item-work-order-link" data-id="'+data+'" >我的工单</a>';
+                            }
+                            else
+                            {
+                                $work_order_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >我的工单</a>';
+                            }
+                            return $work_order_html;
                         }
                     },
                     {
@@ -343,6 +352,12 @@
                     );
                 }
             });
+        });
+
+        // 跳转【站点工单】
+        $("#item-main-body").on('click', ".item-work-order-link", function() {
+            var that = $(this);
+            window.open("/client/business/my-work-order-list");
         });
 
 

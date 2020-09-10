@@ -157,6 +157,11 @@ class IndexController extends Controller
     {
         return $this->repo->operate_business_my_work_order_get(request()->all());
     }
+    // 操作【工单】完成
+    public function operate_business_my_work_order_complete()
+    {
+        return $this->repo->operate_business_my_work_order_complete(request()->all());
+    }
 
 
 

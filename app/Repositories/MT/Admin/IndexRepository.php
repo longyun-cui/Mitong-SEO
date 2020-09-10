@@ -2875,7 +2875,7 @@ class IndexRepository {
     }
 
 
-    // 返回【站点】
+    // 获取【站点】详情
     public function operate_business_work_order_get($post_data)
     {
         $messages = [
@@ -2893,7 +2893,7 @@ class IndexRepository {
         }
 
         $operate = $post_data["operate"];
-        if($operate != 'get-work-order') return response_error([],"参数有误！");
+        if($operate != 'work-order-get') return response_error([],"参数有误！");
         $id = $post_data["id"];
         if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
 
@@ -2902,6 +2902,55 @@ class IndexRepository {
 
         $work_order = Item::find($id);
         return response_success($work_order,"");
+
+    }
+    // 推送【站点】
+    public function operate_business_work_order_push($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'work-order-push') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $work_order = Item::find($id);
+        if(!$work_order) return response_error([],"该工单不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $work_order->active = 1;
+            $bool = $work_order->save();
+            if(!$bool) throw new Exception("update--item--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
 
     }
     // 删除【站点】
@@ -2922,7 +2971,7 @@ class IndexRepository {
         }
 
         $operate = $post_data["operate"];
-        if($operate != 'delete-work-order') return response_error([],"参数有误！");
+        if($operate != 'work-order-delete') return response_error([],"参数有误！");
         $id = $post_data["id"];
         if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
 
@@ -2937,10 +2986,7 @@ class IndexRepository {
         try
         {
             $bool = $work_order->delete();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--item--fail");
+            if(!$bool) throw new Exception("delete--item--fail");
 
             DB::commit();
             return response_success([]);

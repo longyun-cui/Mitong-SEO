@@ -152,7 +152,8 @@ class IndexRepository {
         $mine = Auth::guard("client")->user();
         $query = SEOSite::select('id','createuserid','createusername','sitestatus','sitename','website','ftp','createtime')
             ->withCount([
-                    'keywords'=>function($query){ $query->where(["keywordstatus"=>"优化中","status"=>1]); }
+                    'keywords'=>function($query){ $query->where(["keywordstatus"=>"优化中","status"=>1]); },
+                    'work_orders as work_order_count'=>function ($query) { $query->where('category',1)->where('active','>',0); },
                 ])
             ->where('createuserid',$mine->id);
 
@@ -1316,7 +1317,7 @@ class IndexRepository {
     {
         $me = Auth::guard("client")->user();
 
-        $query = Item::select('*')->with(['user','site'])->where('category',1)->where('user_id',$me->id);
+        $query = Item::select('*')->with(['user','site'])->where('category',1)->where('active','>',0)->where('user_id',$me->id);
 
         $total = $query->count();
 
@@ -1353,7 +1354,7 @@ class IndexRepository {
     {
         $messages = [
             'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
+            'id.required' => '请输入工单ID',
         ];
         $v = Validator::make($post_data, [
             'operate' => 'required',
@@ -1366,15 +1367,70 @@ class IndexRepository {
         }
 
         $operate = $post_data["operate"];
-        if($operate != 'get-work-order') return response_error([],"参数有误！");
+        if($operate != 'work-order-get') return response_error([],"参数有误！");
         $id = $post_data["id"];
         if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
 
         $me = Auth::guard('client')->user();
         if($me->usertype != "sub") return response_error([],"你没有操作权限");
 
+
         $work_order = Item::find($id);
+        if($work_order->is_read == 0)
+        {
+            $work_order->is_read = 1;
+            $work_order->save();
+        }
         return response_success($work_order,"");
+
+    }
+    // 删除【站点】
+    public function operate_business_my_work_order_complete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入工单ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'work-order-complete') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"ID有误！");
+
+        $me = Auth::guard('client')->user();
+        if($me->usertype != "sub") return response_error([],"你没有操作权限!");
+
+        $work_order = Item::find($id);
+        if(!$work_order) return response_error([],"该工单不存在，刷新页面试试!");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $work_order->active = 9;
+            $bool = $work_order->save();
+            if(!$bool) throw new Exception("update--item--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
 
     }
 
