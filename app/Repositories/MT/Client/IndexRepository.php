@@ -193,6 +193,7 @@ class IndexRepository {
 //        $query = SEOKeyword::select('id','createuserid','createusername','keywordstatus','website','sitename','keyword','searchengine','price','createtime','initialrangking','latestranking')
         $query = SEOKeyword::select('*')
             ->with('site')
+            ->where('status',1)
             ->where('createuserid',$mine->id);
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
