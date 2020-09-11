@@ -44,7 +44,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
+                        {{--<th></th>--}}
                         <th></th>
                         <th></th>
                         <th>操作</th>
@@ -58,7 +58,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
+                        {{--<td></td>--}}
                         <td></td>
                         <td></td>
                         <td>
@@ -288,7 +288,7 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(row.keywords_standard_count)
+                            if(row.standard_today_count)
                             {
                                 if(row.standard_today_count > 0)
                                 {
@@ -317,23 +317,23 @@
                             else return 0;
                         }
                     },
-                    {
-                        "width": "64px",
-                        "title": "累计达标",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(row.standard_all_sum)
-                            {
-                                if(row.standard_all_sum > 0)
-                                {
-                                    return '<span class="text-blue">'+row.standard_all_sum.toLocaleString()+'</span>';
-                                }
-                                else return parseInt(row.standard_all_sum).toLocaleString();
-                            }
-                            else return 0;
-                        }
-                    },
+//                    {
+//                        "width": "64px",
+//                        "title": "累计达标",
+//                        "data": "id",
+//                        'orderable': false,
+//                        render: function(data, type, row, meta) {
+//                            if(row.standard_all_sum)
+//                            {
+//                                if(row.standard_all_sum > 0)
+//                                {
+//                                    return '<span class="text-blue">'+row.standard_all_sum.toLocaleString()+'</span>';
+//                                }
+//                                else return parseInt(row.standard_all_sum).toLocaleString();
+//                            }
+//                            else return 0;
+//                        }
+//                    },
                     {
                         "width": "64px",
                         "title": "累计消费",

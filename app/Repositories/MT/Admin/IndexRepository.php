@@ -1033,7 +1033,9 @@ class IndexRepository {
         $query = SEOSite::select('*')->with('creator')
             ->withCount([
                 'keywords',
-                'keywords as standard_today_count'=>function ($query) { $query->where('standardstatus','已达标'); },
+                'keywords as standard_today_count'=>function ($query) {
+                    $query->where('standardstatus','已达标');
+                },
                 'keywords as consumption_today_sum'=>function ($query) {
                     $query->select(DB::raw("sum(price) as consumption_today_sum"))->where('standardstatus','已达标');
                 },
