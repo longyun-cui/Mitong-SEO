@@ -55,7 +55,7 @@
             {{--财务管理--}}
             <li class="header">财务管理</li>
 
-            <li class="treeview {{ $sidebar_finance_overview_active or '' }}">
+            <li class="treeview {{ $sidebar_finance_overview_active or '' }} _none">
                 <a href="{{ url('/agent/finance/overview') }}">
                     <i class="fa fa-cny text-red"></i><span>财务概览</span>
                 </a>
@@ -75,9 +75,9 @@
 
 
             {{--员工管理--}}
-            <li class="header">员工管理</li>
+            <li class="header _none">员工管理</li>
 
-            <li class="treeview">
+            <li class="treeview _none">
                 <a href="{{ url('/agent/') }}">
                     <i class="fa fa-text-width"></i><span>员工列表</span>
                 </a>
@@ -104,63 +104,7 @@
 
 
 
-            {{--目录管理--}}
-            <li class="header _none">自定义内容管理</li>
 
-            <li class="treeview _none">
-                <a href="{{ url('/admin/menu/list') }}">
-                    <i class="fa fa-folder-open-o text-blue"></i> <span>目录列表</span>
-                </a>
-            </li>
-
-            <li class="treeview _none">
-                <a href="{{ url('/admin/item/list') }}">
-                    <i class="fa fa-file-o text-blue"></i> <span>内容列表</span>
-                </a>
-            </li>
-
-
-            <li class="treeview _none">
-                <a href="{{ url('/admin/menu/sort') }}">
-                    <i class="fa fa-sort text-red"></i> <span>目录排序</span>
-                </a>
-            </li>
-
-
-            <li class="treeview _none">
-                <a href=""><i class="fa fa-th text-aqua"></i> <span>特殊内容</span>
-                    <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="{{ url('/admin/product/list') }}">
-                            <i class="fa fa-file-text text-red"></i> <span>产品列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/article/list') }}">
-                            <i class="fa fa-file-text text-red"></i> <span>文章列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/activity/list') }}">
-                            <i class="fa fa-calendar-check-o text-red"></i> <span>活动/会议列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/survey/list') }}">
-                            <i class="fa fa-question-circle text-red"></i> <span>调研问卷列表</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/admin/slide/list') }}">
-                            <i class="fa fa-th-large text-red"></i> <span>幻灯片列表</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
 
 
 
@@ -168,7 +112,6 @@
             <li class="header _none">流量统计</li>
 
             <li class="treeview _none">
-                {{--<a href="{{ url(config('common.org.admin.prefix').'/admin/website/statistics') }}"><i class="fa fa-bar-chart text-green"></i> <span>流量统计</span></a>--}}
                 <a href="{{ url('/admin/statistics/website') }}"><i class="fa fa-bar-chart text-green"></i> <span>流量统计</span></a>
             </li>
 
