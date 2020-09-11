@@ -41,6 +41,7 @@
                 <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
+                        <th>序号</th>
                         <th>ID</th>
                         <th></th>
                         <th></th>
@@ -57,6 +58,7 @@
                         <th>历史数据</th>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
@@ -164,6 +166,13 @@
                 "order": [],
                 "orderCellsTop": true,
                 "columns": [
+                    {
+                        "width": "48px",
+                        "title": "序号",
+                        "data": null,
+                        "targets": 0,
+                        'orderable': false
+                    },
                     {
                         "width": "48px",
                         "title": "ID",
@@ -350,6 +359,12 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();
