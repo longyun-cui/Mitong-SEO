@@ -3945,11 +3945,11 @@ class IndexRepository {
     // 下载
     public function operate_download_keyword_today()
     {
-        $cellData = SEOKeyword::select('keyword','searchengine','detectiondate','latestranking')
+        $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
             ->whereDate('detectiondate',date("Y-m-d"))->orderby('id','desc')
             ->get()
             ->toArray();
-        array_unshift($cellData,['关键词','搜索引擎','检测时间','排名']);
+        array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
 
         $title = '【今日关键词】 - '.date('YmdHis');
         Excel::create($title,function($excel) use ($cellData){
