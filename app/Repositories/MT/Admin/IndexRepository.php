@@ -3973,7 +3973,7 @@ class IndexRepository {
             ->toArray();
         array_unshift($cellData,['检测时间','排名']);
 
-        $title = "【关键词-{$keyword->keyword}】【搜索引擎-{$keyword->searchengine}】 - 【价格-{$keyword->price}】 - ".date('YmdHis');
+        $title = "【关键词】{$keyword->keyword}-{$keyword->searchengine}-{$keyword->price}元 - ".date('YmdHis');
         $engine = $keyword->searchengine;
         Excel::create($title,function($excel) use ($cellData,$keyword,$engine){
             $excel->sheet($engine, function($sheet) use ($cellData){
