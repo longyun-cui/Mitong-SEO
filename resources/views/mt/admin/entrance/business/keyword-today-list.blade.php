@@ -45,6 +45,10 @@
                     {{--<span style="margin-right:12px;">--}}
                         {{--消费统计 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum_by_expense'] or 0 }}</span> 元--}}
                     {{--</span>--}}
+
+                    <span style="margin-right:12px;">
+                        <a class="text-green font-18px" href="/admin/business/download/keyword-today"><button>下载今日关键词</button></a>
+                    </span>
                 </div>
             </div>
         </div>
@@ -392,16 +396,18 @@
                         "title": "操作",
                         "data": 'id',
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
                             var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >数据详情</a>';
+//                                    '<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+
+//                                    '<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+
+//                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+
+//                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+data+'">流量统计</a>'+
+                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+data+'">编辑</a>'+--}}
+//                                    '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
+//                                    '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+                                    '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
+                                    '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
+                                    '';
                             return html;
                         }
                     }
@@ -510,12 +516,12 @@
                 window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
+
         // 【数据详情】
         $("#item-main-body").on('click', ".item-data-detail-link", function() {
             var that = $(this);
             window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
         });
-
         // 【数据详情】
         $("#item-main-body").on('click', ".item-data-detail-show", function() {
             var that = $(this);
@@ -533,6 +539,47 @@
             );
             ('#modal-body').modal('show');
         });
+
+
+
+
+        // 【下载】
+        $("#item-main-body").on('click', ".item-download-link", function() {
+            var that = $(this);
+            layer.msg('确定要"下载"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    window.open("/admin/business/download/keyword-detect?id="+that.attr('data-id'));
+                }
+            });
+        });
+        // 【下载】
+        $("#item-main-body").on('click', ".item-download-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"下载"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/download/keyword-detect') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"download-keyword-detect",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
@@ -557,6 +604,7 @@
             });
         });
 
+
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -579,7 +627,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

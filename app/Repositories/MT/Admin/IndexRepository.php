@@ -15,6 +15,7 @@ use App\Repositories\Common\CommonRepository;
 
 use Response, Auth, Validator, DB, Exception;
 use QrCode;
+use Excel;
 
 class IndexRepository {
 
@@ -3937,6 +3938,52 @@ class IndexRepository {
             return response_fail([],'禁用失败，请重试');
         }
     }
+
+
+
+
+    // 下载
+    public function operate_download_keyword_today()
+    {
+        $cellData = SEOKeyword::select('keyword','searchengine','detectiondate','latestranking')
+            ->whereDate('detectiondate',date("Y-m-d"))->orderby('id','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['关键词','搜索引擎','检测时间','排名']);
+
+        $title = '【今日关键词】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+    }
+
+    // 下载
+    public function operate_download_keyword_detect($post_data)
+    {
+//        echo 0;
+        $keyword_id = $post_data["id"];
+        $keyword = SEOKeyword::find($keyword_id);
+        if(!$keyword) return response_fail([],'关键词不存在，请重试！');
+
+        $cellData = SEOKeywordDetectRecord::select('detect_time','rank')
+            ->where('keywordid',$keyword_id)->orderby('detect_time','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['检测时间','排名']);
+
+        $title = '【关键词】'.$keyword->keyword.' - '.date('YmdHis');
+        $engine = $keyword->searchengine;
+        Excel::create($title,function($excel) use ($cellData,$keyword,$engine){
+            $excel->sheet($engine, function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+        return response_success([]);
+    }
+
+
 
 
 }

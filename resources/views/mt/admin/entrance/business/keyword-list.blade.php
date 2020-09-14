@@ -198,7 +198,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "48px",
+                        "width": "32px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
@@ -224,7 +224,7 @@
                     },
                     {
                         "className": "",
-                        "width": "72px",
+                        "width": "",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -396,15 +396,17 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>';
+                                    {{--'<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+--}}
+                                    {{--'<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+--}}
+                                    {{--'<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+--}}
+                                    {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
+                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+                                    {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
+                                    '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
+                                    '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                    '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
+                                    '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
+                                    ''
                             return html;
                         }
                     }
@@ -583,6 +585,42 @@
                         function(data){
                             if(!data.success) layer.msg(data.msg);
                             else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+
+        // 【下载】
+        $("#item-main-body").on('click', ".item-download-link", function() {
+            var that = $(this);
+            layer.msg('确定要"下载"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    window.open("/admin/business/download/keyword-detect?id="+that.attr('data-id'));
+                }
+            });
+        });
+        // 【下载】
+        $("#item-main-body").on('click', ".item-download-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"下载"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/download/keyword-detect') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"download-keyword-detect",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
                         },
                         'json'
                     );

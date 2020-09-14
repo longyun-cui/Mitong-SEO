@@ -1278,9 +1278,11 @@ class IndexController extends Controller
         //G('begin');
 
         // 长尾词挖掘配置
-        $KeywordDigOptions 				= C('KeywordDigOptions');
+//        $KeywordDigOptions 				= C('KeywordDigOptions');
+        $KeywordDigOptions 				= config('seo.KeywordDigOptions');
         // 关键词长度价格指数代码集
-        $KeywordLengthPriceIndexOptions = C('KeywordLengthPriceIndexOptions');
+//        $KeywordLengthPriceIndexOptions = C('KeywordLengthPriceIndexOptions');
+        $KeywordLengthPriceIndexOptions 			= config('seo.KeywordLengthPriceIndexOptions');
         $searchengine_keys = array_keys($KeywordLengthPriceIndexOptions);
 
         //组成字符
@@ -1290,6 +1292,7 @@ class IndexController extends Controller
         $url_search = "http://www.baidu.com/s?wd=". urlencode($keywords);;
         //从http://www.5118.com/seo/words/%E4%BA%92%E8%81%94%E7%BD%91%E4%BF%9D%E9%99%A9
         $html = file_get_contents( $url_search );
+        dd($html);
 
 
         // ...其他代码段
