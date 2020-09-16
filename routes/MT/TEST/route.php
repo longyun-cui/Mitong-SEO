@@ -9,6 +9,10 @@ Route::group([], function () {
 
     $controller = "TestController";
 
+    Route::get('phpinfo', function () {
+        phpinfo();
+    });
+
     Route::match(['get','post'], '/', $controller.'@index');
     Route::match(['get','post'], '/repeat', $controller.'@repeat');
     Route::match(['get','post'], '/statistics', $controller.'@statistics');

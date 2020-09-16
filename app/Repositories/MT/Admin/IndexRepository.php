@@ -3151,6 +3151,7 @@ class IndexRepository {
         }
 
         $list = $this -> combKeywordSearchResults( $arr );
+        dd($list);
 
 
         $mine = Auth::guard('client')->user();
@@ -3233,6 +3234,62 @@ class IndexRepository {
 
     }
 
+    public function operate_business_keyword_recommend($post_data)
+    {
+        $messages = [
+            'keywords.required' => '关键词不能为空',
+        ];
+        $v = Validator::make($post_data, [
+            'keywords' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $keywords = $post_data['keywords'];
+
+        $keyword_arr = explode(',' , $keywords );
+        // 去重空值
+        $keyword_arr = array_filter( $keyword_arr );
+        // 去重操作
+        $keyword_arr = array_values(array_unique( $keyword_arr ));
+
+
+        // 长尾词挖掘配置
+//        $KeywordDigOptions = C('KeywordDigOptions');
+        $KeywordDigOptions = config('seo.KeywordDigOptions');
+        // 关键词长度价格指数代码集
+//        $KeywordLengthPriceIndexOptions = C('KeywordLengthPriceIndexOptions');
+        $KeywordLengthPriceIndexOptions = config('seo.KeywordLengthPriceIndexOptions');
+        $searchengine_keys = array_keys($KeywordLengthPriceIndexOptions);
+
+        //组成字符
+        $keywords = implode(',' , $keyword_arr);
+        //关键词搜索
+        //$url_search = $KeywordDigOptions['url']. urlencode($keywords);
+        $url_search = "http://www.baidu.com/s?wd=". urlencode($keywords);;
+        //从http://www.5118.com/seo/words/%E4%BA%92%E8%81%94%E7%BD%91%E4%BF%9D%E9%99%A9
+        $html = file_get_contents( $url_search );
+
+        // ...也许这里还有其他代码
+        // 进行统计区间
+        //echo G('begin','end').'s';
+        // 根据特殊的字符进行匹配
+        /*
+        $pattern_all = '/<span class="hoverToHide"><a.*?>(.+?)<\/a><\/span>/is';
+        */
+        $pattern_all = '/<th><a href="(?:.*?)">(.*?)<\/a><\/th>/is';
+        preg_match_all($pattern_all, $html, $results);
+
+        $keyword_arr1 = $results[1];
+        dd($keyword_arr1);
+
+        return 1;
+    }
+
     /**
      * 搜索关键词:根据用户的关键词搜索推荐的关键词
      *
@@ -3277,19 +3334,20 @@ class IndexRepository {
 
 
             // 百度指数查询
+            ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727;)');
             $url_index = 'http://api.91cha.com/index?key=456a38a7a22f41a0ae3829ec1ccb7fc1&kws='.urlencode($keywords);
             //echo file_get_contents("http://www.91cha.com");
 
-            //$data_index = json_decode( file_get_contents($url_index));
+            $data_index = json_decode( file_get_contents($url_index));
 
-            try {
-                $data_index = file_get_contents($url_index);
-                $data_index = json_decode($data_index, true);
-            }
-            catch (Exception $e) {
-                echo $e->getMessage();
-                return $e->getMessage();
-            }
+//            try {
+//                $data_index = file_get_contents($url_index);
+//                $data_index = json_decode($data_index, true);
+//            }
+//            catch (Exception $e) {
+////                echo $e->getMessage();
+//                return $e->getMessage();
+//            }
 
 
 
