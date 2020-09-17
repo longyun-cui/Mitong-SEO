@@ -3151,7 +3151,7 @@ class IndexRepository {
         }
 
         $list = $this -> combKeywordSearchResults( $arr );
-        dd($list);
+//        dd($list);
 
 
         $mine = Auth::guard('client')->user();
@@ -3285,9 +3285,42 @@ class IndexRepository {
         preg_match_all($pattern_all, $html, $results);
 
         $keyword_arr1 = $results[1];
-        dd($keyword_arr1);
 
-        return 1;
+        //$keyword_arr2 =  array_slice($keyword_arr1,0,20) ;
+
+        if( count($keyword_arr1) > 0 ){
+
+
+            // 截取和去重获取10个关键词
+            foreach ( $keyword_arr1 as $vo ){
+                //dump($vo);
+                $keyword_arr3[] = str_replace(array('<em>','</em>'), '',$vo);
+                //$keyword_temp  = explode(' ',$vo);
+
+            }
+
+
+            // 数组去重
+            $keyword_arr3 = array_unique( $keyword_arr3 );
+            // 在最终的数组去掉关键词
+            $keyword_arr3 = array_diff( $keyword_arr3,$keyword_arr );
+            // 截取前10个元素
+            $keyword_arr3 =  array_slice($keyword_arr3,0,10) ;
+
+
+            foreach ( $keyword_arr3 as $key => $vo ){
+                $temp['keyword'] = $vo;
+                foreach ( $searchengine_keys as $vo2 ){
+                    $temp[$vo2] = 0;
+                }
+                $temp['isrecommend'] = 1;
+                $arr[] = $temp;
+            }
+
+            $list = $this -> combKeywordSearchResults( $arr );
+        }
+
+        return $list;
     }
 
     /**
@@ -3296,7 +3329,8 @@ class IndexRepository {
      * 通过第三方接口搜索关键词:由于第三方的接口一下只能提交10个关键词，需要将关键词进行等
      *
      */
-    public function combKeywordSearchResults( $list ){
+    public function combKeywordSearchResults( $list )
+    {
         // 关键词长度价格指数代码集
         $KeywordLengthPriceIndexOptions 			= config('seo.KeywordLengthPriceIndexOptions');
         // 百度指数价格指数代码集
@@ -3311,6 +3345,7 @@ class IndexRepository {
         $KeywordOptimizationCycle4BaiduIndexOptions = config('seo.KeywordOptimizationCycle4BaiduIndexOptions');
 
 
+        ini_set("user_agent","Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)");
 
         // 将关键词组成一个字符串
         /* foreach ( $list as $vo1){
@@ -3334,11 +3369,17 @@ class IndexRepository {
 
 
             // 百度指数查询
-            ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727;)');
             $url_index = 'http://api.91cha.com/index?key=456a38a7a22f41a0ae3829ec1ccb7fc1&kws='.urlencode($keywords);
-            //echo file_get_contents("http://www.91cha.com");
+//            dd($url_index);
+//            echo file_get_contents("http://www.91cha.com");
 
-            $data_index = json_decode( file_get_contents($url_index));
+
+            $context = stream_context_create(array('http'=>array('ignore_errors'=>true)));
+            $data_index = file_get_contents($url_index, FALSE, $context);
+            $data_index = json_decode($data_index, true);
+//            dd($data_index);
+
+//            $data_index = json_decode( file_get_contents($url_index), true);
 
 //            try {
 //                $data_index = file_get_contents($url_index);
