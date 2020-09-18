@@ -1396,10 +1396,15 @@ class IndexController extends Controller
             // 百度指数查询
             $url_index = 'http://api.91cha.com/index?key=456a38a7a22f41a0ae3829ec1ccb7fc1&kws='.urlencode($keywords);
             //echo file_get_contents("http://www.91cha.com");
-            $data_index = json_decode( file_get_contents($url_index), true);
+//            $data_index = json_decode( file_get_contents($url_index), true);
             //$data_index = json_decode( file_get_contents($url_index));
 
             //$data_index = file_get_contents($url_index);
+
+
+            $context = stream_context_create(array('http'=>array('ignore_errors'=>true)));
+            $data_index = file_get_contents($url_index, FALSE, $context);
+            $data_index = json_decode($data_index, true);
 
 
             /*

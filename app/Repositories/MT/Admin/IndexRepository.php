@@ -3268,11 +3268,31 @@ class IndexRepository {
 
         //组成字符
         $keywords = implode(',' , $keyword_arr);
+
+
+        ini_set("user_agent","Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)");
+
+
         //关键词搜索
         //$url_search = $KeywordDigOptions['url']. urlencode($keywords);
         $url_search = "http://www.baidu.com/s?wd=". urlencode($keywords);;
         //从http://www.5118.com/seo/words/%E4%BA%92%E8%81%94%E7%BD%91%E4%BF%9D%E9%99%A9
-        $html = file_get_contents( $url_search );
+//        $html = file_get_contents( $url_search );
+
+
+        $context = stream_context_create(array('http'=>array('ignore_errors'=>true)));
+        $html = file_get_contents($url_search, FALSE, $context);
+
+//        $ch = curl_init();
+//        $timeout = 10; // set to zero for no timeout
+//        curl_setopt ($ch, CURLOPT_URL,$url_search);
+//        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+//        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+//        $html = curl_exec($ch);
+
+//        echo $html;
+//        dd($url_search);
+
 
         // ...也许这里还有其他代码
         // 进行统计区间
@@ -3281,22 +3301,26 @@ class IndexRepository {
         /*
         $pattern_all = '/<span class="hoverToHide"><a.*?>(.+?)<\/a><\/span>/is';
         */
-        $pattern_all = '/<th><a href="(?:.*?)">(.*?)<\/a><\/th>/is';
+//        $pattern_all = '/<th><a (.+) href="(?:.*?)">(.*?)<\/a><\/th>/is';
+        $pattern_all = '/<th><a class="c-font-medium" href="(?:.*?)">(.*?)<\/a><\/th>/is';
         preg_match_all($pattern_all, $html, $results);
 
         $keyword_arr1 = $results[1];
+//        dd($results);
 
         //$keyword_arr2 =  array_slice($keyword_arr1,0,20) ;
+
+        $list = [];
 
         if( count($keyword_arr1) > 0 ){
 
 
             // 截取和去重获取10个关键词
-            foreach ( $keyword_arr1 as $vo ){
+            foreach ( $keyword_arr1 as $vo )
+            {
                 //dump($vo);
                 $keyword_arr3[] = str_replace(array('<em>','</em>'), '',$vo);
                 //$keyword_temp  = explode(' ',$vo);
-
             }
 
 
@@ -3308,9 +3332,11 @@ class IndexRepository {
             $keyword_arr3 =  array_slice($keyword_arr3,0,10) ;
 
 
-            foreach ( $keyword_arr3 as $key => $vo ){
+            foreach ( $keyword_arr3 as $key => $vo )
+            {
                 $temp['keyword'] = $vo;
-                foreach ( $searchengine_keys as $vo2 ){
+                foreach ( $searchengine_keys as $vo2 )
+                {
                     $temp[$vo2] = 0;
                 }
                 $temp['isrecommend'] = 1;
@@ -3320,7 +3346,15 @@ class IndexRepository {
             $list = $this -> combKeywordSearchResults( $arr );
         }
 
-        return $list;
+//        return $list;
+
+        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
+        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
+
+//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
+//        $html = response($html)->getContent();
+
+        return response_success(['html'=>$html]);
     }
 
     /**
