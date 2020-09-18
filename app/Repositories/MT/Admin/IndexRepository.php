@@ -14,8 +14,7 @@ use App\Models\MT\Item;
 use App\Repositories\Common\CommonRepository;
 
 use Response, Auth, Validator, DB, Exception;
-use QrCode;
-use Excel;
+use QrCode, Excel;
 
 class IndexRepository {
 
@@ -3110,6 +3109,12 @@ class IndexRepository {
             return response_error([],$messages->first());
         }
 
+        $mine = Auth::guard('admin')->user();
+        $mine_id = $mine->id;
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $CommonRepository = new CommonRepository();
+
 
         $keywords = $post_data['keywords'];
 
@@ -3150,90 +3155,26 @@ class IndexRepository {
             $arr[] = $temp;
         }
 
-        $list = $this -> combKeywordSearchResults( $arr );
-//        dd($list);
-
-
-        $mine = Auth::guard('client')->user();
-        $mine_id = $mine->id;
-        if($mine->usergroup != "Service") return response_error([],"你没有操作权限！");
-
-        foreach ($list as $k => $v)
-        {
-            $keyword = $v["keyword"];
-            $keywords = SEOKeyword::select('id','keyword','searchengine','price')->where(['createuserid'=>$mine_id,'keyword'=>$keyword])->get();
-            $keywords_data = $keywords->toArray();
-            if($keywords_data)
-            {
-                foreach ($keywords_data as $data_k => $data_v)
-                {
-                    $searchengine = $data_v["searchengine"];
-                    $price = (int)$data_v["price"];
-                    $difference = 0;
-                    if($searchengine == "baidu")
-                    {
-                        if($v["baidu"] < $price) $difference = $price - $v["baidu"];
-                        $list[$k]["baidu"] = $price;
-
-                        $list[$k]["baidu_mobile"] += $difference;
-                        $list[$k]["sougou"] += $difference;
-                        $list[$k]["360"] += $difference;
-                        $list[$k]["shenma"] += $difference;
-                    }
-                    else if($searchengine == "baidu_mobile")
-                    {
-                        if($v["baidu_mobile"] < $price) $difference = $price - $v["baidu_mobile"];
-                        $list[$k]["baidu_mobile"] = $price;
-
-                        $list[$k]["baidu"] += $difference;
-                        $list[$k]["sougou"] += $difference;
-                        $list[$k]["360"] += $difference;
-                        $list[$k]["shenma"] += $difference;
-                    }
-                    else if($searchengine == "sougou")
-                    {
-                        if($v["sougou"] < $price) $difference = $price - $v["sougou"];
-                        $list[$k]["sougou"] = $price;
-
-                        $list[$k]["baidu"] += $difference;
-                        $list[$k]["baidu_mobile"] += $difference;
-                        $list[$k]["360"] += $difference;
-                        $list[$k]["shenma"] += $difference;
-                    }
-                    else if($searchengine == "360")
-                    {
-                        if($v["360"] < $price) $difference = $price - $v["360"];
-                        $list[$k]["360"] = $price;
-
-                        $list[$k]["baidu"] += $difference;
-                        $list[$k]["baidu_mobile"] += $difference;
-                        $list[$k]["sougou"] += $difference;
-                        $list[$k]["shenma"] += $difference;
-                    }
-                    else if($searchengine == "shenma")
-                    {
-                        if($v["shenma"] < $price) $difference = $price - $v["shenma"];
-                        $list[$k]["shenma"] = $price;
-
-                        $list[$k]["baidu"] += $difference;
-                        $list[$k]["baidu_mobile"] += $difference;
-                        $list[$k]["sougou"] += $difference;
-                        $list[$k]["360"] += $difference;
-                    }
-                }
-            }
-        }
-
+        $list = $CommonRepository -> combKeywordSearchResults( $arr );
         $view_blade = 'mt.admin.entrance.business.keyword-search-result';
         $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
-
 //        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
 //        $html = response($html)->getContent();
 
-        return response_success(['html'=>$html]);
+
+        $recommend_list = $this->operate_business_keyword_recommend($post_data);
+        $recommend_html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$recommend_list])->__toString();
+
+        return response_success([
+            'list'=>json_encode($list),
+            'html'=>$html,
+            'recommend_list'=>json_encode($recommend_list),
+            'recommend_html'=>$recommend_html
+        ]);
 
     }
 
+    // 查询【关键词】推荐
     public function operate_business_keyword_recommend($post_data)
     {
         $messages = [
@@ -3247,6 +3188,8 @@ class IndexRepository {
             $messages = $v->errors();
             return response_error([],$messages->first());
         }
+
+        $CommonRepository = new CommonRepository();
 
 
         $keywords = $post_data['keywords'];
@@ -3302,7 +3245,7 @@ class IndexRepository {
         $pattern_all = '/<span class="hoverToHide"><a.*?>(.+?)<\/a><\/span>/is';
         */
 //        $pattern_all = '/<th><a (.+) href="(?:.*?)">(.*?)<\/a><\/th>/is';
-        $pattern_all = '/<th><a class="c-font-medium" href="(?:.*?)">(.*?)<\/a><\/th>/is';
+        $pattern_all = '/<th><a href="(?:.*?)">(.*?)<\/a><\/th>/is';
         preg_match_all($pattern_all, $html, $results);
 
         $keyword_arr1 = $results[1];
@@ -3343,262 +3286,39 @@ class IndexRepository {
                 $arr[] = $temp;
             }
 
-            $list = $this -> combKeywordSearchResults( $arr );
+            $list = $CommonRepository -> combKeywordSearchResults( $arr );
         }
 
-//        return $list;
+        return $list;
 
-        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
-        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
-
-//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
-//        $html = response($html)->getContent();
-
-        return response_success(['html'=>$html]);
+//        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
+//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
+//
+////        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
+////        $html = response($html)->getContent();
+//
+//        return response_success(['html'=>$html]);
     }
 
-    /**
-     * 搜索关键词:根据用户的关键词搜索推荐的关键词
-     *
-     * 通过第三方接口搜索关键词:由于第三方的接口一下只能提交10个关键词，需要将关键词进行等
-     *
-     */
-    public function combKeywordSearchResults( $list )
+    public function operate_business_keyword_search_export($post_data)
     {
-        // 关键词长度价格指数代码集
-        $KeywordLengthPriceIndexOptions 			= config('seo.KeywordLengthPriceIndexOptions');
-        // 百度指数价格指数代码集
-        $BaiduIndexPriceIndexOptions 				= config('seo.BaiduIndexPriceIndexOptions');
-        // 关键词长度难度指数代码集
-        $KeywordDifficultyIndexOptions 				= config('seo.KeywordDifficultyIndexOptions');
-        // 关键词长度优化周期代码集
-        $KeywordOptimizationCycleOptions 			= config('seo.KeywordOptimizationCycleOptions');
-        // 关键词百度指数难度指数代码集
-        $KeywordDifficultyIndex4BaiduIndexOptions 	= config('seo.KeywordDifficultyIndex4BaiduIndexOptions');
-        // 关键词百度指数化周期代码集
-        $KeywordOptimizationCycle4BaiduIndexOptions = config('seo.KeywordOptimizationCycle4BaiduIndexOptions');
+        $me = Auth::guard('client')->user();
+        $list_decode = json_decode($post_data['list'],true);
+        $recommend_list_decode = json_decode($post_data['recommend_list'],true);
 
+        $cellData = array_merge($list_decode,$recommend_list_decode);
+        array_unshift($cellData,['关键词','百度PC','百度移动','360','搜狗','神马','难度指数','难度指数','优化周期']);
 
-        ini_set("user_agent","Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)");
+//        dd($cellData);
 
-        // 将关键词组成一个字符串
-        /* foreach ( $list as $vo1){
-            $keyword_arr[] = $vo1['keyword'];
-            } */
-
-        // 将 关键词进行等分
-        $list_new = array_chunk($list,10);
-
-        foreach ($list_new as &$vo_list)
-        {
-            unset($keyword_arr);
-            foreach ($vo_list as $vo_temp )
-            {
-                $keyword_arr[] = trim($vo_temp['keyword']);
-            }
-
-            //将获取的关键词数组组成字符串
-            $keywords= implode(',',$keyword_arr);
-
-
-
-            // 百度指数查询
-            $url_index = 'http://api.91cha.com/index?key=456a38a7a22f41a0ae3829ec1ccb7fc1&kws='.urlencode($keywords);
-//            dd($url_index);
-//            echo file_get_contents("http://www.91cha.com");
-
-
-            $context = stream_context_create(array('http'=>array('ignore_errors'=>true)));
-            $data_index = file_get_contents($url_index, FALSE, $context);
-            $data_index = json_decode($data_index, true);
-//            dd($data_index);
-
-//            $data_index = json_decode( file_get_contents($url_index), true);
-
-//            try {
-//                $data_index = file_get_contents($url_index);
-//                $data_index = json_decode($data_index, true);
-//            }
-//            catch (Exception $e) {
-////                echo $e->getMessage();
-//                return $e->getMessage();
-//            }
-
-
-
-            /*
-            $baiduindex_data =0;
-            $baiduindex = 0;
-            $mobileindex = 0;
-            $so360index = 0;
-            if($data_index['state'] == 1 )
-            {
-                $baiduindex_data = $data_index['data'];
-                $baiduindex = $data_index['data'][0]['allindex'];
-                $mobileindex = $data_index['data'][0]['mobileindex'];
-                $so360index = $data_index['data'][0]['so360index'];
-            }
-            */
-
-            foreach ( $vo_list as $key => &$vo )
-            {
-                $baiduindex = 0;
-                $mobileindex = 0;
-                $so360index = 0;
-
-                if($data_index['state'] == 1 )
-                {
-                    foreach ($data_index['data'] as $vo_bi)
-                    {
-                        if(  $vo['keyword'] == $vo_bi['keyword'])
-                        {
-                            $baiduindex 	= $vo_bi['allindex'];
-                            $mobileindex 	= $vo_bi['mobileindex'];
-                            $so360index 	= $vo_bi['so360index'];
-                        }
-                    }
-                }
-
-                // 判断字符的长度
-                $len = floor((strlen( $vo['keyword']) + mb_strlen( $vo['keyword'],'UTF8')) / 2);
-
-                /*
-                $baiduindex 	= $baiduindex_data[$key]['allindex'];
-                $mobileindex 	= $baiduindex_data[$key]['mobileindex'];
-                $so360index 	= $baiduindex_data[$key]['so360index'];
-                */
-
-                foreach ($vo as $key_vo => &$vo_vo )
-                {
-                    $price = 0;
-                    $price1 = 0;
-                    $price2 = 0;
-
-                    // 关键词长度指数
-                    $keywordOption = isset($KeywordLengthPriceIndexOptions[$key_vo]) ? $KeywordLengthPriceIndexOptions[$key_vo] : null;
-                    if( $keywordOption )
-                    {
-                        $keywordOption = $KeywordLengthPriceIndexOptions[$key_vo];
-                        foreach ($keywordOption as $vo_ko )
-                        {
-                            if( $vo_ko['vmin'] <= $len && $len <=$vo_ko['vmax'] )
-                            {
-                                $price1 = $vo_ko['quotavalue'];
-//                                echo("-----");
-//                                echo(" vmin=".$vo_ko['vmin']);
-//                                echo(" vmax=".$vo_ko['vmax']);
-//                                echo(" price1=".$price1);
-                            }
-                        }
-                    }
-
-                    // 关键词百度指数
-                    $BaiduIndexPriceIndexOption = isset($KeywordLengthPriceIndexOptions[$key_vo]) ? $BaiduIndexPriceIndexOptions[$key_vo] : null;
-                    if( $BaiduIndexPriceIndexOption )
-                    {
-                        foreach ($BaiduIndexPriceIndexOption as $vo_bo )
-                        {
-                            if( $vo_bo['vmin'] <= $baiduindex && $baiduindex <=$vo_bo['vmax'] )
-                            {
-                                $price2 = $vo_bo['quotavalue'];
-//                                echo(" price2=".$price2);
-                            }
-                        }
-                    }
-
-                    $price = $price1 + $price2;
-
-                    if( $price )
-                    {
-                        $vo_vo = round($price*0.95,0);
-                    }
-//                    echo("-----");
-//                    echo "<br>";
-                }
-
-
-
-                // 计算难度指数difficulty_index 和 优化周期 optimization_cycle
-                // 如果有百度指数，则只通过百度指数来进行计算
-                if( $baiduindex )
-                {
-                    foreach ($KeywordDifficultyIndex4BaiduIndexOptions as $vo_kd )
-                    {
-                        if( $vo_kd['vmin'] <= $baiduindex && $baiduindex <=$vo_kd['vmax'] )
-                        {
-                            $difficulty_index = $vo_kd['quotavalue'];
-                        }
-                    }
-
-                    foreach ($KeywordOptimizationCycle4BaiduIndexOptions as $vo_ko )
-                    {
-                        if( $vo_ko['vmin'] <= $baiduindex && $baiduindex <=$vo_ko['vmax'] )
-                        {
-                            $optimization_cycle = $vo_ko['quotavalue'];
-                        }
-                    }
-                }
-                else
-                {
-                    foreach ($KeywordDifficultyIndexOptions as $vo_kd )
-                    {
-                        if( $vo_kd['vmin'] <= $len && $len <=$vo_kd['vmax'] )
-                        {
-                            $difficulty_index = $vo_kd['quotavalue'];
-                        }
-                    }
-
-                    foreach ($KeywordOptimizationCycleOptions as $vo_ko )
-                    {
-                        if( $vo_ko['vmin'] <= $len && $len <=$vo_ko['vmax'] )
-                        {
-                            $optimization_cycle = $vo_ko['quotavalue'];
-                        }
-                    }
-                }
-                $vo['difficulty_index'] = $difficulty_index;
-
-
-                // 计算显示的样式
-                if($difficulty_index > 0 )
-                {
-                    $rate = '';
-                    for($i =1 ;$i<=$difficulty_index;$i++)
-                    {
-                        $rate .='★';
-                    }
-                    $rate .= '';
-                }
-
-                $rate_diff = 5 - $difficulty_index;
-                if($rate_diff > 0 )
-                {
-                    $rate .= '';
-                    for($i=1;$i<= $rate_diff;$i++)
-                    {
-                        $rate .= '☆';
-                    }
-                    $rate .= '';
-                }
-                $vo['rate'] = $rate;
-
-                $vo['optimization_cycle'] = $optimization_cycle;
-            }
-        }
-
-        foreach ($list_new as $vo2 )
-        {
-            if( !isset($return) )
-            {
-                $return = $vo2;
-            }
-            else
-            {
-                $return = array_merge ( $return,$vo2);
-            }
-        }
-        return $return;
+        $title = '【关键词价格查询】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
     }
+
 
 
 

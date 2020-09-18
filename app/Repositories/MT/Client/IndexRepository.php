@@ -547,6 +547,8 @@ class IndexRepository {
             return response_error([],$messages->first());
         }
 
+        $CommonRepository = new CommonRepository();
+
 
         $keywords = $post_data['keywords'];
 
@@ -587,7 +589,7 @@ class IndexRepository {
             $arr[] = $temp;
         }
 
-        $list = $this -> combKeywordSearchResults( $arr );
+        $list = $CommonRepository -> combKeywordSearchResults( $arr );
 
 
         $mine = Auth::guard('client')->user();
@@ -676,7 +678,8 @@ class IndexRepository {
      * 通过第三方接口搜索关键词:由于第三方的接口一下只能提交10个关键词，需要将关键词进行等
      *
      */
-    public function combKeywordSearchResults( $list ){
+    public function combKeywordSearchResults( $list )
+    {
         // 关键词长度价格指数代码集
         $KeywordLengthPriceIndexOptions 			= config('seo.KeywordLengthPriceIndexOptions');
         // 百度指数价格指数代码集

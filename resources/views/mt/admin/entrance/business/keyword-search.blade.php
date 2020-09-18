@@ -23,22 +23,22 @@
             </div>
 
             <form action="" method="post" class="form-horizontal form-bordered" id="form-search-item">
-                <div class="box-body">
+            <div class="box-body">
 
-                    {{csrf_field()}}
-                    <input type="hidden" name="operate" value="{{ $operate or '' }}" readonly>
-                    <input type="hidden" name="operate_id" value="{{ $operate_id or 0 }}" readonly>
+                {{csrf_field()}}
+                <input type="hidden" name="operate" value="{{ $operate or '' }}" readonly>
+                <input type="hidden" name="operate_id" value="{{ $operate_id or 0 }}" readonly>
 
 
-                    {{--关键词--}}
-                    <div class="form-group">
-                        <label class="control-label col-md-2">关键词</label>
-                        <div class="col-md-8 ">
-                            <textarea class="form-control" name="keywords" rows="3" cols="100%" placeholder="请输入关键词，多个关键词查询请回车，关键词不能超过10个"></textarea>
-                        </div>
+                {{--关键词--}}
+                <div class="form-group">
+                    <label class="control-label col-md-2">关键词</label>
+                    <div class="col-md-8 ">
+                        <textarea class="form-control" name="keywords" rows="3" cols="100%" placeholder="请输入关键词，多个关键词查询请回车，关键词不能超过10个"></textarea>
                     </div>
-
                 </div>
+
+            </div>
             </form>
 
             <div class="box-footer">
@@ -69,10 +69,12 @@
     <!-- end loading -->
 </div>
 
+
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
-        <div class="box box-info form-container">
+        <div class="box box-info form-container" id="keyword-search-result">
+
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">关键词查询结果</h3>
@@ -80,121 +82,53 @@
                 </div>
             </div>
 
-            <div class="box-body">
-                {{--关键词结果--}}
-                <div class="form-group" id="keyword-search-result">
 
-                    <div id="search">
-
-                        <div class="box box-success _none">
-
-                            <div class="box-header with-border" style="margin:16px 0;">
-                                <h3 class="box-title">系统为您推荐的词</h3>
-                                <div class="caption">
-                                    <i class="icon-pin font-blue"></i>
-                                    <span class="caption-subject font-blue sbold uppercase"></span>
-                                </div>
-                                <div class="pull-right" style="display:none;">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                                        <i class="fa fa-minus"></i></button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                                        <i class="fa fa-times"></i></button>
-                                </div>
-                            </div>
-
-                            <div class="box-body datatable-body" id="recommend">
-
-                                <!-- 加载进度 begin -->
-                                <!-- <div class="progress">
-                                  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">45% Complete</span></div>
-                                </div> -->
-
-                                <div class="progress" style="margin: 0px auto; text-align: center; padding: 0px 20px 20px; display: none;">
-                                    <img class="progress-img" alt="" src="/seo/img/laoding.gif">
-                                    <div class="progress-text mt10">系统正在为你查询相关推荐的关键词</div>
-
-                                </div>
-                                <!-- 加载进度 end -->
-                                <div id="show_recommend">
-                                    <div class="alert alert-warning" role="alert">未能获取到相关推荐关键词！</div>
-                                </div>
-                            </div>
-
-                            <div class="box-footer">
-                                <div class="row" style="margin:16px 0;">
-                                    <div class="col-md-offset-0 col-md-9">
-                                        <button type="button" onclick="" class="btn btn-primary _none"><i class="fa fa-check"></i> 提交</button>
-                                        <button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        {{--<form name="form2" id="form2" action="" method="post" class="table-responsive">--}}
-                        <input type="hidden" name="keywords" value="">
-
-                        <div class="box box-success">
-
-                            <div class="box-header with-border" style="margin:16px 0;">
-                                <h3 class="box-title">关键词清单</h3>
-                                <div class="caption">
-                                    <i class="icon-pin font-blue"></i>
-                                    <span class="caption-subject font-blue sbold uppercase"></span>
-                                </div>
-                                <div class="pull-right" style="display:none;">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                                        <i class="fa fa-minus"></i></button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                                        <i class="fa fa-times"></i></button>
-                                </div>
-                            </div>
-
-                            <div class="box-body datatable-body" id="form-main-body">
-                                <!-- datatable start -->
-                                <form action="" method="post" class="form-horizontal form-bordered" id="form-keyword">
-                                    {{csrf_field()}}
-                                    <table class='table table-striped table-bordered list' id='tablelist'>
-                                        <thead>
-                                        <tr role='row' class='heading'>
-                                            <td class="text-left" style="text-align:left">关键词</td>
-                                            <td class="text-center key_pc"><img alt="" src="/seo/img/baidu.png" style="width: 100px;"></td>
-                                            <td class="text-center key_yidong"><img alt="" src="/seo/img/baidu_mobile.png" style="width: 100px;"></td>
-                                            <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
-                                            <td class="text-center key_sougou"><img alt="" src="/seo/img/sougou.png" style="width: 100px;"></td>
-                                            <td class="text-center key_shenma"><img alt="" src="/seo/img/shenma.png" style="width: 100px;"></td>
-                                            <td class="text-center" width="96px">难度指数</td>
-                                            <td class="text-center" width="96px">优化周期</td>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="keyword-result-list">
-                                        </tbody>
-                                    </table>
-                                </form>
-                                <!-- datatable end -->
-                            </div>
-
-                        </div>
-
-                        {{--</form>--}}
-
-
-
-                    </div>
-
-                </div>
-
+            <div class="box-body datatable-body" id="form-main-body">
+                <table class='table table-striped- table-bordered list' id='tablelist'>
+                    <thead>
+                        <tr role='row' class='heading'>
+                            <td class="text-left" style="text-align:left">关键词</td>
+                            <td class="text-center key_pc"><img alt="" src="/seo/img/baidu.png" style="width: 100px;"></td>
+                            <td class="text-center key_yidong"><img alt="" src="/seo/img/baidu_mobile.png" style="width: 100px;"></td>
+                            <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
+                            <td class="text-center key_sougou"><img alt="" src="/seo/img/sougou.png" style="width: 100px;"></td>
+                            <td class="text-center key_shenma"><img alt="" src="/seo/img/shenma.png" style="width: 100px;"></td>
+                            <td class="text-center" width="96px">难度指数</td>
+                            <td class="text-center" width="96px">优化周期</td>
+                        </tr>
+                    </thead>
+                    <tbody id="keyword-result-list">
+                    </tbody>
+                    <tbody class="recommend-title" style="display:none;">
+                        <tr role='row' class='heading'>
+                            <td class="text-left" colspan="8">
+                                <h3 class="box-title" style="margin:8px 0;text-align:left;color:#00a65a;font-size:16px;">系统为您推荐的词</h3>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody class="recommend-none" style="display:none;">
+                        <tr role='row' class='heading-'>
+                            <td class="text-left" colspan="8">
+                                <div class="alert alert-warning" role="alert" style="margin:16px 0 8px;">未能获取到相关推荐关键词！</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody class="recommend-exist" id="keyword-recommend-list">
+                    </tbody>
+                </table>
             </div>
 
-            {{--<div class="box-footer">--}}
-                {{--<div class="row">--}}
-                    {{--<div class="col-md-8 col-md-offset-2">--}}
-                        {{--<button type="button" class="btn btn-success" id="search-item-submit"><i class="fa fa-check"></i> 提交</button>--}}
-                        {{--<button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>--}}
-                    {{--</div>--}}
-                {{--</div>--}}
-            {{--</div>--}}
+
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-0">
+                        <button type="button" class="btn btn-success" id="search-export-submit"><i class="fa fa-check"></i> 导出价目表</button>
+                        <button type="button" onclick="history.go(-1);" class="btn btn-default">返回</button>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
         <!-- END PORTLET-->
     </div>
@@ -250,15 +184,78 @@
                     if(!data.success) layer.msg(data.msg);
                     else
                     {
+                        $("#keyword-search-result").attr("data-list",data.data.list);
+                        $("#keyword-search-result").attr("data-recommend-list",data.data.recommend_list);
                         $("#search-overlay").hide();
 //                        $('#keyword-search-result').html(data.data.html);
                         $('#keyword-result-list').html(data.data.html);
+                        if(data.data.recommend_html == "")
+                        {
+//                            $('.recommend-title').hide();
+                            $('.recommend-exist').hide();
+                            $('.recommend-none').show();
+                            $('#keyword-recommend-list').html("");
+                        }
+                        else
+                        {
+//                            $('.recommend-title').show();
+                            $('.recommend-exist').show();
+                            $('.recommend-none').hide();
+                            $('#keyword-recommend-list').html(data.data.recommend_html);
+                        }
                     }
                 }
             };
             $("#form-search-item").ajaxSubmit(options);
             $("#search-overlay").show();
         });
+
+
+
+
+        // 【导出】
+        $("#keyword-search-result").on('click', "#search-export-submit", function() {
+            var that = $(this);
+            var $search = $("#keyword-search-result");
+            var $search_list = $search.attr('data-list');
+            var $search_recommend_list = $search.attr('data-recommend-list');
+            layer.msg('确定要"导出"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    window.open("/admin/business/keyword-search-export?list="+$search_list+"&recommend_list="+$search_recommend_list);
+                }
+            });
+        });
+        // 导出
+        $("#keyword-search-result").on('click', '#search-export-submit-', function() {
+            var that = $(this);
+            var $search = $("#keyword-search-result");
+            var $data = new Object();
+            $.ajax({
+                type:"post",
+                dataType:'json',
+                async:false,
+                url: "{{ url('/admin/business/keyword-search-export') }}",
+                data: {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:"search-export",
+                    list:$search.attr('data-list'),
+                    recommend_list:$search.attr('data-recommend-list')
+                },
+                success:function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else
+                    {
+                        $data = data.data;
+                    }
+                }
+            });
+        });
+
+
+
 
         // 添加or编辑
         $("#keyword-search-result").on('click', '.keyword-cart-add', function() {

@@ -199,6 +199,12 @@ class IndexController extends Controller
         return $this->repo->operate_business_keyword_recommend(request()->all());
     }
 
+    // 返回【关键词推荐】视图
+    public function operate_keyword_search_export()
+    {
+        return $this->repo->operate_business_keyword_search_export(request()->all());
+    }
+
 
     // 返回【站点列表】视图
     public function view_business_site_list()
