@@ -184,11 +184,14 @@
                     if(!data.success) layer.msg(data.msg);
                     else
                     {
+                        $("#search-overlay").hide();
+
                         $("#keyword-search-result").attr("data-list",data.data.list);
                         $("#keyword-search-result").attr("data-recommend-list",data.data.recommend_list);
-                        $("#search-overlay").hide();
+
 //                        $('#keyword-search-result').html(data.data.html);
                         $('#keyword-result-list').html(data.data.html);
+
                         if(data.data.recommend_html == "")
                         {
 //                            $('.recommend-title').hide();

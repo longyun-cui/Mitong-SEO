@@ -33,8 +33,8 @@
             <input type="hidden" name="keywords[{{ $num }}][data][shenma]" value="0" data-price="{{ $item['shenma'] or 0 }}">
         </td>
         <td class="text-center">
-            <button type="button" class="btn btn-xs bg-black keyword-cart-add" type="">加入清单</button>
-            <a mark="0" onclick="rm(this)" class="btn btn-xs btn-danger">移出</a>
+            <button type="button" class="btn btn-xs bg-black keyword-cart-add _none" type="">加入清单</button>
+            <a mark="{{ $num }}" onclick="rm(this)" class="btn btn-xs btn-danger">移出</a>
         </td>
         <td class="text-center">
             <span style="color:red;font-size:16px;">{{ $item['rate'] or '' }}</span>

@@ -668,7 +668,16 @@ class IndexRepository {
 //        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
 //        $html = response($html)->getContent();
 
-        return response_success(['html'=>$html]);
+
+        $recommend_list = $CommonRepository->get_keyword_recommend($post_data);
+        $recommend_html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$recommend_list])->__toString();
+
+        return response_success([
+            'list'=>json_encode($list),
+            'html'=>$html,
+            'recommend_list'=>json_encode($recommend_list),
+            'recommend_html'=>$recommend_html
+        ]);
 
     }
 
