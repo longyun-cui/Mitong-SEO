@@ -248,7 +248,7 @@
                         }
                     },
                     {
-                        "className": "text-center",
+                        "className": "text-left",
                         "width": "192px",
                         "title": "站点",
                         "data": "sitename",
@@ -259,6 +259,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "",
                         "title": "Website",
                         "data": "website",

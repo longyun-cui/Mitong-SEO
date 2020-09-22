@@ -71,7 +71,6 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
                         <th>单价</th>
                         <th>初始排名</th>
                         <th>最新排名</th>
@@ -83,7 +82,6 @@
                         <th>历史数据</th>
                     </tr>
                     <tr>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
@@ -197,7 +195,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "48px",
+                        "width": "36px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
@@ -213,15 +211,7 @@
                         }
                     },
                     {
-                        "width": "",
-                        "title": "客户",
-                        "data": "createuserid",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
-                        }
-                    },
-                    {
+                        "className": "text-left",
                         "width": "72px",
                         "title": "关键词",
                         "data": "keyword",
@@ -251,6 +241,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "72px",
                         "title": "站点",
                         "data": "website",

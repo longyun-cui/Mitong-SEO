@@ -194,6 +194,33 @@
                     </div>
                 </div>
 
+                {{--attachment 附件--}}
+                <div class="form-group">
+                    <label class="control-label col-md-2">附件</label>
+                    <div class="col-md-8 fileinput-group">
+
+                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                            <div class="fileinput-new thumbnail">
+                                <a target="_blank" href="/all/download-item-attachment?item-id={{ $data->id }}">{{ $data->attachment_name or '' }}</a>
+                            </div>
+                            <div class="fileinput-preview fileinput-exists thumbnail">
+                            </div>
+                            <div class="btn-tool-group">
+                                <span class="btn-file">
+                                    <button class="btn btn-sm btn-primary fileinput-new">选择附件</button>
+                                    <button class="btn btn-sm btn-warning fileinput-exists">更改</button>
+                                    <input type="file" name="attachment" />
+                                </span>
+                                <span class="">
+                                    <button class="btn btn-sm btn-danger fileinput-exists" data-dismiss="fileinput">移除</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="titleImageError" style="color: #a94442"></div>
+
+                    </div>
+                </div>
+
                 {{--启用--}}
                 @if($operate == 'create')
                     <div class="form-group form-type _none">

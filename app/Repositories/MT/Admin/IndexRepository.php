@@ -2826,22 +2826,23 @@ class IndexRepository {
             if($bool)
             {
                 // 封面图片
-                if(!empty($post_data["cover"]))
+                if(!empty($post_data["attachment"]))
                 {
                     // 删除原封面图片
-                    $mine_cover_pic = $mine->cover_pic;
+                    $mine_cover_pic = $mine->attachment;
                     if(!empty($mine_cover_pic) && file_exists(storage_path("resource/" . $mine_cover_pic)))
                     {
                         unlink(storage_path("resource/" . $mine_cover_pic));
                     }
 
-                    $result = upload_storage($post_data["cover"]);
+                    $result = upload_file_storage($post_data["attachment"]);
                     if($result["result"])
                     {
-                        $mine->cover_pic = $result["local"];
+                        $mine->attachment_name = $result["name"];
+                        $mine->attachment_src = $result["local"];
                         $mine->save();
                     }
-                    else throw new Exception("upload-cover-fail");
+                    else throw new Exception("upload-attachment-fail");
                 }
 
             }

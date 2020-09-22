@@ -225,6 +225,7 @@
                         }
                     },
                     {
+                        'className':"text-left",
 //                        'width':"192px",
                         "title": "代理商",
                         "data": "id",

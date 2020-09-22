@@ -172,18 +172,25 @@
                                     <span class="work-order-website"></span>
                                 </div>
                             </div>
-                            {{--FTP--}}
+                            {{--标题--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">标题</label>
                                 <div class="col-md-8 ">
                                     <div><b class="work-order-title"></b></div>
                                 </div>
                             </div>
-                            {{--管理后台--}}
+                            {{--内容--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">内容</label>
                                 <div class="col-md-8 ">
                                     <div class="work-order-content"></div>
+                                </div>
+                            </div>
+                            {{--附件--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">附件</label>
+                                <div class="col-md-8 ">
+                                    <div class="work-order-attachment"></div>
                                 </div>
                             </div>
                             {{--说明--}}
@@ -357,7 +364,7 @@
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
                                     $html_1+
-                                    '<a class="btn btn-xs bg-primary item-work-order-show" data-id="'+data+'">查看详情</a>'+
+                                '<a class="btn btn-xs bg-primary item-work-order-show" data-id="'+data+'" data-username="'+row.user.username+'" data-name="'+row.site.sitename+'" data-website="'+row.site.website+'">查看详情</a>'+
                                     '';
                             return html;
                         }
@@ -490,6 +497,11 @@
             $('.work-order-website').html(that.attr('data-website'));
             $('.work-order-title').html($data.title);
             $('.work-order-content').html($data.content);
+            if($data.attachment_name)
+            {
+                var $attachment_html = $data.attachment_name+'&nbsp&nbsp&nbsp&nbsp'+'<a href="/all/download-item-attachment?item-id='+$data.id+'">下载</a>';
+                $('.work-order-attachment').html($attachment_html);
+            }
             $('#modal-body').modal('show');
         });
 

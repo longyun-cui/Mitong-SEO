@@ -145,6 +145,8 @@
                             }
                         },
                         {
+                            'className':"text-left",
+                            'width':"96px",
                             "title": "客户",
                             "data": "id",
                             'orderable': false,
@@ -153,7 +155,8 @@
                             }
                         },
                         {
-                            'width':"72px",
+                            'className':"text-left",
+                            'width':"96px",
                             "title": "所属代理商",
                             "data": "pid",
                             'orderable': false,

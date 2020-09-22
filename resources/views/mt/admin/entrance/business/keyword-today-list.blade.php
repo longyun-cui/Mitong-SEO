@@ -220,6 +220,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "",
                         "title": "客户",
                         "data": "createuserid",
@@ -229,6 +230,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "",
                         "title": "关键词",
                         "data": "keyword",
@@ -258,6 +260,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "72px",
                         "title": "站点",
                         "data": "website",

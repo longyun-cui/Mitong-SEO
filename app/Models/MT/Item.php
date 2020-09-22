@@ -9,7 +9,7 @@ class Item extends Model
     protected $fillable = [
         'active', 'category', 'type', 'sort', 'user_id', 'item_id', 'menu_id', 'site_id', 'keyword_id',
         'name', 'title', 'subtitle', 'description', 'content', 'custom', 'custom2', 'custom3',
-        'cover_pic', 'link_url',
+        'cover_pic', 'link_url', 'attachment_name', 'attachment_src',
         'visit_num', 'share_num'
     ];
     protected $dateFormat = 'U';
