@@ -36,13 +36,13 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>充值源</th>
                         <th>充值对象</th>
                         <th>充值金额</th>
-                        <th>说明</th>
                         <th>记录时间</th>
-                        <th>操作</th>
+                        <th>说明</th>
+                        <th class="_none_">操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -51,7 +51,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>
+                        <td class="_none_">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
@@ -126,6 +126,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "48px",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -133,6 +134,8 @@
                         }
                     },
                     {
+                        "className": "text-left",
+                        "width": "160px",
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -140,6 +143,8 @@
                         }
                     },
                     {
+                        "className": "text-left",
+                        "width": "160px",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -147,6 +152,7 @@
                         }
                     },
                     {
+                        "width": "80px",
                         "data": "amount",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -154,13 +160,7 @@
                         }
                     },
                     {
-                        "data": "puserid",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
-                    {
+                        "width": "96px",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -175,6 +175,15 @@
                         }
                     },
                     {
+                        "className": "text-left",
+                        "data": "puserid",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "width": "160px",
                         'data': 'id',
                         'orderable': false,
                         render: function(value) {
@@ -183,9 +192,10 @@
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                '';
                             return html;
                         }
                     }

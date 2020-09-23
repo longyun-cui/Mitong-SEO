@@ -119,6 +119,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
+                        "width": "128px",
                         "title": "月份",
                         "data": "month",
                         'orderable': false,
@@ -127,6 +128,7 @@
                         }
                     },
                     {
+                        "width": "128px",
                         "title": "上词总数",
                         "data": "count",
                         'orderable': false,
@@ -135,6 +137,7 @@
                         }
                     },
                     {
+                        "width": "128px",
                         "title": "累计消费额金额",
                         "data": "sum",
                         'orderable': false,
@@ -156,7 +159,7 @@
 //                    },
                     {
                         "title": "操作",
-                        'data': 'month',
+                        "data": 'month',
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var html =
@@ -167,7 +170,7 @@
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs item-month-detail-link" data-month="'+row.month+'" >查看详情</a>';
+                                '<a class="btn btn-xs bg-olive item-month-detail-link" data-month="'+row.month+'" >查看详情</a>';
                             return html;
                         }
                     }

@@ -43,7 +43,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th>操作</th>
+                        {{--<th>操作</th>--}}
                     </tr>
                     <tr>
                         <td></td>
@@ -54,9 +54,9 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                        {{--<td>--}}
+                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>--}}
+                            {{--<a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>--}}
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
@@ -69,7 +69,7 @@
                                     {{--<li><a href="#">Separated link</a></li>--}}
                                 {{--</ul>--}}
                             {{--</div>--}}
-                        </td>
+                        {{--</td>--}}
                     </tr>
                     </thead>
                     <tbody>
@@ -137,6 +137,8 @@
                         }
                     },
                     {
+                        "className": "text-left",
+                        "width": "160px",
                         "title": "客户",
                         "data": "id",
                         'orderable': false,
@@ -145,6 +147,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "160px",
                         "title": "关键词",
                         "data": "id",
@@ -154,6 +157,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "160px",
                         "title": "站点",
                         "data": "id",
@@ -214,21 +218,21 @@
                             return $year+'-'+$month+'-'+$day;
                         }
                     },
-                    {
-                        'data': 'id',
-                        'orderable': false,
-                        render: function(value) {
-                            var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                    {{--{--}}
+                        {{--'data': 'id',--}}
+                        {{--'orderable': false,--}}
+                        {{--render: function(value) {--}}
+                            {{--var html =--}}
+{{--//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                            return html;
-                        }
-                    }
+                                {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
+                                {{--'<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';--}}
+                            {{--return html;--}}
+                        {{--}--}}
+                    {{--}--}}
                 ],
                 "drawCallback": function (settings) {
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});

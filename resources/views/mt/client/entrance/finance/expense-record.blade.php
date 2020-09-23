@@ -38,7 +38,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th class="_none">操作</th>
+                        <th class="_none_">操作</th>
                     </tr>
                     <tr>
                         <td></td>
@@ -48,7 +48,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="_none">
+                        <td class="_none_">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
@@ -131,7 +131,8 @@
                         }
                     },
                     {
-                        "width": "192px",
+                        "className": "text-left",
+                        "width": "160px",
                         "title": "客户",
                         "data": "id",
                         'orderable': false,
@@ -140,7 +141,8 @@
                         }
                     },
                     {
-                        "width": "",
+                        "className": "text-left",
+                        "width": "160px",
                         "title": "关键词",
                         "data": "id",
                         'orderable': false,
@@ -170,7 +172,8 @@
                         }
                     },
                     {
-                        "width": "",
+                        "className": "text-left",
+                        "width": "160px",
                         "title": "站点",
                         "data": "id",
                         'orderable': false,
@@ -206,7 +209,7 @@
                         }
                     },
                     {
-                        "width": "",
+                        "width": "192px",
                         "title": "记录时间",
                         "data": "createtime",
                         'orderable': false,
@@ -215,20 +218,21 @@
                         }
                     },
                     {
-                        "className": "_none",
+                        "className": "_none_",
                         "width": "",
                         "title": "操作",
                         "data": 'id',
                         'orderable': false,
                         render: function(value) {
                             var html =
-                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                '<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+//                                '<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>'+
+                                '';
                             return html;
                         }
                     }
