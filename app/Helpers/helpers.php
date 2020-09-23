@@ -21,6 +21,18 @@ if(!function_exists('password_check'))
     }
 }
 
+// 密码格式是否合法
+if(!function_exists('password_is_legal'))
+{
+    function password_is_legal($str)
+    {
+        $pattern = '/^[a-zA-Z]{1}[a-zA-Z0-9]{5,19}$/i';
+        if (preg_match($pattern,$str)) return 1;
+        else return 0;
+    }
+}
+
+
 
 // 初始化时间戳 global $time_stamp
 if(!function_exists('time_init')) {

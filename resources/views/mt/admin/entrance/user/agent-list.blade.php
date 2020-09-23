@@ -98,6 +98,66 @@
 </div>
 
 
+<div class="modal fade" id="modal-password-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">修改密码</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-change-password-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="change-password" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--用户ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">新密码</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="password" class="form-control form-filter" name="user-password" value="">
+                                    6-20位英文、数值、下划线构成
+                                </div>
+                            </div>
+                            {{--用户名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">确认密码</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="password" class="form-control form-filter" name="user-password-confirm" value="">
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-change-password-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-change-password-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" id="modal-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -403,9 +463,10 @@
                                 $sub_agent+
                                 $recharge_limit+
                                 '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-password-submit" data-id="'+data+'">修改密码</a>'+
+                                '<a class="btn btn-xs bg-navy item-change-password-show" data-id="'+data+'">修改密码</a>'+
                                 '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+data+'">登录</a>';
+                                '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+data+'">登录</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -502,6 +563,50 @@
 
 
 
+        // 显示【修改密码】
+        $("#item-main-body").on('click', ".item-change-password-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('input[name=user-password]').val('');
+            $('input[name=user-password-confirm]').val('');
+            $('#modal-password-body').modal('show');
+        });
+        // 【修改密码】取消
+        $("#modal-password-body").on('click', "#item-change-password-cancel", function() {
+            $('input[name=id]').val('');
+            $('input[name=user-password]').val('');
+            $('input[name=user-password-confirm]').val('');
+            $('#modal-password-body').modal('hide');
+        });
+        // 【修改密码】提交
+        $("#modal-password-body").on('click', "#item-change-password-submit", function() {
+            var that = $(this);
+            layer.msg('确定"修改"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    var options = {
+                        url: "{{ url('/admin/user/change-password') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+                                $('#modal-password-body').modal('hide');
+                            }
+                        }
+                    };
+                    $("#form-change-password-modal").ajaxSubmit(options);
+                }
+            });
+        });
+
+
+
+
         // 显示【充值】
         $("#item-main-body").on('click', ".item-recharge-show", function() {
             var that = $(this);
@@ -509,6 +614,12 @@
             $('.recharge-user-id').html(that.attr('data-id'));
             $('.recharge-username').html(that.attr('data-name'));
             $('#modal-body').modal('show');
+        });
+        // 【充值】取消
+        $("#modal-body").on('click', "#item-recharge-cancel", function() {
+            $('.recharge-user-id').html('');
+            $('.recharge-username').html('');
+            $('#modal-body').modal('hide');
         });
         // 【充值】提交
         $("#modal-body").on('click', "#item-recharge-submit", function() {
@@ -534,12 +645,6 @@
                     $("#form-edit-modal").ajaxSubmit(options);
                 }
             });
-        });
-        // 【充值】取消
-        $("#modal-body").on('click', "#item-recharge-cancel", function() {
-            $('.recharge-user-id').html('');
-            $('.recharge-username').html('');
-            $('#modal-body').modal('hide');
         });
 
 

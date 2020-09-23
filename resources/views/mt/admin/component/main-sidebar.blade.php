@@ -142,9 +142,9 @@
 
 
             {{--留言管理--}}
-            <li class="header">公告&通知管理</li>
+            <li class="header _none">公告&通知管理</li>
 
-            <li class="treeview {{ $sidebar_notice_active or '' }}">
+            <li class="treeview {{ $sidebar_notice_active or '' }} _none">
                 <a href="#">
                     <i class="fa fa-envelope"></i>
                     <span>公告&通知管理</span>

@@ -154,6 +154,79 @@ class IndexRepository {
     /*
      * 用户系统
      */
+    // 【修改密码】
+    public function operate_user_change_password($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户ID',
+            'user-password.required' => '请输入密码',
+            'user-password-confirm.required' => '请输入确认密码',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+            'user-password' => 'required',
+            'user-password-confirm' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'change-password') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $password = $post_data["user-password"];
+        $confirm = $post_data["user-password-confirm"];
+        if($password != $confirm) return response_error([],"两次密码不一致！");
+
+//        if(!password_is_legal($password)) ;
+        $pattern = '/^[a-zA-Z0-9]{1}[a-zA-Z0-9]{5,19}$/i';
+        if(!preg_match($pattern,$password)) return response_error([],"密码格式不正确！");
+
+
+        $user = User::find($id);
+        if(!$user) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($user->usergroup,['Agent','Agent2','Service'])) return response_error([],"该用户参数有误，你不能操作！");
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $user->password_1 = $password;
+            $user->password = password_encode($password);
+            $user->userpass = basic_encrypt($password);
+            $user->save();
+
+            $bool = $user->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success(['id'=>$user->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
     // 返回【代理商列表】数据
     public function get_user_agent_list_datatable($post_data)
     {
@@ -320,6 +393,9 @@ class IndexRepository {
             $post_data["createtime"] = $current_time;
             $post_data["userstatus"] = "正常";
             $post_data["status"] = 1;
+            $post_data["userpass"] = basic_encrypt("123456");
+            $post_data["password"] = password_encode("123456");
+            $post_data["password_1"] = "123456";
         }
         else if($operate == 'edit') // 编辑
         {

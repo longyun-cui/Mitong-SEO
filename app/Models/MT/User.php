@@ -14,7 +14,7 @@ class User extends Authenticatable
         'active', 'pid', 'epid', 'epname', 'usergroup', 'userno', 'departno', 'roleno',
         'createuserid', 'createusername', 'createtime',
         'username', 'truename', 'email', 'mobileno', 'telephone', 'QQnumber', 'wechat_id', 'contact',
-        'userpass', 'password', 'question', 'answer',
+        'userpass', 'password', 'password_1', 'question', 'answer',
         'usertype', 'usertype_desc', 'product', 'product_desc', 'seller_id', 'operation_id', 'customer_id',
         'isopen_oem', 'isopen_subagent', 'is_recharge_limit',
         'regfrom', 'userstatus', 'usersessionid', 'expand_info',
