@@ -49,10 +49,20 @@ class IndexController extends Controller
         }
         else if($type == 'again')
         {
+//            $query = SEOKeyword::select('id','keyword','website','searchengine')
+//                ->where(['keywordstatus'=>'优化中','status'=>1])
+//                ->where(function ($query) use ($date) {
+//                    $query->where('latestranking','<=',0)->orWhere('latestranking','>',10);
+//                })
+//                ->orderby('id','asc');
+
             $query = SEOKeyword::select('id','keyword','website','searchengine')
-                ->where(['keywordstatus'=>'优化中','status'=>1])
+                ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标'])
                 ->where(function ($query) use ($date) {
                     $query->where('latestranking','<=',0)->orWhere('latestranking','>',10);
+                })
+                ->whereHas('detects',function($query) {
+                    $query->whereDate('detect_time',date("Y-m-d",(time()-86400)))->where('rank','>',0)->where('rank','<=',10);
                 })
                 ->orderby('id','asc');
         }
