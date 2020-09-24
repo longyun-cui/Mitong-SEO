@@ -601,16 +601,16 @@
                         "title": "操作",
                         "data": 'id',
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
                             var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-//                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >数据详情</a>'+
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+data+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+data+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+//                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
                                 '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
                                 '';
                             return html;
