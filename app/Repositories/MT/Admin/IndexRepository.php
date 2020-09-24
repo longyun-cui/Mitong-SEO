@@ -1407,7 +1407,7 @@ class IndexRepository {
             ->with([
                 'data'=>$data,
                 'sidebar_business_keyword_active'=>'active',
-                'sidebar_business_keyword_today_active'=>'active'
+                'sidebar_business_keyword_anomaly_active'=>'active'
             ]);
     }
     // 返回【今日关键词】列表
