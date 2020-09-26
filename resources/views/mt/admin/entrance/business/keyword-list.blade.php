@@ -579,7 +579,7 @@
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "32px",
                         "title": "最新消费",
                         "data": "latestconsumption",
                         'orderable': true,
@@ -589,7 +589,7 @@
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "32px",
                         "title": "达标天数",
                         "data": "standarddays",
                         'orderable': true,
@@ -599,7 +599,7 @@
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "32px",
                         "title": "累计消费",
                         "data": "totalconsumption",
                         'orderable': true,

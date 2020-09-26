@@ -33,34 +33,55 @@ class TestController extends Controller
     public function index()
     {
 
-        $keyword_data = SEOKeyword::first(
-            array(
-                \DB::raw('COUNT(*) as keyword_count'),
-                \DB::raw('SUM(standarddays) as standarddays_sum'),
-                \DB::raw('SUM(standard_days) as standard_days_sum'),
-                \DB::raw('SUM(totalconsumption) as totalconsumption_sum'),
-                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
-            )
-        )->toArray();
+//        dd(date("Y-m-d"));
+//        dd(date("Y-m-d",strtotime("-26 day")));
 
-        $test_data["keyword_count"] = number_format($keyword_data["keyword_count"]);
-        $test_data["standarddays_sum"] = number_format($keyword_data["standarddays_sum"]);
-        $test_data["standard_days_sum"] = number_format($keyword_data["standard_days_sum"]);
-        $test_data["totalconsumption_sum"] = number_format($keyword_data["totalconsumption_sum"]);
-        $test_data["standard_days_consumption_sum"] = number_format($keyword_data["standard_days_consumption_sum"]);
+        $sql ="select a.keywordid, a.rank - b.rank as diff,a.keyword,a.rank as rank_yesterday, b.rank as rank_today,a.website,a.searchengine from (select keywordid,rank,keyword,website,searchengine from mt_seo_keyword_detect_record WHERE detect_time like '".date("Y-m-d",strtotime("-1 day"))."%' and rank > -1 ) a, (select `keywordid`,`rank` from mt_seo_keyword_detect_record WHERE detect_time like '".date('Y-m-d')."%' and rank > -1 ) b where a.keywordid = b.keywordid and (a.rank - b.rank != 0) and a.rank > 0 AND a.rank <= 10";
 
 
-        $keyword_data = User::first(
-            array(
-                \DB::raw('COUNT(*) as keyword_count'),
-                \DB::raw('SUM(fund_expense) as fund_expense_sum'),
-                \DB::raw('SUM(fund_expense_2) as fund_expense_2_sum'),
-                \DB::raw('SUM(fund_balance) as fund_balance'),
-                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
-            )
-        )->toArray();
+        $data_0 = DB::select($sql);
 
-        return view('mt.admin.test')->with('test_data',$test_data);
+//        $query = SEOKeyword::select('*')
+//            ->with([
+//                'creator',
+//                'detects'=>function($query) {
+//                    $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")));
+//                }
+//                ])
+//            ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标']);
+//            ->whereDate('detectiondate',date("Y-m-d"));
+
+//        $data = $query->orderby('id','desc')->get()->toArray();
+//        dd($data);
+
+//        $keyword_data = SEOKeyword::first(
+//            array(
+//                \DB::raw('COUNT(*) as keyword_count'),
+//                \DB::raw('SUM(standarddays) as standarddays_sum'),
+//                \DB::raw('SUM(standard_days_1) as standard_days_sum'),
+//                \DB::raw('SUM(totalconsumption) as totalconsumption_sum'),
+//                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
+//            )
+//        )->toArray();
+//
+//        $test_data["keyword_count"] = number_format($keyword_data["keyword_count"]);
+//        $test_data["standarddays_sum"] = number_format($keyword_data["standarddays_sum"]);
+//        $test_data["standard_days_sum"] = number_format($keyword_data["standard_days_sum"]);
+//        $test_data["totalconsumption_sum"] = number_format($keyword_data["totalconsumption_sum"]);
+//        $test_data["standard_days_consumption_sum"] = number_format($keyword_data["standard_days_consumption_sum"]);
+//
+//
+//        $keyword_data = User::first(
+//            array(
+//                \DB::raw('COUNT(*) as keyword_count'),
+//                \DB::raw('SUM(fund_expense) as fund_expense_sum'),
+//                \DB::raw('SUM(fund_expense_2) as fund_expense_2_sum'),
+//                \DB::raw('SUM(fund_balance) as fund_balance'),
+//                \DB::raw('SUM(standard_days * price) as standard_days_consumption_sum')
+//            )
+//        )->toArray();
+
+        return view('mt.admin.test')->with('test_data',$data_0);
     }
 
 

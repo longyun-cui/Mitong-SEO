@@ -37,19 +37,15 @@
                     <thead>
                     <tr role='row' class='heading'>
                         <th>ID</th>
-                        <th>客户</th>
-                        <th>关键词</th>
-                        <th>站点</th>
-                        <th>搜索引擎</th>
-                        <th>创建时间</th>
-                        <th>单价</th>
-                        <th>初始排名</th>
-                        <th>最新排名</th>
-                        <th>检测时间</th>
-                        <th>最新消费</th>
-                        <th>达标天数</th>
-                        <th>累计消费</th>
-                        <th>状态</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
@@ -65,15 +61,6 @@
                                 <option value ="sougou">搜狗</option>
                                 <option value ="360">360</option>
                                 <option value ="shenma">神马</option>
-                            </select>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <select name="latest_ranking" class="form-control form-filter">
-                                <option value ="0">全部</option>
-                                <option value ="1">已达标</option>
                             </select>
                         </td>
                         <td></td>
@@ -428,7 +415,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "",
+                        "width": "160px",
                         "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
@@ -438,7 +425,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "",
+                        "width": "192px",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -491,35 +478,39 @@
                         }
                     },
                     {
-                        "width": "72px",
-                        "title": "创建时间",
-                        "data": "createtime",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return data;
-                            var $date = new Date(data);
-                            var $year = $date.getFullYear();
-                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
-                            var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "48px",
-                        "title": "价格",
-                        "data": "price",
+                        "width": "54px",
+                        "title": "3天前",
+                        "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            return parseInt(data);
+                            var $rank = "";
+                            if(row.detects[3].rank) $rank = row.detects[3].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
                         }
                     },
                     {
                         "width": "54px",
-                        "title": "初始排名",
-                        "data": "initialranking",
-                        'orderable': false,
+                        "title": "前天",
+                        "data": "latestranking",
+                        'orderable': true,
                         render: function(data, type, row, meta) {
-                            return data;
+                            var $rank = "";
+                            if(row.detects[2].rank) $rank = row.detects[2].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "昨天",
+                        "data": "latestranking",
+                        'orderable': true,
+                        render: function(data, type, row, meta) {
+                            var $rank = "";
+                            if(row.detects[1].rank) $rank = row.detects[1].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
                         }
                     },
                     {
@@ -530,16 +521,6 @@
                         render: function(data, type, row, meta) {
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
                             else return data;
-                        }
-                    },
-                    {
-                        "width": "56px",
-                        "title": "最新消费",
-                        "data": "latestconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
-                            else return parseInt(data);
                         }
                     },
                     {
@@ -555,45 +536,6 @@
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
                             return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "56px",
-                        "title": "达标天数",
-                        "data": "standarddays",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
-                            else return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "56px",
-                        "title": "累计消费",
-                        "data": "totalconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
-                            else return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "状态",
-                        "data": "keywordstatus",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(row.status == 1)
-                            {
-                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
-                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
-                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
-                                else return data;
-                            }
-                            else
-                            {
-                                return '<small class="btn-xs bg-navy">已删除</small>';
-                            }
                         }
                     },
                     {

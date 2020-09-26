@@ -1398,7 +1398,7 @@ class IndexRepository {
     }
 
 
-    // 返回【今日关键词】视图
+    // 返回【异常关键词】视图
     public function show_business_keyword_anomaly_list()
     {
         $data = [];
@@ -1410,14 +1410,17 @@ class IndexRepository {
                 'sidebar_business_keyword_anomaly_active'=>'active'
             ]);
     }
-    // 返回【今日关键词】列表
+    // 返回【异常关键词】列表
     public function get_business_keyword_anomaly_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
-        $query = SEOKeyword::select('*')->with('creator')
+        $query = SEOKeyword::select('*')
+            ->with([
+                'creator','detects'=>function($query) { $query->orderby('id','desc'); }
+            ])
             ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标'])
             ->whereHas('detects',function($query) {
-                $query->whereDate('detect_time',date("Y-m-d",(time()-86400)))->where('rank','>',0)->where('rank','<=',10);
+                $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-4 day")))->where('rank','>',0)->where('rank','<=',10);
             });
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
