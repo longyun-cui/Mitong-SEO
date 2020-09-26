@@ -481,7 +481,7 @@
                         "width": "54px",
                         "title": "3天前",
                         "data": "latestranking",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
                             if(row.detects[3].rank) $rank = row.detects[3].rank;
@@ -493,7 +493,7 @@
                         "width": "54px",
                         "title": "前天",
                         "data": "latestranking",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
                             if(row.detects[2].rank) $rank = row.detects[2].rank;
@@ -505,7 +505,7 @@
                         "width": "54px",
                         "title": "昨天",
                         "data": "latestranking",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
                             if(row.detects[1].rank) $rank = row.detects[1].rank;
@@ -517,7 +517,7 @@
                         "width": "54px",
                         "title": "最新排名",
                         "data": "latestranking",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
                             else return data;
