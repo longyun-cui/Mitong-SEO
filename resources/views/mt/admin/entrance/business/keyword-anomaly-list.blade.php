@@ -46,23 +46,22 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
-                        <td>
-                            <select name="searchengine" class="form-control form-filter">
-                                <option value ="0">全部</option>
-                                <option value ="baidu">百度PC</option>
-                                <option value ="baidu_mobile">百度移动</option>
-                                <option value ="sougou">搜狗</option>
-                                <option value ="360">360</option>
-                                <option value ="shenma">神马</option>
-                            </select>
-                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -374,7 +373,8 @@
             var dt = $('#datatable_ajax');
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+//                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                "aLengthMenu": [[-1], ["全部"]],
                 "processing": true,
                 "serverSide": true,
                 "searching": false,
@@ -479,12 +479,60 @@
                     },
                     {
                         "width": "54px",
-                        "title": "3天前",
-                        "data": "latestranking",
+                        "title": "7天前",
+                        "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
-                            if(row.detects[3].rank) $rank = row.detects[3].rank;
+                            if(row.detects[7]) $rank = row.detects[7].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "6天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $rank = "";
+                            if(row.detects[6]) $rank = row.detects[6].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "5天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $rank = "";
+                            if(row.detects[5]) $rank = row.detects[5].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "4天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $rank = "";
+                            if(row.detects[4]) $rank = row.detects[4].rank;
+                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+                            return $rank;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "3天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $rank = "";
+                            if(row.detects[3]) $rank = row.detects[3].rank;
                             if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
                             return $rank;
                         }
@@ -496,7 +544,7 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
-                            if(row.detects[2].rank) $rank = row.detects[2].rank;
+                            if(row.detects[2]) $rank = row.detects[2].rank;
                             if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
                             return $rank;
                         }
@@ -508,7 +556,7 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             var $rank = "";
-                            if(row.detects[1].rank) $rank = row.detects[1].rank;
+                            if(row.detects[1]) $rank = row.detects[1].rank;
                             if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
                             return $rank;
                         }

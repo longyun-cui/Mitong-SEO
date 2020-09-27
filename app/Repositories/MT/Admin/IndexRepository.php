@@ -1416,11 +1416,14 @@ class IndexRepository {
         $me = Auth::guard("admin")->user();
         $query = SEOKeyword::select('*')
             ->with([
-                'creator','detects'=>function($query) { $query->orderby('id','desc'); }
+                'creator',
+                'detects'=>function($query) {
+                    $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")))->orderby('id','desc');
+                }
             ])
             ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标'])
             ->whereHas('detects',function($query) {
-                $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-4 day")))->where('rank','>',0)->where('rank','<=',10);
+                $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")))->where('rank','>',0)->where('rank','<=',10);
             });
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
