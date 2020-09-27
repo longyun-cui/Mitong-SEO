@@ -54,11 +54,7 @@ class IndexController extends Controller
     // 返回【客户列表】视图
     public function view_user_client_list()
     {
-        if(request()->isMethod('get'))
-        {
-            return view('mt.admin.entrance.user.client-list')
-                ->with(['sidebar_client_list_active'=>'active menu-open']);
-        }
+        if(request()->isMethod('get')) return $this->repo->view_user_client_list();
         else if(request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
     }
 

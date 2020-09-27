@@ -273,6 +273,20 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
+    // 返回【添加代理商】视图
+    public function view_user_client_list()
+    {
+        $me = Auth::guard('admin')->user();
+
+        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])->where('fund_expense_daily','>',0)
+            ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
+
+        $view_blade = 'mt.admin.entrance.user.client-list';
+        return view($view_blade)->with([
+            'sidebar_client_list_active'=>'active menu-open',
+            'insufficient_clients'=>$insufficient_clients
+        ]);
+    }
     // 返回【客户列表】数据
     public function get_user_client_list_datatable($post_data)
     {
