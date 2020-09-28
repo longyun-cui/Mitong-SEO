@@ -80,7 +80,7 @@
                     {
                         layer.msg(data.data.usergroup);
                         var $user_group = data.data.usergroup;
-                        if($user_group == "Magage")
+                        if($user_group == "Manage")
                         {
                             location.href = "/admin";
                         }
