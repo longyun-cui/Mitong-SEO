@@ -36,7 +36,9 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
+                        <th>序号</th>
                         <th>ID</th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -53,6 +55,8 @@
                         <th>历史数据</th>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -405,7 +409,14 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "36px",
+                        "width": "48px",
+                        "title": "序号",
+                        "data": null,
+                        "targets": 0,
+                        'orderable': false
+                    },
+                    {
+                        "width": "48px",
                         "title": "ID",
                         "data": "id",
                         'orderable': false,
@@ -478,15 +489,34 @@
                         }
                     },
                     {
+                        "className": "",
+                        "width": "48px",
+                        "title": "价格",
+                        "data": "price",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
                         "width": "54px",
                         "title": "7天前",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[7]) $rank = row.detects[7].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[7])
+                            {
+                                var $detect = row.detects[7];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -495,10 +525,19 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[6]) $rank = row.detects[6].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[6])
+                            {
+                                var $detect = row.detects[6];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -507,10 +546,19 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[5]) $rank = row.detects[5].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[5])
+                            {
+                                var $detect = row.detects[5];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -519,10 +567,19 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[4]) $rank = row.detects[4].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[4])
+                            {
+                                var $detect = row.detects[4];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -531,34 +588,61 @@
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[3]) $rank = row.detects[3].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[3])
+                            {
+                                var $detect = row.detects[3];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
                         "width": "54px",
                         "title": "前天",
-                        "data": "latestranking",
+                        "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[2]) $rank = row.detects[2].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[2])
+                            {
+                                var $detect = row.detects[2];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
                         "width": "54px",
                         "title": "昨天",
-                        "data": "latestranking",
+                        "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $rank = "";
-                            if(row.detects[1]) $rank = row.detects[1].rank;
-                            if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
-                            return $rank;
+                            var $html = "";
+                            if(row.detects[1])
+                            {
+                                var $detect = row.detects[2];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -567,8 +651,21 @@
                         "data": "latestranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
-                            else return data;
+//                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
+//                            else return data;
+                            var $html = "";
+                            if(row.detects[0])
+                            {
+                                var $detect = row.detects[0];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
                         }
                     },
                     {
@@ -608,6 +705,12 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();
@@ -814,7 +917,8 @@
                                 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                 '<a class="btn btn-xs item-set-rank-show" data-id="'+data+
                                 '" data-name="'+row.keyword+'" data-rank="'+row.rank+'" data-date="'+$date+
-                                '">指定排名</a>';
+                                '">指定排名</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -1204,39 +1308,46 @@
         // 【修改排名】提交
         $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
             var that = $(this);
-            layer.msg('确定"提交"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-detect-set-rank') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:$('input[name="detect-set-operate"]').val(),
-                            detect_id:$('input[name="detect-set-id"]').val(),
-                            detect_date:$('input[name="detect-set-date"]').val(),
-                            detect_rank:$('input[name="detect-set-rank"]').val(),
-                            detect_description:$('input[name="detect-set-description"]').val()
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
+//            layer.msg('确定"提交"么？', {
+//                time: 0
+//                ,btn: ['确定', '取消']
+//                ,yes: function(index){
+//                }
+//            });
+            $.post(
+                "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:$('input[name="detect-set-operate"]').val(),
+                    detect_id:$('input[name="detect-set-id"]').val(),
+                    detect_date:$('input[name="detect-set-date"]').val(),
+                    detect_rank:$('input[name="detect-set-rank"]').val(),
+                    detect_description:$('input[name="detect-set-description"]').val()
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
 //                            else location.reload();
-                            else
-                            {
-                                layer.close(index);
-                                $('#modal-set-body').modal('hide');
-                                $("#modal-set-body").on("hidden.bs.modal", function () {
-                                    $("body").addClass("modal-open");
-                                });
+                    else
+                    {
+//                        layer.close(index);
+                        $('#modal-set-body').modal('hide');
+                        $("#modal-set-body").on("hidden.bs.modal", function () {
+                            $("body").addClass("modal-open");
+                        });
 
-                                var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
-                            }
-                        },
-                        'json'
-                    );
-                }
-            });
+                        var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
+                        TableDatatablesAjax_inner.init($keyword_id);
+
+                        var $detect_id = $('input[name="detect-set-id"]').val();
+                        var $rank = $('input[name="detect-set-rank"]').val();
+                        var $html = $rank;
+                        if(($rank > 0) && ($rank <= 10)) $html = '<samll class="text-red">'+$rank+'</samll>';
+
+                        $('.item-set-rank-show[data-id='+$detect_id+']').html($html);
+                    }
+                },
+                'json'
+            );
         });
 
     });
