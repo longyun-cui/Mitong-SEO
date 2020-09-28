@@ -82,7 +82,8 @@
                         <td></td>
                         <td>
                             <select name="keywordstatus" class="form-control form-filter">
-                                <option value ="0">全部</option>
+                                <option value ="默认" selected="selected">默认</option>
+                                <option value ="全部">全部</option>
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
                                 <option value ="合作停">合作停</option>
