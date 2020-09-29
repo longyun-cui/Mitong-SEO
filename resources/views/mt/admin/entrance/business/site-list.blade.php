@@ -52,8 +52,8 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="sitename" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -212,10 +212,8 @@
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
-//                        d.nickname 	= $('input[name="nickname"]').val();
-//                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
-//                        d.certificate_state = $('select[name="certificate_state"]').val();
-//                        d.admin_name = $('input[name="admin_name"]').val();
+                        d.sitename = $('input[name="sitename"]').val();
+                        d.website = $('input[name="website"]').val();
 //
 //                        d.created_at_from = $('input[name="created_at_from"]').val();
 //                        d.created_at_to = $('input[name="created_at_to"]').val();
@@ -553,6 +551,30 @@
                         {
                             _token: $('meta[name="_token"]').attr('content'),
                             operate:"stop-site",
+                            id:that.attr('data-id')
+                        },
+                        function(data){
+                            if(!data.success) layer.msg(data.msg);
+                            else location.reload();
+                        },
+                        'json'
+                    );
+                }
+            });
+        });
+
+        // 【再合作】
+        $("#item-main-body").on('click', ".item-start-submit", function() {
+            var that = $(this);
+            layer.msg('确定要"再合作"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.post(
+                        "{{ url('/admin/business/site-start') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate:"start-site",
                             id:that.attr('data-id')
                         },
                         function(data){

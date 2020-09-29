@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','今日新增上词 - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','关键词列表')
+@section('header','今日新增上词')
 @section('description','搜索引擎智能营销系统-米同科技')
 
 
@@ -12,35 +12,6 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <div class="col-md-12">
-        <div class="box">
-            <div class="callout callout-green">
-                <h4>今日概览</h4>
-                <div>
-                    <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
-                    </span>
-
-                    <span style="margin-right:12px;">
-                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
-                    </span>
-
-                    <span style="margin-right:12px;">
-                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
-                    </span>
-
-                    <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{{--关键词列表--}}
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
@@ -80,24 +51,18 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
-                        <td>
-                            <select name="searchengine" class="form-control form-filter">
-                                <option value ="0">全部</option>
-                                <option value ="baidu">百度PC</option>
-                                <option value ="baidu_mobile">百度移动</option>
-                                <option value ="sougou">搜狗</option>
-                                <option value ="360">360</option>
-                                <option value ="shenma">神马</option>
-                            </select>
-                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -107,17 +72,8 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <select name="keywordstatus" class="form-control form-filter">
-                                <option value ="0">全部</option>
-                                <option value ="优化中">优化中</option>
-                                <option value ="待审核">待审核</option>
-                                <option value ="合作停">合作停</option>
-                                <option value ="已删除">已删除</option>
-                            </select>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
+                            <a class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
                                 {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
@@ -153,116 +109,6 @@
 </div>
 
 
-{{--关键词审核--}}
-<div class="modal fade" id="modal-body">
-    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
-
-        <div class="row">
-            <div class="col-md-12">
-                <!-- BEGIN PORTLET-->
-                <div class="box- box-info- form-container">
-
-                    <div class="box-header with-border" style="margin:16px 0;">
-                        <h3 class="box-title">代理商充值</h3>
-                        <div class="box-tools pull-right">
-                        </div>
-                    </div>
-
-                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
-                        <div class="box-body">
-
-                            {{csrf_field()}}
-                            <input type="hidden" name="operate" value="review" readonly>
-                            <input type="hidden" name="id" value="0" readonly>
-
-                            {{--类别--}}
-
-
-                            {{--站点ID--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">关键词ID</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-site-id"></span>
-                                </div>
-                            </div>
-                            {{--关键词--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">关键词</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-keyword"></span>
-                                </div>
-                            </div>
-                            {{--站点名称--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点名称</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-site-name"></span>
-                                </div>
-                            </div>
-                            {{--站点--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="review-website"></span>
-                                </div>
-                            </div>
-                            {{--站点--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">调整价格</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <input type="text" class="form-control review-price" name="review-price" placeholder="调整价格" value="0">
-                                </div>
-                            </div>
-                            {{--审核意见--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">审核结果</label>
-                                <div class="col-md-8 ">
-                                    <select name="keywordstatus" class="form-control form-filter">
-                                        <option value ="0">请选择</option>
-                                        <option value ="待审核">待审核</option>
-                                        <option value ="优化中">优化中</option>
-                                        <option value ="合作停">合作停</option>
-                                        <option value ="被拒绝">被拒绝</option>
-                                    </select>
-                                </div>
-                            </div>
-                            {{--备注--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">备注</label>
-                                <div class="col-md-8 ">
-                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
-                                    <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
-                                </div>
-                            </div>
-                            {{--说明--}}
-                            <div class="form-group _none">
-                                <label class="control-label col-md-2">说明</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </form>
-
-                    <div class="box-footer">
-                        <div class="row">
-                            <div class="col-md-8 col-md-offset-2">
-                                <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
-                                <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END PORTLET-->
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{{--关键词排名详情--}}
 <div class="modal fade" id="modal-data-detect-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn-" style="background:#fff;">
         <div class="box box-info- form-container" id="item-content-body">
@@ -353,7 +199,6 @@
 </div>
 
 
-{{--添加排名记录--}}
 <div class="modal fade" id="modal-create-body">
     <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -434,7 +279,6 @@
 </div>
 
 
-{{--修改排名记录--}}
 <div class="modal fade" id="modal-set-body">
     <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -533,13 +377,13 @@
             var dt = $('#datatable_ajax');
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
-                "bAutoWidth": false,
+//                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+                "aLengthMenu": [[-1], ["全部"]],
                 "processing": true,
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/keyword-list') }}",
+                    'url': "{{ url('/admin/business/keyword-today-newly') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -547,7 +391,11 @@
                         d.keyword = $('input[name="keyword"]').val();
                         d.website = $('input[name="website"]').val();
                         d.searchengine = $('select[name="searchengine"]').val();
-                        d.keywordstatus = $('select[name="keywordstatus"]').val();
+                        d.latest_ranking = $('select[name="latest_ranking"]').val();
+//                        d.nickname 	= $('input[name="nickname"]').val();
+//                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
+//                        d.certificate_state = $('select[name="certificate_state"]').val();
+//                        d.admin_name = $('input[name="admin_name"]').val();
 //
 //                        d.created_at_from = $('input[name="created_at_from"]').val();
 //                        d.created_at_to = $('input[name="created_at_to"]').val();
@@ -561,7 +409,7 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "32px",
+                        "width": "48px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
@@ -571,14 +419,14 @@
                         "width": "48px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
                         "className": "text-left",
-                        "width": "96px",
+                        "width": "160px",
                         "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
@@ -588,7 +436,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "160px",
+                        "width": "192px",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -627,7 +475,7 @@
                         }
                     },
                     {
-                        "width": "72px",
+                        "width": "64px",
                         "title": "搜索引擎",
                         "data": "searchengine",
                         'orderable': true,
@@ -641,117 +489,198 @@
                         }
                     },
                     {
-                        "width": "72px",
-                        "title": "创建时间",
-                        "data": "createtime",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return data;
-                            var $date = new Date(data);
-                            var $year = $date.getFullYear();
-                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
-                            var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
+                        "className": "",
                         "width": "48px",
                         "title": "价格",
                         "data": "price",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            return '<span class="text-blue">'+parseInt(data)+'</span>';
-                        }
-                    },
-                    {
-                        "width": "56px",
-                        "title": "初始排名",
-                        "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "54px",
+                        "title": "7天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[7])
+                            {
+                                var $detect = row.detects[7];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "6天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[6])
+                            {
+                                var $detect = row.detects[6];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "5天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[5])
+                            {
+                                var $detect = row.detects[5];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "4天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[4])
+                            {
+                                var $detect = row.detects[4];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "3天前",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[3])
+                            {
+                                var $detect = row.detects[3];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "前天",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[2])
+                            {
+                                var $detect = row.detects[2];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
+                        "title": "昨天",
+                        "data": "id",
+                        'orderable': false,
+                        render: function(data, type, row, meta) {
+                            var $html = "";
+                            if(row.detects[1])
+                            {
+                                var $detect = row.detects[2];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
+                            }
+                            return $html;
+                        }
+                    },
+                    {
+                        "width": "54px",
                         "title": "最新排名",
                         "data": "latestranking",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $gif = '';
-                            if(data < row.initialranking)
+//                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>';
+//                            else return data;
+                            var $html = "";
+                            if(row.detects[0])
                             {
-                                $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
+                                var $detect = row.detects[0];
+                                var $date = $detect.detect_time.trim().split(" ")[0];
+                                var $rank = $detect.rank;
+                                if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
+
+                                $html = '<a class="btn btn-xs item-set-rank-show" '+
+                                    ' data-id="'+$detect.id+'" data-name="'+$detect.keyword+'" data-rank="'+$detect.rank+'" data-date="'+$date+
+                                    '">'+$rank+'</a>';
                             }
-                            if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>'+$gif;
-                            else return data+$gif;
-                        }
-                    },
-                    {
-                        "width": "32px",
-                        "title": "最新消费",
-                        "data": "latestconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data)+'</span>';
-                            else return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "32px",
-                        "title": "达标天数",
-                        "data": "standarddays",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
-                            else return parseInt(data);
-                        }
-                    },
-                    {
-                        "width": "32px",
-                        "title": "累计消费",
-                        "data": "totalconsumption",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            if(parseInt(data) > 0) return '<span class="text-blue">'+parseInt(data).toLocaleString()+'</span>';
-                            else return parseInt(data);
+                            return $html;
                         }
                     },
                     {
                         "width": "72px",
-                        "title": "检测时间",
+                        "title": "检测日期",
                         "data": "detectiondate",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             if(!data) return '--';
-//                            return data;
-//                            newDate = new Date(data);
-//                            return newDate.toLocaleDateString('chinese',{hour12:false});
 //                            return data;
                             var $date = new Date(data);
                             var $year = $date.getFullYear();
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
                             return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "状态",
-                        "data": "keywordstatus",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            if(row.status == 1)
-                            {
-                                if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
-                                else if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
-                                else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
-                                else return data;
-                            }
-                            else
-                            {
-                                return '<small class="btn-xs bg-navy">已删除</small>';
-                            }
                         }
                     },
                     {
@@ -760,44 +689,17 @@
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $cooperation_html = '';
-                            var $review_html = '';
-                            var $delete_html = '';
-
-                            if(row.status == 1)
-                            {
-                                if(row.keywordstatus == '优化中')
-                                {
-                                    $cooperation_html = '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>';
-                                }
-                                else if(row.keywordstatus == '合作停')
-                                {
-                                    $cooperation_html = '<a class="btn btn-xs bg-primary item-start-submit" data-id="'+data+'" >再合作</a>';
-                                }
-
-                                $review_html = '<a class="btn btn-xs bg-primary item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>';
-                                $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
-                            }
-                            else
-                            {
-                                $review_html = '<a class="btn btn-xs btn-default disabled">审核</a>';
-                                $delete_html = '<a class="btn btn-xs btn-default disabled">删除</a>';
-                            }
-
                             var html =
-                                    {{--'<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
-//                                    $cooperation_html+
-                                    $review_html+
-                                    $delete_html+
-//                                    '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
-                                    '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
-                                    '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
-                                    ''
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+data+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+data+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+//                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
+                                '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -858,13 +760,11 @@
             });
 
             dt.on('click', '.filter-cancel', function () {
-                $('textarea.form-filter, input.form-filter, select.form-filter', dt).each(function () {
+                $('textarea.form-filter, select.form-filter, input.form-filter', dt).each(function () {
                     $(this).val("");
                 });
 
-//                $('select.form-filter').selectpicker('refresh');
-                $('select.form-filter option').attr("selected",false);
-                $('select.form-filter').find('option:eq(0)').attr('selected', true);
+                $('select.form-filter').selectpicker('refresh');
 
                 ajax_datatable.ajax.reload();
             });
@@ -1017,7 +917,8 @@
                                 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
                                 '<a class="btn btn-xs item-set-rank-show" data-id="'+data+
                                 '" data-name="'+row.keyword+'" data-rank="'+row.rank+'" data-date="'+$date+
-                                '">指定排名</a>';
+                                '">指定排名</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -1136,62 +1037,9 @@
         // 【编辑】
         $(".item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            window.location.href = "/item/edit?id="+that.attr('data-id');
+            {{--layer.msg("/item/edit?id="+that.attr('data-id'));--}}
+                window.location.href = "/item/edit?id="+that.attr('data-id');
         });
-
-
-
-
-        // 【审核】显示
-        $("#item-main-body").on('click', ".item-review-show", function() {
-            var that = $(this);
-            $('input[name=id]').val(that.attr('data-id'));
-            $('.review-site-id').html(that.attr('data-id'));
-            $('.review-site-name').html(that.attr('data-name'));
-            $('.review-website').html(that.attr('data-website'));
-            $('.review-keyword').html(that.attr('data-keyword'));
-            $('.review-price').val(that.attr('data-price'));
-            $('#modal-body').modal('show');
-        });
-        // 【审核】取消
-        $("#modal-body").on('click', "#item-review-cancel", function() {
-            $('.review-user-id').html('');
-            $('.review-user-name').html('');
-            $('.review-website').html('');
-            $('.review-keyword').html('');
-            $('.review-price').val(0);
-            $('#modal-body').modal('hide');
-        });
-
-        // 【审核】提交
-        $("#modal-body").on('click', "#item-review-submit", function() {
-            var that = $(this);
-            layer.msg('确定"审核"么', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-
-                    var options = {
-                        url: "{{ url('/admin/business/keyword-review') }}",
-                        type: "post",
-                        dataType: "json",
-                        // target: "#div2",
-                        success: function (data) {
-                            if(!data.success) layer.msg(data.msg);
-                            else
-                            {
-                                layer.msg(data.msg);
-                                location.reload();
-                            }
-                        }
-                    };
-                    $("#form-edit-modal").ajaxSubmit(options);
-                }
-            });
-        });
-
-
-
 
         // 【数据详情】
         $(".item-main-body").on('click', ".item-data-detail-link", function() {
@@ -1215,21 +1063,17 @@
             $('#modal-data-detect-body').modal('show');
         });
 
-
-
-
         // 【删除】
         $(".item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
-            layer.msg('确定要"删除"么？', {
+            layer.msg('确定要删除该"产品"么', {
                 time: 0
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/admin/business/keyword-delete') }}",
+                        "{{ url('/item/delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
-                            operate:"delete-keyword",
                             id:that.attr('data-id')
                         },
                         function(data){
@@ -1241,93 +1085,6 @@
                 }
             });
         });
-
-        // 【合作停】
-        $(".item-main-body").on('click', ".item-stop-submit", function() {
-            var that = $(this);
-            layer.msg('确定要"合作停"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-stop') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:"stop-keyword",
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-        // 【再合作】
-        $(".item-main-body").on('click', ".item-start-submit", function() {
-            var that = $(this);
-            layer.msg('确定要"再合作"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-start') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:"start-keyword",
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                            else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-
-        // 【下载】
-        $(".item-main-body").on('click', ".item-download-link", function() {
-            var that = $(this);
-            layer.msg('确定要"下载"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    layer.close(index);
-                    window.open("/admin/business/download/keyword-detect?id="+that.attr('data-id'));
-                }
-            });
-        });
-        // 【下载】
-        $(".item-main-body").on('click', ".item-download-submit", function() {
-            var that = $(this);
-            layer.msg('确定要"下载"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/download/keyword-detect') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:"download-keyword-detect",
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-
-
 
         // 【启用】
         $(".item-main-body").on('click', ".item-enable-submit", function() {
@@ -1351,6 +1108,7 @@
                 }
             });
         });
+
         // 【禁用】
         $(".item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);
@@ -1550,39 +1308,46 @@
         // 【修改排名】提交
         $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
             var that = $(this);
-            layer.msg('确定"提交"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-detect-set-rank') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:$('input[name="detect-set-operate"]').val(),
-                            detect_id:$('input[name="detect-set-id"]').val(),
-                            detect_date:$('input[name="detect-set-date"]').val(),
-                            detect_rank:$('input[name="detect-set-rank"]').val(),
-                            detect_description:$('input[name="detect-set-description"]').val()
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
+//            layer.msg('确定"提交"么？', {
+//                time: 0
+//                ,btn: ['确定', '取消']
+//                ,yes: function(index){
+//                }
+//            });
+            $.post(
+                "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:$('input[name="detect-set-operate"]').val(),
+                    detect_id:$('input[name="detect-set-id"]').val(),
+                    detect_date:$('input[name="detect-set-date"]').val(),
+                    detect_rank:$('input[name="detect-set-rank"]').val(),
+                    detect_description:$('input[name="detect-set-description"]').val()
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
 //                            else location.reload();
-                            else
-                            {
-                                layer.close(index);
-                                $('#modal-set-body').modal('hide');
-                                $("#modal-set-body").on("hidden.bs.modal", function () {
-                                    $("body").addClass("modal-open");
-                                });
+                    else
+                    {
+//                        layer.close(index);
+                        $('#modal-set-body').modal('hide');
+                        $("#modal-set-body").on("hidden.bs.modal", function () {
+                            $("body").addClass("modal-open");
+                        });
 
-                                var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
-                            }
-                        },
-                        'json'
-                    );
-                }
-            });
+                        var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
+                        TableDatatablesAjax_inner.init($keyword_id);
+
+                        var $detect_id = $('input[name="detect-set-id"]').val();
+                        var $rank = $('input[name="detect-set-rank"]').val();
+                        var $html = $rank;
+                        if(($rank > 0) && ($rank <= 10)) $html = '<samll class="text-red">'+$rank+'</samll>';
+
+                        $('.item-set-rank-show[data-id='+$detect_id+']').html($html);
+                    }
+                },
+                'json'
+            );
         });
 
     });

@@ -17,7 +17,34 @@
     <div class="col-md-12">
         <div class="box">
             <div class="callout callout-green">
-                <h4>今日概览</h4>
+                <h4>财务概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        资产总额 <span class="text-red" style="font-size:24px;">{{ $user_data->fund_total or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        累计消费 <span class="text-red font-24px">{{ $user_data->fund_expense or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        资产余额 <span class="text-red font-24px">{{ $user_data->fund_balance or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        可用余额 <span class="text-red font-24px">{{ $user_data->fund_available or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        初始冻结 <span class="text-red font-24px">{{ $user_data->fund_frozen_init or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        冻结金额 <span class="text-red font-24px">{{ $user_data->fund_frozen or 0 }}</span> 元
+                    </span>
+                </div>
+                <div> &nbsp; </div>
+                <h4>今日优化概览</h4>
                 <div>
                     <span style="margin-right:12px;">
                         优化关键词 <span class="text-red" style="font-size:24px;">{{ $user_data['keyword_count'] or 0 }}</span> 个
@@ -41,6 +68,7 @@
 </div>
 
 
+{{--关键词列表--}}
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
@@ -148,6 +176,116 @@
         <!-- END PORTLET-->
     </div>
 </div>
+
+
+{{--关键词审核--}}
+<div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">代理商充值</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="review" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--站点ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-id"></span>
+                                </div>
+                            </div>
+                            {{--关键词--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">关键词</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-keyword"></span>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-name"></span>
+                                </div>
+                            </div>
+                            {{--站点--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-website"></span>
+                                </div>
+                            </div>
+                            {{--站点--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">调整价格</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="text" class="form-control review-price" name="review-price" placeholder="调整价格" value="0">
+                                </div>
+                            </div>
+                            {{--审核意见--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">审核结果</label>
+                                <div class="col-md-8 ">
+                                    <select name="keywordstatus" class="form-control form-filter">
+                                        <option value ="0">请选择</option>
+                                        <option value ="待审核">待审核</option>
+                                        <option value ="优化中">优化中</option>
+                                        <option value ="合作停">合作停</option>
+                                        <option value ="被拒绝">被拒绝</option>
+                                    </select>
+                                </div>
+                            </div>
+                            {{--备注--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">备注</label>
+                                <div class="col-md-8 ">
+                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
+                                    <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
+                                </div>
+                            </div>
+                            {{--说明--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">说明</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal fade" id="modal-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;"></div>
@@ -384,6 +522,30 @@
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            var $cooperation_html = '';
+                            var $review_html = '';
+                            var $delete_html = '';
+
+                            if(row.status == 1)
+                            {
+                                if(row.keywordstatus == '优化中')
+                                {
+                                    $cooperation_html = '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>';
+                                }
+                                else if(row.keywordstatus == '合作停')
+                                {
+                                    $cooperation_html = '<a class="btn btn-xs bg-primary item-start-submit" data-id="'+data+'" >再合作</a>';
+                                }
+
+                                $review_html = '<a class="btn btn-xs bg-primary item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-keyword="'+row.keyword+'" data-price="'+row.price+'">审核</a>';
+                                $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
+                            }
+                            else
+                            {
+                                $review_html = '<a class="btn btn-xs btn-default disabled">审核</a>';
+                                $delete_html = '<a class="btn btn-xs btn-default disabled">删除</a>';
+                            }
+
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -391,8 +553,9 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+//                                    $cooperation_html+
+                                $review_html+
+                                $delete_html+
                                 '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>';
                             return html;
                         }
@@ -502,6 +665,60 @@
             var that = $(this);
             window.location.href = "/admin/user/edit?id="+that.attr('data-id');
         });
+
+
+
+
+        // 【审核】显示
+        $("#item-main-body").on('click', ".item-review-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.review-site-id').html(that.attr('data-id'));
+            $('.review-site-name').html(that.attr('data-name'));
+            $('.review-website').html(that.attr('data-website'));
+            $('.review-keyword').html(that.attr('data-keyword'));
+            $('.review-price').val(that.attr('data-price'));
+            $('#modal-body').modal('show');
+        });
+        // 【审核】取消
+        $("#modal-body").on('click', "#item-review-cancel", function() {
+            $('.review-user-id').html('');
+            $('.review-user-name').html('');
+            $('.review-website').html('');
+            $('.review-keyword').html('');
+            $('.review-price').val(0);
+            $('#modal-body').modal('hide');
+        });
+
+        // 【审核】提交
+        $("#modal-body").on('click', "#item-review-submit", function() {
+            var that = $(this);
+            layer.msg('确定"审核"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    var options = {
+                        url: "{{ url('/admin/business/keyword-review') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+                                location.reload();
+                            }
+                        }
+                    };
+                    $("#form-edit-modal").ajaxSubmit(options);
+                }
+            });
+        });
+
+
+
 
         // 【数据详情】
         $("#item-main-body").on('click', ".item-data-detail-link", function() {

@@ -1138,6 +1138,9 @@ class IndexRepository {
                 'work_orders as work_order_count'=>function ($query) { $query->where('category',1); },
             ]);
 
+        if(!empty($post_data['sitename'])) $query->where('sitename', 'like', "%{$post_data['sitename']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+
         $total = $query->count();
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
@@ -1359,6 +1362,125 @@ class IndexRepository {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = SEOKeyword::select('*')->with('creator')
             ->where(['keywordstatus'=>'优化中','status'=>1]);
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+        if(!empty($post_data['latest_ranking']))
+        {
+            if($post_data['latest_ranking'] = 1)
+            {
+                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
+            }
+        }
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+    // 返回【今日新增上词关键词】视图
+    public function show_business_keyword_today_newly_list()
+    {
+        $data = [];
+
+        $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1]);
+
+        // 优化关键词总数
+        $keyword_count = $query->count('*');
+        $data['keyword_count'] = $keyword_count;
+
+        // 检测关键词总数
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"));
+        $keyword_detect_count = $query_1->count("*");
+        $data['keyword_detect_count'] = $keyword_detect_count;
+
+        // 已达标关键词总数
+        $query_2 = $query->whereDate('standarddate',date("Y-m-d"))->where('standardstatus','已达标');
+        $keyword_standard_count = $query_2->count("*");
+        $data['keyword_standard_count'] = $keyword_standard_count;
+
+        // 已达标关键词消费
+        $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
+        $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
+
+
+//        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
+//        $keyword_standard_count_by_detect = $query_detect->count('*');
+//        $data['keyword_standard_count_by_detect'] = $keyword_standard_count_by_detect;
+//
+//
+//        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
+//        $keyword_standard_count_by_expense = $query_expense->count('*');
+//        $data['keyword_standard_count_by_expense'] = $keyword_standard_count_by_expense;
+//
+//        $keyword_standard_fund_sum_by_expense = $query_expense->sum('price');
+//        $data['keyword_standard_fund_sum_by_expense'] = $keyword_standard_fund_sum_by_expense;
+
+//        dd($data);
+
+        return view('mt.admin.entrance.business.keyword-today-newly-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_keyword_active'=>'active',
+                'sidebar_business_keyword_today_newly_active'=>'active'
+            ]);
+    }
+    // 返回【今日新增上词关键词】列表
+    public function get_business_keyword_today_newly_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+        $query = SEOKeyword::select('*')
+            ->with([
+                'creator',
+                'detects'=>function($query) {
+                    $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")))->orderby('id','desc');
+                }
+            ])
+            ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereHas('detects',function($query) {
+                $query
+                    ->whereDate('detect_time','>',date("Y-m-d",strtotime("-2 day")))
+                    ->where(function($query) {
+                        $query->where('rank','<=',0)->orWhere('rank','>',10);
+                    });
+            });
 
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
@@ -2244,12 +2366,16 @@ class IndexRepository {
         $keyword = SEOKeyword::find($id);
         if($keyword)
         {
+            $keyword_status_original = $keyword->keywordstatus;
             $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
             if($keyword_owner)
             {
-                if($keyword_owner->fund_available < ($keyword_price * 30))
+                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
                 {
-                    return response_error([],'用户可用余额不足！');
+                    if($keyword_owner->fund_available < ($keyword_price * 30))
+                    {
+                        return response_error([],'用户可用余额不足！');
+                    }
                 }
             }
             else return response_error([],'用户不存在，刷新页面试试！');
@@ -2272,29 +2398,33 @@ class IndexRepository {
             }
             else throw new Exception("update--keyword--fail");
 
-            $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
-            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
-            $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
-            $keyword_owner->save();
-
-            $cart = SEOCart::find($keyword->cartid);
-            $cart->price = $keyword_price;
-            $cart->save();
-
-            $freeze = new FundFreezeRecord;
-            $freeze_date["owner_id"] = $keyword->createuserid;
-            $freeze_date["siteid"] = $keyword->siteid;
-            $freeze_date["keywordid"] = $keyword->id;
-            $freeze_date["freezefunds"] = $keyword_price * 30;
-            $freeze_date["createuserid"] = $me->id;
-            $freeze_date["createusername"] = $me->username;
-            $freeze_date["reguser"] = $me->username;
-            $freeze_date["regtime"] = time();
-            $bool_1 = $freeze->fill($freeze_date)->save();
-            if($bool_1)
+            if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
             {
+
+                $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
+                $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
+                $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
+                $keyword_owner->save();
+
+                $cart = SEOCart::find($keyword->cartid);
+                $cart->price = $keyword_price;
+                $cart->save();
+
+                $freeze = new FundFreezeRecord;
+                $freeze_date["owner_id"] = $keyword->createuserid;
+                $freeze_date["siteid"] = $keyword->siteid;
+                $freeze_date["keywordid"] = $keyword->id;
+                $freeze_date["freezefunds"] = $keyword_price * 30;
+                $freeze_date["createuserid"] = $me->id;
+                $freeze_date["createusername"] = $me->username;
+                $freeze_date["reguser"] = $me->username;
+                $freeze_date["regtime"] = time();
+                $bool_1 = $freeze->fill($freeze_date)->save();
+                if($bool_1)
+                {
+                }
+                else throw new Exception("insert--freeze--fail");
             }
-            else throw new Exception("insert--freeze--fail");
 
             DB::commit();
 
@@ -2706,7 +2836,8 @@ class IndexRepository {
 
     }
 
-    // 删除【站点】
+
+    // 合作停【站点】
     public function operate_business_site_stop($post_data)
     {
         $messages = [
@@ -2758,7 +2889,61 @@ class IndexRepository {
         }
 
     }
-    // 删除【关键词】
+    // 再合作【站点】
+    public function operate_business_site_start($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'start-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["sitestatus"] = "优化中";
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+    // 合作停【关键词】
     public function operate_business_keyword_stop($post_data)
     {
         $messages = [
@@ -2791,6 +2976,58 @@ class IndexRepository {
         try
         {
             $update["keywordstatus"] = "合作停";
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 再合作【关键词】
+    public function operate_business_keyword_start($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'start-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["keywordstatus"] = "优化中";
             $bool = $keyword->fill($update)->save();
             if($bool)
             {
@@ -3289,6 +3526,8 @@ class IndexRepository {
                 $sheet->rows($cellData);
             });
         })->export('xls');
+
+        return false;
     }
 
 

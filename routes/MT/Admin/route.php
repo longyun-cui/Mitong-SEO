@@ -77,6 +77,7 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/site-todo', $controller.'@view_business_site_todo_list');
         Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
         Route::match(['get','post'], '/business/keyword-today', $controller.'@view_business_keyword_today_list');
+        Route::match(['get','post'], '/business/keyword-today-newly', $controller.'@view_business_keyword_today_newly_list');
         Route::match(['get','post'], '/business/keyword-anomaly', $controller.'@view_business_keyword_anomaly_list');
         Route::match(['get','post'], '/business/keyword-todo', $controller.'@view_business_keyword_todo_list');
         Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
@@ -99,7 +100,10 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/keyword-delete', $controller.'@operate_business_keyword_delete');
 
         Route::match(['get','post'], '/business/site-stop', $controller.'@operate_business_site_stop');
+        Route::match(['get','post'], '/business/site-start', $controller.'@operate_business_site_start');
+
         Route::match(['get','post'], '/business/keyword-stop', $controller.'@operate_business_keyword_stop');
+        Route::match(['get','post'], '/business/keyword-start', $controller.'@operate_business_keyword_start');
 
 
         Route::match(['get','post'], '/business/site/work-order-create', $controller.'@operate_business_site_work_order_create');

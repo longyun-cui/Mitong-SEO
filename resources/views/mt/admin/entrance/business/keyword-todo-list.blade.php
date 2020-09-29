@@ -122,6 +122,7 @@
     </div>
 </div>
 
+
 <div class="modal fade" id="modal-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -474,11 +475,6 @@
 
 
 
-        // 【批量选择】全选or反选
-        $("#item-content-body").on('click', '#check-all', function () {
-            $('input[name="bulk-keyword-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
-        });
-
         // 【审核】显示
         $("#item-main-body").on('click', ".item-review-show", function() {
             var that = $(this);
@@ -525,6 +521,14 @@
                     $("#form-edit-modal").ajaxSubmit(options);
                 }
             });
+        });
+
+
+
+
+        // 【批量选择】全选or反选
+        $("#item-content-body").on('click', '#check-all', function () {
+            $('input[name="bulk-keyword-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
         });
 
         // 【批量审核】【关键词】

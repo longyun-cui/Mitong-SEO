@@ -253,6 +253,13 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
 
+    // 返回【今日关键词列表】视图
+    public function view_business_keyword_today_newly_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_today_newly_list();
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_newly_list_datatable(request()->all());
+    }
+
     // 返回【异常关键词列表】视图
     public function view_business_keyword_anomaly_list()
     {
@@ -374,10 +381,22 @@ class IndexController extends Controller
     {
         return $this->repo->operate_business_site_stop(request()->all());
     }
+    // 再合作【站点】
+    public function operate_business_site_start()
+    {
+        return $this->repo->operate_business_site_start(request()->all());
+    }
+
+
     // 合作停【关键词】
     public function operate_business_keyword_stop()
     {
         return $this->repo->operate_business_keyword_stop(request()->all());
+    }
+    // 再合作【关键词】
+    public function operate_business_keyword_start()
+    {
+        return $this->repo->operate_business_keyword_start(request()->all());
     }
 
 
