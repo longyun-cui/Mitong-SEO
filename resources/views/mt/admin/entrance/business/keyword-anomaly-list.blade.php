@@ -200,7 +200,7 @@
 
 
 <div class="modal fade" id="modal-create-body">
-    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+    <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
         <div class="row">
             <div class="col-md-12">
@@ -280,7 +280,7 @@
 
 
 <div class="modal fade" id="modal-set-body">
-    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+    <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
         <div class="row">
             <div class="col-md-12">
