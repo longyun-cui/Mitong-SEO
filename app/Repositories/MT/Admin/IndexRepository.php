@@ -1859,8 +1859,8 @@ class IndexRepository {
                                 }
                                 else
                                 {
-                                    $keyword_owner->fund_frozen = 0;
                                     $keyword_owner->fund_available = $keyword_owner->fund_available - ($price - $keyword_owner->fund_frozen);
+                                    $keyword_owner->fund_frozen = 0;
                                 }
                                 $keyword_owner->save();
                             }
@@ -1928,7 +1928,7 @@ class IndexRepository {
         if($detect_date != date("Y-m-d",strtotime($DetectRecord->detect_time))) return response_error([],"参数有误！");
 
         // [old=1-10][new=10+]
-        if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10) return response_error([],"已上词，指定排名不能大于【10】！");
+//        if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10) return response_error([],"已上词，指定排名不能大于【10】！");
 
         $keyword = SEOKeyword::where("id",$DetectRecord->keywordid)->lockForUpdate()->first();
         if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
@@ -1964,6 +1964,112 @@ class IndexRepository {
                     $keyword->latestranking = $detect_rank;
                     $bool_1 = $keyword->save();
                     if(!$bool_1) throw new Exception("update--keyword--fail");
+                }
+            }
+
+            // [old=1-10][new=10+]
+            if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10)
+            {
+//                return response_error([],"已上词，指定排名不能大于【10】！");
+                if($bool)
+                {
+                    if($detect_date == date("Y-m-d",strtotime($keyword->detectiondate)))
+                    {
+                        $keyword->latestranking = $detect_rank;
+                        $keyword->standardstatus = "未达标";
+                        $keyword->latestconsumption = 0;
+
+                        $detect_last = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10)
+                            ->orderby('detect_time','asc')->first();
+                        if($detect_last)
+                        {
+                            $keyword->standarddate = $detect_last->detect_time;
+                        }
+                        else
+                        {
+                            $keyword->standarddate = "";
+                        }
+                    }
+
+                    if($detect_date == date("Y-m-d",strtotime($keyword->firststandarddate)))
+                    {
+                        $detect_first = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10)
+                            ->orderby('detect_time','asc')->first();
+                        if($detect_first)
+                        {
+                            $keyword->firststandarddate = $detect_first->detect_time;
+                        }
+                        else
+                        {
+                            $keyword->firststandarddate = "";
+                        }
+                    }
+
+                    $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+                    $detect_standard_count = $query_detect->count('*');
+                    $detect_standard_price_sum = $detect_standard_count * $keyword->price;
+
+                    $keyword->standarddays = $detect_standard_count;
+                    $keyword->totalconsumption = $detect_standard_price_sum;
+
+                    $keyword->standard_days_1 = $detect_standard_count;
+                    $keyword->standard_days_2 = $detect_standard_count;
+                    $keyword->consumption_total = $detect_standard_price_sum;
+
+                    $bool_1 = $keyword->save();
+                    if($bool_1)
+                    {
+                        $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$detect_date)->first();
+                        if($DetectRecord->expense_id == $ExpenseRecord->id)
+                        {
+                            $bool_2 = $ExpenseRecord->delete();
+                            if($bool_2)
+                            {
+                                $DetectRecord->expense_id = 0;
+                                $bool_x = $DetectRecord->save();
+
+                                $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+
+                                if($keyword_owner->fund_frozen > 0)
+                                {
+                                    $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + $price;
+                                }
+                                else
+                                {
+                                    // 只扣费【冻结金额】
+                                    if($keyword_owner->fund_expense == $keyword_owner->fund_frozen_init)
+                                    {
+                                        $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + $price;
+                                    }
+
+                                    // 只扣费【可用余额】
+                                    if($keyword_owner->fund_expense >= ($keyword_owner->fund_frozen_init + $price))
+                                    {
+                                        $keyword_owner->fund_available = $keyword_owner->fund_available + $price;
+                                    }
+
+                                    // 扣费【冻结金额 + 可用余额】
+                                    if($keyword_owner->fund_expense < ($keyword_owner->fund_frozen_init + $price))
+                                    {
+                                        $available_cost = $keyword_owner->fund_expense - $keyword_owner->fund_frozen_init;
+                                        if($available_cost > 0)
+                                        {
+                                            $frozen_cost = $price - $available_cost;
+                                            $keyword_owner->fund_available = $keyword_owner->fund_available + $available_cost;
+                                            $keyword_owner->fund_frozen = $frozen_cost;
+                                        }
+                                    }
+                                }
+
+                                $keyword_owner->fund_expense = $keyword_owner->fund_expense - $price;
+                                $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 - $price;
+                                $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 - $price;
+                                $keyword_owner->fund_balance = $keyword_owner->fund_balance + $price;
+
+                                $keyword_owner->save();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2030,8 +2136,8 @@ class IndexRepository {
                                 }
                                 else
                                 {
-                                    $keyword_owner->fund_frozen = 0;
                                     $keyword_owner->fund_available = $keyword_owner->fund_available - ($price - $keyword_owner->fund_frozen);
+                                    $keyword_owner->fund_frozen = 0;
                                 }
 
                                 $keyword_owner->save();
@@ -2109,7 +2215,7 @@ class IndexRepository {
                 $DetectRecordTime = date("Y-m-d",strtotime($DetectRecord->detect_time));
 
                 // [old=1-10][new=10+]
-                if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10) return response_error([],"已上词，指定排名不能大于【10】！");
+//                if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10) return response_error([],"已上词，指定排名不能大于【10】！");
 
                 $keyword = SEOKeyword::where("id",$DetectRecord->keywordid)->lockForUpdate()->first();
                 if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试！");
@@ -2141,6 +2247,112 @@ class IndexRepository {
                         $keyword->latestranking = $detect_rank;
                         $bool_1 = $keyword->save();
                         if(!$bool_1) throw new Exception("update--keyword--fail");
+                    }
+                }
+
+                // [old=1-10][new=10+]
+                if(($DetectRecordRank > 0 and $DetectRecordRank <= 10) and $detect_rank > 10)
+                {
+//                return response_error([],"已上词，指定排名不能大于【10】！");
+                    if($bool)
+                    {
+                        if($DetectRecordTime == date("Y-m-d",strtotime($keyword->detectiondate)))
+                        {
+                            $keyword->latestranking = $detect_rank;
+                            $keyword->standardstatus = "未达标";
+                            $keyword->latestconsumption = 0;
+
+                            $detect_last = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10)
+                                ->orderby('detect_time','asc')->first();
+                            if($detect_last)
+                            {
+                                $keyword->standarddate = $detect_last->detect_time;
+                            }
+                            else
+                            {
+                                $keyword->standarddate = "";
+                            }
+                        }
+
+                        if($DetectRecordTime == date("Y-m-d",strtotime($keyword->firststandarddate)))
+                        {
+                            $detect_first = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10)
+                                ->orderby('detect_time','asc')->first();
+                            if($detect_first)
+                            {
+                                $keyword->firststandarddate = $detect_first->detect_time;
+                            }
+                            else
+                            {
+                                $keyword->firststandarddate = "";
+                            }
+                        }
+
+                        $query_detect = SEOKeywordDetectRecord::where('keywordid',$keyword->id)->where('rank','>',0)->where('rank','<=',10);
+                        $detect_standard_count = $query_detect->count('*');
+                        $detect_standard_price_sum = $detect_standard_count * $keyword->price;
+
+                        $keyword->standarddays = $detect_standard_count;
+                        $keyword->totalconsumption = $detect_standard_price_sum;
+
+                        $keyword->standard_days_1 = $detect_standard_count;
+                        $keyword->standard_days_2 = $detect_standard_count;
+                        $keyword->consumption_total = $detect_standard_price_sum;
+
+                        $bool_1 = $keyword->save();
+                        if($bool_1)
+                        {
+                            $ExpenseRecord = ExpenseRecord::where(['keywordid'=>$keyword->id])->whereDate('standarddate',$DetectRecordTime)->first();
+                            if($DetectRecord->expense_id == $ExpenseRecord->id)
+                            {
+                                $bool_2 = $ExpenseRecord->delete();
+                                if($bool_2)
+                                {
+                                    $DetectRecord->expense_id = 0;
+                                    $bool_x = $DetectRecord->save();
+
+                                    $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+
+                                    if($keyword_owner->fund_frozen > 0)
+                                    {
+                                        $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + $price;
+                                    }
+                                    else
+                                    {
+                                        // 只扣费【冻结金额】
+                                        if($keyword_owner->fund_expense == $keyword_owner->fund_frozen_init)
+                                        {
+                                            $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + $price;
+                                        }
+
+                                        // 只扣费【可用余额】
+                                        if($keyword_owner->fund_expense >= ($keyword_owner->fund_frozen_init + $price))
+                                        {
+                                            $keyword_owner->fund_available = $keyword_owner->fund_available + $price;
+                                        }
+
+                                        // 扣费【冻结金额 + 可用余额】
+                                        if($keyword_owner->fund_expense < ($keyword_owner->fund_frozen_init + $price))
+                                        {
+                                            $available_cost = $keyword_owner->fund_expense - $keyword_owner->fund_frozen_init;
+                                            if($available_cost > 0)
+                                            {
+                                                $frozen_cost = $price - $available_cost;
+                                                $keyword_owner->fund_available = $keyword_owner->fund_available + $available_cost;
+                                                $keyword_owner->fund_frozen = $frozen_cost;
+                                            }
+                                        }
+                                    }
+
+                                    $keyword_owner->fund_expense = $keyword_owner->fund_expense - $price;
+                                    $keyword_owner->fund_expense_1 = $keyword_owner->fund_expense_1 - $price;
+                                    $keyword_owner->fund_expense_2 = $keyword_owner->fund_expense_2 - $price;
+                                    $keyword_owner->fund_balance = $keyword_owner->fund_balance + $price;
+
+                                    $keyword_owner->save();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -2207,8 +2419,8 @@ class IndexRepository {
                                     }
                                     else
                                     {
-                                        $keyword_owner->fund_frozen = 0;
                                         $keyword_owner->fund_available = $keyword_owner->fund_available - ($price - $keyword_owner->fund_frozen);
+                                        $keyword_owner->fund_frozen = 0;
                                     }
 
                                     $keyword_owner->save();
