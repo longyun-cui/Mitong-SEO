@@ -275,10 +275,13 @@
 //                            return row.keywords_count == null ? 0 : row.keywords_count;
                             if(row.keywords_count)
                             {
-                                if(row.keywords_count > 0) return '<span class="text-blue">'+row.keywords_count+'</span>';
+//                                if(row.keywords_count > 0) return '<span class="text-blue">'+row.keywords_count+'</span>';
+                                if(row.keywords_count > 0) return '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.keywords_count+'</a>';
                                 else row.keywords_count;
                             }
                             else return 0;
+
+                            ;
                         }
                     },
                     {

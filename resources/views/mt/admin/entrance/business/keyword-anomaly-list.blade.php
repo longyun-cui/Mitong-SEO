@@ -109,6 +109,7 @@
 </div>
 
 
+{{--关键词排名详情--}}
 <div class="modal fade" id="modal-data-detect-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn-" style="background:#fff;">
         <div class="box box-info- form-container" id="item-content-body">
@@ -199,6 +200,7 @@
 </div>
 
 
+{{--添加排名记录--}}
 <div class="modal fade" id="modal-create-body">
     <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -279,6 +281,7 @@
 </div>
 
 
+{{--修改排名记录--}}
 <div class="modal fade" id="modal-set-body">
     <div class="col-md-4 col-md-offset-4" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -1041,12 +1044,14 @@
                 window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
+
+
+
         // 【数据详情】
         $(".item-main-body").on('click', ".item-data-detail-link", function() {
             var that = $(this);
             window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
         });
-
         // 【数据详情】
         $(".item-main-body").on('click', ".item-data-detail-show", function() {
             var that = $(this);
@@ -1062,6 +1067,9 @@
 
             $('#modal-data-detect-body').modal('show');
         });
+
+
+
 
         // 【删除】
         $(".item-main-body").on('click', ".item-delete-submit", function() {
@@ -1086,6 +1094,7 @@
             });
         });
 
+
         // 【启用】
         $(".item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -1108,7 +1117,6 @@
                 }
             });
         });
-
         // 【禁用】
         $(".item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

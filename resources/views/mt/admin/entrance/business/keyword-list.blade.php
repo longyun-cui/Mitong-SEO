@@ -163,7 +163,7 @@
                 <div class="box- box-info- form-container">
 
                     <div class="box-header with-border" style="margin:16px 0;">
-                        <h3 class="box-title">代理商充值</h3>
+                        <h3 class="box-title">关键词审核</h3>
                         <div class="box-tools pull-right">
                         </div>
                     </div>
@@ -1162,7 +1162,6 @@
             $('.review-price').val(0);
             $('#modal-body').modal('hide');
         });
-
         // 【审核】提交
         $("#modal-body").on('click', "#item-review-submit", function() {
             var that = $(this);
@@ -1198,7 +1197,6 @@
             var that = $(this);
             window.open("/admin/business/keyword-detect-record?id="+that.attr('data-id'));
         });
-
         // 【数据详情】
         $(".item-main-body").on('click', ".item-data-detail-show", function() {
             var that = $(this);
@@ -1242,6 +1240,7 @@
             });
         });
 
+
         // 【合作停】
         $(".item-main-body").on('click', ".item-stop-submit", function() {
             var that = $(this);
@@ -1265,7 +1264,6 @@
                 }
             });
         });
-
         // 【再合作】
         $(".item-main-body").on('click', ".item-start-submit", function() {
             var that = $(this);
@@ -1550,39 +1548,39 @@
         // 【修改排名】提交
         $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
             var that = $(this);
-            layer.msg('确定"提交"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-detect-set-rank') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:$('input[name="detect-set-operate"]').val(),
-                            detect_id:$('input[name="detect-set-id"]').val(),
-                            detect_date:$('input[name="detect-set-date"]').val(),
-                            detect_rank:$('input[name="detect-set-rank"]').val(),
-                            detect_description:$('input[name="detect-set-description"]').val()
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
+//            layer.msg('确定"提交"么？', {
+//                time: 0
+//                ,btn: ['确定', '取消']
+//                ,yes: function(index){
+//                }
+//            });
+            $.post(
+                "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:$('input[name="detect-set-operate"]').val(),
+                    detect_id:$('input[name="detect-set-id"]').val(),
+                    detect_date:$('input[name="detect-set-date"]').val(),
+                    detect_rank:$('input[name="detect-set-rank"]').val(),
+                    detect_description:$('input[name="detect-set-description"]').val()
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
 //                            else location.reload();
-                            else
-                            {
-                                layer.close(index);
-                                $('#modal-set-body').modal('hide');
-                                $("#modal-set-body").on("hidden.bs.modal", function () {
-                                    $("body").addClass("modal-open");
-                                });
+                    else
+                    {
+//                        layer.close(index);
+                        $('#modal-set-body').modal('hide');
+                        $("#modal-set-body").on("hidden.bs.modal", function () {
+                            $("body").addClass("modal-open");
+                        });
 
-                                var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
-                            }
-                        },
-                        'json'
-                    );
-                }
-            });
+                        var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
+                        TableDatatablesAjax_inner.init($keyword_id);
+                    }
+                },
+                'json'
+            );
         });
 
     });

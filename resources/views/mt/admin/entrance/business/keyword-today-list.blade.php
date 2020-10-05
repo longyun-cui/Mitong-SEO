@@ -1319,39 +1319,39 @@
         // 【修改排名】提交
         $("#modal-set-body").on('click', "#item-detect-set-submit", function() {
             var that = $(this);
-            layer.msg('确定"提交"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/keyword-detect-set-rank') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:$('input[name="detect-set-operate"]').val(),
-                            detect_id:$('input[name="detect-set-id"]').val(),
-                            detect_date:$('input[name="detect-set-date"]').val(),
-                            detect_rank:$('input[name="detect-set-rank"]').val(),
-                            detect_description:$('input[name="detect-set-description"]').val()
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
+//            layer.msg('确定"提交"么？', {
+//                time: 0
+//                ,btn: ['确定', '取消']
+//                ,yes: function(index){
+//                }
+//            });
+            $.post(
+                "{{ url('/admin/business/keyword-detect-set-rank') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:$('input[name="detect-set-operate"]').val(),
+                    detect_id:$('input[name="detect-set-id"]').val(),
+                    detect_date:$('input[name="detect-set-date"]').val(),
+                    detect_rank:$('input[name="detect-set-rank"]').val(),
+                    detect_description:$('input[name="detect-set-description"]').val()
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
 //                            else location.reload();
-                            else
-                            {
-                                layer.close(index);
-                                $('#modal-set-body').modal('hide');
-                                $("#modal-set-body").on("hidden.bs.modal", function () {
-                                    $("body").addClass("modal-open");
-                                });
+                    else
+                    {
+//                        layer.close(index);
+                        $('#modal-set-body').modal('hide');
+                        $("#modal-set-body").on("hidden.bs.modal", function () {
+                            $("body").addClass("modal-open");
+                        });
 
-                                var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
-                            }
-                        },
-                        'json'
-                    );
-                }
-            });
+                        var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
+                        TableDatatablesAjax_inner.init($keyword_id);
+                    }
+                },
+                'json'
+            );
         });
 
     });
