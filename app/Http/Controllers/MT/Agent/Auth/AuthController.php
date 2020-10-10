@@ -65,7 +65,8 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::guard('agent')->logout();
-        return redirect('/agent/login');
+//        return redirect('/agent/login');
+        return redirect('/login');
     }
 
 

@@ -22,7 +22,9 @@ class AdminMiddleware
     {
         if(!Auth::guard('admin')->check()) // 未登录
         {
-            return redirect('/admin/login');
+//            return redirect('/admin/login');
+            return redirect('/login');
+
             $return["status"] = false;
             $return["log"] = "admin-no-login";
             $return["msg"] = "请先登录";

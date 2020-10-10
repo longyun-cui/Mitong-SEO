@@ -22,7 +22,8 @@ class ClientMiddleware
     {
         if(!Auth::guard('client')->check()) // 未登录
         {
-            return redirect('/client/login');
+//            return redirect('/client/login');
+            return redirect('/login');
 
 //            $return["status"] = false;
 //            $return["log"] = "admin-no-login";

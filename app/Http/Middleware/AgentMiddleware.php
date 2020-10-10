@@ -22,7 +22,8 @@ class AgentMiddleware
     {
         if(!Auth::guard('agent')->check()) // 未登录
         {
-            return redirect('/agent/login');
+//            return redirect('/agent/login');
+            return redirect('/login');
 
 //            $return["status"] = false;
 //            $return["log"] = "admin-no-login";
