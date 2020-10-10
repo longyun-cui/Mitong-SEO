@@ -184,6 +184,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "",
                         "title": "关键词",
                         "data": "keyword",
@@ -213,6 +214,7 @@
                         }
                     },
                     {
+                        "className": "text-left",
                         "width": "",
                         "title": "站点",
                         "data": "website",
@@ -236,7 +238,7 @@
                         }
                     },
                     {
-                        "width": "48px",
+                        "width": "40px",
                         "className": "text-center",
                         "title": "价格",
                         "data": "price",
@@ -261,9 +263,9 @@
                         }
                     },
                     {
-                        "width": "64px",
+                        "width": "40px",
                         "className": "text-center",
-                        "title": "初始排名",
+                        "title": "初始 排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -271,19 +273,24 @@
                         }
                     },
                     {
-                        "width": "64px",
+                        "width": "56px",
                         "className": "text-center",
                         "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
-                            if((data > 0) && (data <= 10)) return '<samll class="text-red"><b>'+data+'</b></samll>';
-                            else return data;
+                            var $gif = '';
+                            if(data < row.initialranking)
+                            {
+                                $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
+                            }
+                            if((data > 0) && (data <= 10)) return '<samll class="text-red"><b>'+data+'</b></samll>'+$gif;
+                            else return data+$gif;
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "最新消费",
+                        "width": "40px",
+                        "title": "最新 消费",
                         "data": "latestconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -291,7 +298,7 @@
                         }
                     },
                     {
-                        "width": "96px",
+                        "width": "72px",
                         "className": "text-center",
                         "title": "检测时间",
                         "data": "detectiondate",
@@ -306,8 +313,8 @@
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "达标天数",
+                        "width": "40px",
+                        "title": "达标 天数",
                         "data": "standarddays",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -315,8 +322,8 @@
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "累计消费",
+                        "width": "40px",
+                        "title": "累计 消费",
                         "data": "totalconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {

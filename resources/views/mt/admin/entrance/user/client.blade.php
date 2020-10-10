@@ -679,7 +679,7 @@
                         }
                     },
                     {
-                        "width": "48px",
+                        "width": "40px",
                         "title": "价格",
                         "data": "price",
                         'orderable': false,
@@ -688,8 +688,8 @@
                         }
                     },
                     {
-                        "width": "64px",
-                        "title": "初始排名",
+                        "width": "40px",
+                        "title": "初始 排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -712,8 +712,8 @@
                         }
                     },
                     {
-                        "width": "56px",
-                        "title": "最新消费",
+                        "width": "40px",
+                        "title": "最新 消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -722,8 +722,8 @@
                         }
                     },
                     {
-                        "width": "56px",
-                        "title": "达标天数",
+                        "width": "40px",
+                        "title": "达标 天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -732,8 +732,8 @@
                         }
                     },
                     {
-                        "width": "56px",
-                        "title": "累计消费",
+                        "width": "40px",
+                        "title": "累计 消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {

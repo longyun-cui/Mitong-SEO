@@ -578,7 +578,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "96px",
+                        "width": "80px",
                         "title": "客户",
                         "data": "createuserid",
                         'orderable': false,
@@ -588,7 +588,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "160px",
+                        "width": "",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -655,7 +655,7 @@
                         }
                     },
                     {
-                        "width": "48px",
+                        "width": "40px",
                         "title": "价格",
                         "data": "price",
                         'orderable': true,
@@ -664,7 +664,7 @@
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "32px",
                         "title": "初始排名",
                         "data": "initialranking",
                         'orderable': false,

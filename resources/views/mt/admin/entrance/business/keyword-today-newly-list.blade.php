@@ -499,7 +499,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "7天前",
                         "data": "id",
                         'orderable': false,
@@ -520,7 +520,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "6天前",
                         "data": "id",
                         'orderable': false,
@@ -541,7 +541,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "5天前",
                         "data": "id",
                         'orderable': false,
@@ -562,7 +562,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "4天前",
                         "data": "id",
                         'orderable': false,
@@ -583,7 +583,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "3天前",
                         "data": "id",
                         'orderable': false,
@@ -604,7 +604,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "前天",
                         "data": "id",
                         'orderable': false,
@@ -625,7 +625,7 @@
                         }
                     },
                     {
-                        "width": "54px",
+                        "width": "40px",
                         "title": "昨天",
                         "data": "id",
                         'orderable': false,
@@ -646,8 +646,8 @@
                         }
                     },
                     {
-                        "width": "54px",
-                        "title": "最新排名",
+                        "width": "40px",
+                        "title": "最新 排名",
                         "data": "latestranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
