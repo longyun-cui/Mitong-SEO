@@ -174,6 +174,15 @@ class TestController extends Controller
 
             if($user->password_1)
             {
+                $user->password_1 = str_replace( chr(1), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(2), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(3), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(4), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(5), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(6), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(7), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(8), '',$user->password_1 );
+                $user->password_1 = str_replace( chr(9), '',$user->password_1 );
                 $user->password_1 = trim($user->password_1);
                 $user->password = password_encode(trim($user->password_1));
                 $user->save();
