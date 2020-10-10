@@ -43,6 +43,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <link href="https://cdn.bootcss.com/iCheck/1.0.2/skins/all.css" rel="stylesheet">
 
+    @yield('custom-css')
+    @yield('custom-style')
+
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -91,6 +94,9 @@ desired effect
 <script src="https://cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
 
 @yield('js')
+
+@yield('custom-js')
+@yield('custom-script')
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the

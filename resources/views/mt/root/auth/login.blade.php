@@ -1,12 +1,12 @@
 @extends('mt.root.layout.auth')
 
-@section('title','用户登陆 - 米同科技')
+@section('title','用户登陆 - 搜索引擎智能营销系统')
 
 @section('content')
 <div class="login-box">
     <div class="login-logo">
-        <a href="/"><b>{{ config('common.name') }}</b> 搜索引擎智能营销系统</a>
-        <a href="/" style="font-size:24px;"><b>{{ config('common.name') }}</b> 米同科技</a>
+        {{--<a href="/"><b>{{ config('common.name') }}</b> 搜索引擎智能营销系统</a>--}}
+        <a href="/" style="font-size:24px;"><b>{{ config('common.name') }}</b> 搜索引擎智能营销系统</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -58,7 +58,31 @@
 @endsection
 
 
-@section('js')
+@section('custom-style')
+    <style>
+        body.login-page {
+            background: url(/seo/img/bg_login.png) no-repeat center top;
+            width: 100%;
+            height: 100%;
+            min-width: 375px;
+            min-height: 510px;
+            /*background-size: cover;*/
+        }
+        .login-box, .register-box {
+            margin-top: 10%;
+            margin-right: 7%;
+        }
+        @media (max-width: 768px)
+        {
+            .login-box, .register-box {
+                margin-right: auto;
+            }
+        }
+    </style>
+@endsection
+
+
+@section('custom-js')
 <script>
     $(function() {
         $('input').iCheck({
