@@ -24,6 +24,14 @@ Route::group([], function () {
         Route::match(['get','post'], 'login', $controller.'@login');
         Route::match(['get','post'], 'logout', $controller.'@logout');
 
+        Route::match(['get','post'], 'Service', function(){
+            return redirect('/login');
+        });
+
+        Route::match(['get','post'], 'Service/Index/login', function(){
+            return redirect('/login');
+        });
+
     });
 
 
