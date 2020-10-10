@@ -1,11 +1,11 @@
 @extends('mt.client.layout.layout')
 
 @section('head_title')
-    {{ Auth::guard('client')->user()->username }} - 客户系统 - 搜索引擎智能营销系统 - 米同科技
+    {{ Auth::guard('client')->user()->username }} - 客户系统 - 搜索引擎智能营销系统
 @endsection
 
 @section('header','客户系统')
-@section('description','搜索引擎智能营销系统-米同科技')
+@section('description','搜索引擎智能营销系统')
 
 @section('breadcrumb')
     <li><a href="{{url('/client')}}"><i class="fa fa-dashboard"></i>首页</a></li>

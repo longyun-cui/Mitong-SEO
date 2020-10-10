@@ -1,9 +1,9 @@
 @extends('mt.client.layout.layout')
 
-@section('head_title','我的站点 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','我的站点 - 搜索引擎智能营销系统')
 
 @section('header','我的站点')
-@section('description','搜索引擎智能营销系统-米同科技')
+@section('description','搜索引擎智能营销系统')
 
 @section('breadcrumb')
     <li><a href="{{url('/client')}}"><i class="fa fa-dashboard"></i>首页</a></li>

@@ -5,14 +5,14 @@
 @section('list-text') 站点列表 @endsection
 
 @section('head_title')
-    @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif - 管理员后台 - 搜索引擎智能营销系统 - 米同科技
+    @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif - 管理员后台 - 搜索引擎智能营销系统
 @endsection
 
 @section('header')
     @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif
 @endsection
 
-@section('description', '搜索引擎智能营销系统-米同科技')
+@section('description', '搜索引擎智能营销系统')
 
 @section('breadcrumb')
     <li><a href="{{ url('/client') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
