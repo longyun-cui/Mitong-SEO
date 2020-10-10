@@ -171,9 +171,16 @@ class TestController extends Controller
 //            $pass_decrypt = basic_decrypt($userpass);
 //            $user->password_1 = $pass_decrypt;
 //            $user->password = password_encode($pass_decrypt);
-            $user->password = password_encode($user->password_1);
-            $user->save();
-            echo $user->id.'--'.$user->password_1."<br>";
+            if($user->password_1)
+            {
+                $user->password = password_encode($user->password_1);
+                $user->save();
+                echo $user->id.'--'.$user->password_1.'--'.$user->password."<br>";
+            }
+            else
+            {
+                echo $user->id.'--'.$user->null."<br>";
+            }
         }
     }
 
