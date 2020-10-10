@@ -4,9 +4,9 @@
         <!-- Logo -->
         <a href="{{ url('/client') }}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>M</b></span>
+            <span class="logo-mini"><b>SEO</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>米同科技</b></span>
+            <span class="logo-lg"><b>SEO优化系统</b></span>
         </a>
 
         <!-- Header Navbar -->
