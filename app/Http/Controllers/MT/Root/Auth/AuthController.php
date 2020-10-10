@@ -47,7 +47,7 @@ class AuthController extends Controller
 //                if($admin->active == 1)
 //                {
                     $password = request()->get('password');
-                    if(password_check($password,$user->password))
+                    if(password_check($password,trim($user->password)))
                     {
                         if($user->usergroup == "Manage")
                         {

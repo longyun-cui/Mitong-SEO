@@ -169,8 +169,9 @@ class TestController extends Controller
         {
 //            $userpass = $user->userpass;
 //            $pass_decrypt = basic_decrypt($userpass);
-//            $user->password_1 = $pass_decrypt;
+//            $user->password_1 = trim($pass_decrypt);
 //            $user->password = password_encode($pass_decrypt);
+
             if($user->password_1)
             {
                 $user->password_1 = trim($user->password_1);
@@ -180,7 +181,7 @@ class TestController extends Controller
             }
             else
             {
-                echo $user->id.'--'.$user->null."<br>";
+                echo $user->id.'--null'."<br>";
             }
         }
     }
