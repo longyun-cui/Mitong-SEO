@@ -108,13 +108,13 @@
                         {
                             location.href = "/admin";
                         }
-                        else if($user_group == "Agent" || $user_group == "Agent")
+                        else if($user_group == "Agent" || $user_group == "Agent2")
                         {
                             location.href = "/agent";
                         }
                         else if($user_group == "Service")
                         {
-                            location.href = "/agent";
+                            location.href = "/client";
                         }
                     }
                 }
