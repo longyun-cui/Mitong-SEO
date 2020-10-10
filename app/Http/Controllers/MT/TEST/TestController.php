@@ -167,12 +167,13 @@ class TestController extends Controller
         $users = User::all();
         foreach ($users as $user)
         {
-            $userpass = $user->userpass;
-            $pass_decrypt = basic_decrypt($userpass);
-            $user->password = password_encode($pass_decrypt);
-            $user->password_1 = $pass_decrypt;
+//            $userpass = $user->userpass;
+//            $pass_decrypt = basic_decrypt($userpass);
+//            $user->password_1 = $pass_decrypt;
+//            $user->password = password_encode($pass_decrypt);
+            $user->password = password_encode($user->password_1);
             $user->save();
-            echo $user->id.'--'.$pass_decrypt."<br>";
+            echo $user->id.'--'.$user->password_1."<br>";
         }
     }
 
