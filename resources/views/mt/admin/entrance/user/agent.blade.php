@@ -191,7 +191,7 @@
                         },
                         {
                             'width':"48px",
-                            "title": "站点数",
+                            "title": "优化<br>站点数",
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
@@ -201,7 +201,7 @@
                         },
                         {
                             'width':"48px",
-                            "title": "关键词",
+                            "title": "优化<br>关键词",
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
@@ -211,7 +211,7 @@
                         },
                         {
                             'width':"64px",
-                            "title": "资金总额",
+                            "title": "资金<br>总额",
                             "data": "fund_total",
                             'orderable': false,
                             render: function(data, type, row, meta) {
@@ -221,7 +221,7 @@
                         },
                         {
                             'width':"64px",
-                            "title": "累计消费",
+                            "title": "累计<br>消费",
                             "data": "fund_expense",
                             'orderable': true,
                             render: function(data, type, row, meta) {
@@ -242,7 +242,7 @@
                         },
                         {
                             'width':"64px",
-                            "title": "可用余额",
+                            "title": "可用<br>余额",
                             "data": "fund_available",
                             'orderable': true,
                             render: function(data, type, row, meta) {
@@ -252,7 +252,7 @@
                         },
                         {
                             'width':"64px",
-                            "title": "初始冻结",
+                            "title": "初始<br>冻结",
                             "data": "fund_frozen_init",
                             'orderable': true,
                             render: function(data, type, row, meta) {
@@ -262,7 +262,7 @@
                         },
                         {
                             'width':"64px",
-                            "title": "冻结金额",
+                            "title": "冻结<br>金额",
                             "data": "fund_frozen",
                             'orderable': true,
                             render: function(data, type, row, meta) {
@@ -295,6 +295,7 @@
 //                    },
                         {
                             'width':"80px",
+                            "title": "创建<br>时间",
                             'data': 'createtime',
                             'orderable': true,
                             render: function(data, type, row, meta) {

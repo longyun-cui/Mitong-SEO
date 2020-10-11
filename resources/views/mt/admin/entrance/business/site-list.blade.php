@@ -268,7 +268,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "关键词数",
+                        "title": "优化<br>关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {

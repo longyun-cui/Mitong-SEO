@@ -6,7 +6,7 @@
 @section('header','【客户】'.$user_data->username)
 @section('description')
     搜索引擎智能营销系统-米同科技
-    <a class="btn btn-xs bg-navy item-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
+    <a class="btn btn-sm bg-navy item-login-submit"s data-id="{{ request('id') }}">登录</a>
 @endsection
 
 

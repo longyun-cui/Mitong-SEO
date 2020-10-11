@@ -265,7 +265,7 @@
                     },
                     {
                         'width':"48px",
-                        "title": "站点数",
+                        "title": "优化<br>站点数",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -275,7 +275,7 @@
                     },
                     {
                         'width':"48px",
-                        "title": "关键词",
+                        "title": "优化<br>关键词",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {

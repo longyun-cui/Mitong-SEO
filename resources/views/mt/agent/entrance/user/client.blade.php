@@ -694,7 +694,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "初始 排名",
+                        "title": "初始<br>排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -712,13 +712,17 @@
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
                             }
+                            else if(data > row.initialranking)
+                            {
+                                $gif = '<img src="/seo/img/down.gif" style="vertical-align:middle;float:right;">';
+                            }
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>'+$gif;
                             else return data+$gif;
                         }
                     },
                     {
                         "width": "40px",
-                        "title": "最新 消费",
+                        "title": "最新<br>消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -728,7 +732,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "达标 天数",
+                        "title": "达标<br>天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -738,7 +742,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "累计 消费",
+                        "title": "累计<br>消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -821,8 +825,8 @@
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                    $cooperation_html+
-                                $review_html+
-                                $delete_html+
+//                                $review_html+
+//                                $delete_html+
 //                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
                                 '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
                                 '';
