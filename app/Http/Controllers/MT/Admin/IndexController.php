@@ -187,6 +187,15 @@ class IndexController extends Controller
 
 
 
+    // SELECT2【站点】
+    public function operate_business_select2_agent()
+    {
+        return $this->repo->operate_business_select2_agent(request()->all());
+    }
+
+
+
+
     /*
      * 业务系统
      */

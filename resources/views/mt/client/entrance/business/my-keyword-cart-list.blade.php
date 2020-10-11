@@ -62,7 +62,7 @@
                             <td></td>
                             <td></td>
                             <td>
-                                <select name="cartstatus" class="form-filter">
+                                <select name="cartstatus" class="form-control form-filter">
                                     <option value ="0">全部</option>
                                     <option value ="未购买">未购买</option>
                                     <option value ="已购买">已购买</option>
@@ -336,7 +336,6 @@
                         processResults: function (data, params) {
 
                             params.page = params.page || 1;
-//                    console.log(data);
                             return {
                                 results: data,
                                 pagination: {
@@ -574,7 +573,6 @@
             processResults: function (data, params) {
 
                 params.page = params.page || 1;
-//                    console.log(data);
                 return {
                     results: data,
                     pagination: {

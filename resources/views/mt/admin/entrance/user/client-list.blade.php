@@ -48,7 +48,7 @@
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
-        <div class="box box-info">
+        <div class="box box-info" id="item-content-body">
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
@@ -62,7 +62,7 @@
 
             <div class="box-body datatable-body" id="item-main-body">
                 <!-- datatable start -->
-                <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
+                <table class='table table-striped table-bordered table-hover' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
                         <th>ID</th>
@@ -83,7 +83,10 @@
                     <tr>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="agentname" /></td>
+                        <td>
+                            {{--<input type="text" class="form-control form-filter item-search-keyup" name="agentname" />--}}
+                            <select class="form-control form-filter" name="agent_id" id="select2-agent" style="min-width:100%;"></select>
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -193,6 +196,18 @@
 @endsection
 
 
+@section('custom-css')
+    <link href="https://cdn.bootcss.com/select2/4.0.5/css/select2.min.css" rel="stylesheet">
+@endsection
+
+
+
+
+@section('custom-js')
+    <script src="https://cdn.bootcss.com/select2/4.0.5/js/select2.min.js"></script>
+@endsection
+
+
 @section('custom-script')
 <script>
     var TableDatatablesAjax = function () {
@@ -213,6 +228,7 @@
                         d._token = $('meta[name="_token"]').attr('content');
                         d.username = $('input[name="username"]').val();
                         d.agentname = $('input[name="agentname"]').val();
+                        d.agent_id = $('select[name="agent_id"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -250,7 +266,7 @@
                     },
                     {
                         'className':"text-left",
-                        'width':"96px",
+                        'width':"108px",
                         "title": "所属代理商",
                         "data": "pid",
                         'orderable': false,
@@ -641,6 +657,38 @@
                     );
                 }
             });
+        });
+
+
+
+
+        $('#select2-agent').select2({
+            ajax: {
+                url: "{{url('/admin/business/select2_agent')}}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        keyword: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+
+                    params.page = params.page || 1;
+                    return {
+                        results: data,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 0,
+            theme: 'classic',
+            width: '108'
         });
 
     });

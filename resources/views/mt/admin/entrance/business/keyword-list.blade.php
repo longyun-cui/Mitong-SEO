@@ -1239,7 +1239,11 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -1264,7 +1268,11 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -1287,7 +1295,11 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -1349,7 +1361,11 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -1371,7 +1387,11 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -1573,7 +1593,7 @@
                 },
                 function(data){
                     if(!data.success) layer.msg(data.msg);
-//                            else location.reload();
+//                    else location.reload();
                     else
                     {
 //                        layer.close(index);

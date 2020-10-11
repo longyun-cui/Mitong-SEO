@@ -69,6 +69,9 @@ Route::group([], function () {
         Route::match(['get','post'], '/user/client-delete', $controller.'@operate_user_client_delete');
 
 
+        Route::match(['get','post'], '/business/select2_agent', $controller.'@operate_business_select2_agent');
+
+
         Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
         Route::match(['get','post'], '/business/keyword-recommend', $controller.'@operate_keyword_recommend');
         Route::match(['get','post'], '/business/keyword-search-export', $controller.'@operate_keyword_search_export');

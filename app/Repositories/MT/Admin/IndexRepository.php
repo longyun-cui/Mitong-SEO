@@ -305,6 +305,11 @@ class IndexRepository {
             ->whereIn('usergroup',['Service']);
 
         if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
+        if(!empty($post_data['agent_id']))
+        {
+            $agent_id = $post_data['agent_id'];
+            $query->whereHas('parent',function ($query1) use ($agent_id)  { $query1->where('id',$agent_id); });
+        }
 
         $total = $query->count();
 
@@ -1139,6 +1144,37 @@ class IndexRepository {
 
         }
         else return response_error([],'账户不存在，刷新页面试试');
+    }
+
+
+
+
+    // 【select2】
+    public function operate_business_select2_agent($post_data)
+    {
+        $me = Auth::guard('admin')->user();
+        if(empty($post_data['keyword']))
+        {
+            $list =User::select(['id','username as text'])
+                ->where(['userstatus'=>'正常','status'=>1])
+                ->whereIn('usergroup',['Agent','Agent2'])
+                ->orderBy('id','desc')
+                ->get()
+                ->toArray();
+        }
+        else
+        {
+            $keyword = "%{$post_data['keyword']}%";
+            $list =User::select(['id','username as text'])
+                ->where(['userstatus'=>'正常','status'=>1])
+                ->whereIn('usergroup',['Agent','Agent2'])
+                ->where('sitename','like',"%$keyword%")
+                ->orderBy('id','desc')
+                ->get()
+                ->toArray();
+        }
+        array_unshift($list, ['id'=>0,'text'=>'【全部代理】']);
+        return $list;
     }
 
 
