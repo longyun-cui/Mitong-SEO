@@ -70,7 +70,7 @@ class IndexRepository {
 
 
     /*
-     * 财务系统
+     * 用户系统
      */
     // 返回【子代理商列表】数据
     public function get_user_sub_agent_list_datatable($post_data)
@@ -144,6 +144,125 @@ class IndexRepository {
             $query->orderBy($field, $order_dir);
         }
         else $query->orderBy("updated_at", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+
+
+    // 返回【客户详情】视图
+    public function view_user_client($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+
+        $user = User::find($id);
+        if($user)
+        {
+            if($user->usergroup != 'Service') return response_error([],"该用户不存在，刷新页面试试！");
+        }
+
+        if($user->pid != $me->id) return response_error([],"该用户不是你的客户！");
+
+        $user_data = $user;
+
+
+        /*
+         * 关键词
+         */
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$id)->count();
+        $user_data->keyword_count = $keyword_count;
+
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->count();
+        $user_data->keyword_detect_count = $keyword_detect_count;
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+        $user_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
+        $user_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+
+
+        return view('mt.agent.entrance.user.client')
+            ->with([
+                'user_data'=>$user_data
+            ]);
+    }
+
+    // 返回【客户-关键词】列表
+    public function get_user_client_keyword_list_datatable($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+        $id = $post_data["id"];
+        $query = SEOKeyword::select('*')->with('creator')->where('createuserid',$id);
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+//        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "默认")
+            {
+                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
+            }
+            else if($post_data['keywordstatus'] == "全部")
+            {
+            }
+            else if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+        else
+        {
+            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
 
         if($limit == -1) $list = $query->get();
         else $list = $query->skip($skip)->take($limit)->get();

@@ -314,16 +314,21 @@
                         }
                     },
                     {
-                        "width": "56px",
-                        "className": "text-center",
+                        "width": "64px",
+                        "className": "",
                         "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
                             var $gif = '';
+                            $gif = '<img src="/seo/img/up1.gif" style="vertical-align:middle;float:right;">';
                             if(data < row.initialranking)
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
+                            }
+                            else if(data > row.initialranking)
+                            {
+                                $gif = '<img src="/seo/img/down.gif" style="vertical-align:middle;float:right;">';
                             }
                             if((data > 0) && (data <= 10)) return '<samll class="text-red"><b>'+data+'</b></samll>'+$gif;
                             else return data+$gif;

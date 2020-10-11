@@ -402,8 +402,7 @@
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                window.location.href = "/agent/user/sub-agent-edit?id="+that.attr('data-id');
+            window.location.href = "/agent/user/sub-agent-edit?id="+that.attr('data-id');
         });
 
         // 【充值】
@@ -449,6 +448,9 @@
             $('#modal-body').modal('hide');
         });
 
+
+
+
         // 【登录】
         $("#item-main-body").on('click', ".item-login-submit", function() {
             var that = $(this);
@@ -465,6 +467,9 @@
                 'json'
             );
         });
+
+
+
 
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
@@ -489,6 +494,9 @@
             });
         });
 
+
+
+
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -511,7 +519,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

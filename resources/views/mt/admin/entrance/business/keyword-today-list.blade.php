@@ -590,6 +590,10 @@
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
                             }
+                            else if(data > row.initialranking)
+                            {
+                                $gif = '<img src="/seo/img/down.gif" style="vertical-align:middle;float:right;">';
+                            }
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>'+$gif;
                             else return data+$gif;
                         }

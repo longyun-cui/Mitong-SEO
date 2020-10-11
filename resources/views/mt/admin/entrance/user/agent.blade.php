@@ -3,7 +3,10 @@
 @section('head_title','【代理商】'.$user_data->username.' - 管理员后台 - 搜索引擎智能营销系统 - 米同科技')
 
 @section('header','【代理商】'.$user_data->username)
-@section('description','搜索引擎智能营销系统-米同科技')
+@section('description')
+    搜索引擎智能营销系统-米同科技
+    <a class="btn btn-xs bg-navy item-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
+@endsection
 
 @section('breadcrumb')
     <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -415,38 +418,47 @@
             // 【下载二维码】
             $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {
                 var that = $(this);
-                window.open("/{{config('common.org.admin.prefix')}}/download-qrcode?sort=org-item&id="+that.attr('data-id'));
+                window.open("/download-qrcode?sort=org-item&id="+that.attr('data-id'));
             });
 
             // 【数据分析】
             $("#item-main-body").on('click', ".item-statistics-submit", function() {
                 var that = $(this);
-                window.open("/{{config('common.org.admin.prefix')}}/statistics/item?id="+that.attr('data-id'));
+                window.open("/statistics/item?id="+that.attr('data-id'));
             });
 
             // 【编辑】
             $("#item-main-body").on('click', ".item-edit-submit", function() {
                 var that = $(this);
-                {{--layer.msg("/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id'));--}}
-                    window.location.href = "/{{config('common.org.admin.prefix')}}/item/edit?id="+that.attr('data-id');
+                window.location.href = "/item/edit?id="+that.attr('data-id');
             });
 
+
+
+
             // 【登录】
-            $("#item-main-body").on('click', ".item-login-submit", function() {
+            $(document).on('click', ".item-login-submit", function() {
                 var that = $(this);
                 $.post(
-                    "{{ url('/admin/user/client-login') }}",
+                    "{{ url('/admin/user/agent-login') }}",
                     {
                         _token: $('meta[name="_token"]').attr('content'),
                         id:that.attr('data-id')
                     },
                     function(data){
                         if(!data.success) layer.msg(data.msg);
-                        else window.open('/client/');
+                        else
+                        {
+//                            window.open('/agent/');
+                            window.location.href = "/agent/";
+                        }
                     },
                     'json'
                 );
             });
+
+
+
 
             // 【删除】
             $("#item-main-body").on('click', ".item-delete-submit", function() {

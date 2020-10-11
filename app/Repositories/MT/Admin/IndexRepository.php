@@ -601,7 +601,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【用户-关键词】列表
+    // 返回【客户-关键词】列表
     public function get_user_client_keyword_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();

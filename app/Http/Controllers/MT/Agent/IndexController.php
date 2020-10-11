@@ -5,7 +5,12 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Models\MT\User;
+
 use App\Repositories\MT\Agent\IndexRepository;
+
+use Response, Auth, Validator, DB, Exception;
+use QrCode;
 
 class IndexController extends Controller
 {
@@ -46,6 +51,80 @@ class IndexController extends Controller
                 ->with(['sidebar_user_client_list_active'=>'active']);
         }
         else if(request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+
+
+
+    // 登录【代理商】
+    public function operate_user_agent_login()
+    {
+        $me = Auth::guard("agent")->user();
+
+        $agent_id = request()->get('id');
+        $agent = User::where('id',$agent_id)->first();
+
+        if($agent->pid == $me->id)
+        {
+            Auth::guard('agent')->login($agent,true);
+            return response_success();
+        }
+        else return response_error([],"该代理商不是你的代理商！");
+    }
+
+    // 登录【客户】
+    public function operate_user_client_login()
+    {
+        $me = Auth::guard("agent")->user();
+
+        $client_id = request()->get('id');
+        $client = User::where('id',$client_id)->first();
+
+        if($client->pid == $me->id)
+        {
+            Auth::guard('client')->login($client,true);
+            return response_success();
+        }
+        else return response_error([],"该客户不是你的客户！");
+    }
+
+
+
+
+
+    // 返回【代理商详情】
+    public function view_user_agent()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_agent(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+    // 返回【客户详情】
+    public function view_user_client()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+
+    // 返回【代理商详情】【客户列表】
+    public function view_user_agent_client_list()
+    {
+        if(request()->isMethod('get'))
+        {
+//            return view('mt.admin.entrance.user.agent-list')->with(['sidebar_agent_list_active'=>'active menu-open']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_user_agent_client_list_datatable(request()->all());
+    }
+
+    // 返回【客户详情】【关键词列表】
+    public function view_user_client_keyword_list()
+    {
+        if(request()->isMethod('get'))
+        {
+//            return view('mt.admin.entrance.user.client-list')->with(['sidebar_client_list_active'=>'active menu-open']);
+        }
+        else if(request()->isMethod('post')) return $this->repo->get_user_client_keyword_list_datatable(request()->all());
     }
 
 

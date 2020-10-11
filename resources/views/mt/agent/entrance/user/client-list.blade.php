@@ -459,11 +459,14 @@
                 $('#modal-body').modal('hide');
             });
 
+
+
+
             // 【登录】
             $("#item-main-body").on('click', ".item-login-submit", function() {
                 var that = $(this);
                 $.post(
-                    "{{ url('/admin/user/client-login') }}",
+                    "{{ url('/agent/user/client-login') }}",
                     {
                         _token: $('meta[name="_token"]').attr('content'),
                         id:that.attr('data-id')
@@ -475,6 +478,9 @@
                     'json'
                 );
             });
+
+
+
 
             // 【删除】
             $("#item-main-body").on('click', ".item-delete-submit", function() {
@@ -503,6 +509,9 @@
                 });
             });
 
+
+
+
             // 【启用】
             $("#item-main-body").on('click', ".item-enable-submit", function() {
                 var that = $(this);
@@ -525,7 +534,6 @@
                     }
                 });
             });
-
             // 【禁用】
             $("#item-main-body").on('click', ".item-disable-submit", function() {
                 var that = $(this);

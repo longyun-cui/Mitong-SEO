@@ -1,13 +1,18 @@
-@extends('mt.admin.layout.layout')
+@extends('mt.agent.layout.layout')
 
-@section('head_title','关键词列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','【客户】'.$user_data->username.' - 搜索引擎智能营销系统 - 米同科技')
 
-@section('header','关键词列表')
-@section('description','搜索引擎智能营销系统-米同科技')
+
+@section('header','【客户】'.$user_data->username)
+@section('description')
+    搜索引擎智能营销系统-米同科技
+    <a class="btn btn-xs bg-navy item-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
+@endsection
+
 
 
 @section('breadcrumb')
-    <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
+    <li><a href="{{url('/agent')}}"><i class="fa fa-dashboard"></i>首页</a></li>
     <li><a href="#"><i class="fa "></i>Here</a></li>
 @endsection
 
@@ -16,22 +21,49 @@
     <div class="col-md-12">
         <div class="box">
             <div class="callout callout-green">
-                <h4>今日概览</h4>
+                <h4>财务概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
+                        资产总额 <span class="text-red" style="font-size:24px;">{{ $user_data->fund_total or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
+                        累计消费 <span class="text-red font-24px">{{ $user_data->fund_expense or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
+                        资产余额 <span class="text-red font-24px">{{ $user_data->fund_balance or 0 }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                        可用余额 <span class="text-red font-24px">{{ $user_data->fund_available or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        初始冻结 <span class="text-red font-24px">{{ $user_data->fund_frozen_init or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        冻结金额 <span class="text-red font-24px">{{ $user_data->fund_frozen or 0 }}</span> 元
+                    </span>
+                </div>
+                <div> &nbsp; </div>
+                <h4>今日优化概览</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $user_data['keyword_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        检测 <span class="text-red font-24px">{{ $user_data['keyword_detect_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        达标 <span class="text-red font-24px">{{ $user_data['keyword_standard_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        达标消费 <span class="text-red font-24px">{{ $user_data['keyword_standard_cost_sum'] or 0 }}</span> 元
                     </span>
                 </div>
             </div>
@@ -47,7 +79,7 @@
         <div class="box box-info">
 
             <div class="box-header with-border" style="margin:16px 0;">
-                <h3 class="box-title">内容列表</h3>
+                <h3 class="box-title">关键词列表</h3>
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
@@ -71,19 +103,17 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th>单价</th>
+                        <th>初始排名</th>
+                        <th>最新排名</th>
+                        <th>检测时间</th>
+                        <th>最新消费</th>
+                        <th>达标天数</th>
+                        <th>累计消费</th>
+                        <th>状态</th>
                         <th>历史数据</th>
                     </tr>
                     <tr>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
@@ -108,11 +138,11 @@
                         <td></td>
                         <td>
                             <select name="keywordstatus" class="form-control form-filter">
-                                <option value ="0">全部</option>
+                                <option value ="默认" selected="selected">默认</option>
+                                <option value ="全部">全部</option>
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
                                 <option value ="合作停">合作停</option>
-                                <option value ="已删除">已删除</option>
                             </select>
                         </td>
                         <td>
@@ -522,6 +552,11 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;"></div>
+</div>
 @endsection
 
 
@@ -539,7 +574,7 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/business/keyword-list') }}",
+                    'url': "{{ url('/admin/user/client/keyword-list?id='.request('id')) }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
@@ -548,6 +583,10 @@
                         d.website = $('input[name="website"]').val();
                         d.searchengine = $('select[name="searchengine"]').val();
                         d.keywordstatus = $('select[name="keywordstatus"]').val();
+//                        d.nickname 	= $('input[name="nickname"]').val();
+//                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
+//                        d.certificate_state = $('select[name="certificate_state"]').val();
+//                        d.admin_name = $('input[name="admin_name"]').val();
 //
 //                        d.created_at_from = $('input[name="created_at_from"]').val();
 //                        d.created_at_to = $('input[name="created_at_to"]').val();
@@ -561,14 +600,14 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "32px",
+                        "width": "36px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
                         'orderable': false
                     },
                     {
-                        "width": "32px",
+                        "width": "48px",
                         "title": "ID",
                         "data": "id",
                         'orderable': true,
@@ -578,17 +617,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "88px",
-                        "title": "客户",
-                        "data": "createuserid",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
-                        }
-                    },
-                    {
-                        "className": "text-left",
-                        "width": "",
+                        "width": "72px",
                         "title": "关键词",
                         "data": "keyword",
                         'orderable': false,
@@ -658,14 +687,14 @@
                         "width": "40px",
                         "title": "价格",
                         "data": "price",
-                        'orderable': true,
+                        'orderable': false,
                         render: function(data, type, row, meta) {
                             return '<span class="text-blue">'+parseInt(data)+'</span>';
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "初始排名",
+                        "width": "40px",
+                        "title": "初始 排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -683,17 +712,13 @@
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
                             }
-                            else if(data > row.initialranking)
-                            {
-                                $gif = '<img src="/seo/img/down.gif" style="vertical-align:middle;float:right;">';
-                            }
                             if((data > 0) && (data <= 10)) return '<samll class="text-red">'+data+'</samll>'+$gif;
                             else return data+$gif;
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "最新消费",
+                        "width": "40px",
+                        "title": "最新 消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -702,8 +727,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "达标天数",
+                        "width": "40px",
+                        "title": "达标 天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -712,8 +737,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "累计消费",
+                        "width": "40px",
+                        "title": "累计 消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -789,19 +814,18 @@
                             }
 
                             var html =
-                                    {{--'<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
-                                    {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    {{--'<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
 //                                    $cooperation_html+
-                                    $review_html+
-                                    $delete_html+
-//                                    '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
-                                    '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
-                                    '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
-                                    ''
+                                $review_html+
+                                $delete_html+
+//                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
+                                '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -1140,7 +1164,31 @@
         // 【编辑】
         $(".item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            window.location.href = "/item/edit?id="+that.attr('data-id');
+            window.location.href = "/admin/user/edit?id="+that.attr('data-id');
+        });
+
+
+
+
+        // 【登录】
+        $(document).on('click', ".item-login-submit", function() {
+            var that = $(this);
+            $.post(
+                "{{ url('/agent/user/client-login') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    id:that.attr('data-id')
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else
+                    {
+//                        window.open('/client/');
+                        window.location.href = "/client/";
+                    }
+                },
+                'json'
+            );
         });
 
 
@@ -1166,6 +1214,7 @@
             $('.review-price').val(0);
             $('#modal-body').modal('hide');
         });
+
         // 【审核】提交
         $("#modal-body").on('click', "#item-review-submit", function() {
             var that = $(this);
@@ -1285,42 +1334,6 @@
                         function(data){
                             if(!data.success) layer.msg(data.msg);
                             else location.reload();
-                        },
-                        'json'
-                    );
-                }
-            });
-        });
-
-
-        // 【下载】
-        $(".item-main-body").on('click', ".item-download-link", function() {
-            var that = $(this);
-            layer.msg('确定要"下载"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    layer.close(index);
-                    window.open("/admin/business/download/keyword-detect?id="+that.attr('data-id'));
-                }
-            });
-        });
-        // 【下载】
-        $(".item-main-body").on('click', ".item-download-submit", function() {
-            var that = $(this);
-            layer.msg('确定要"下载"么？', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-                    $.post(
-                        "{{ url('/admin/business/download/keyword-detect') }}",
-                        {
-                            _token: $('meta[name="_token"]').attr('content'),
-                            operate:"download-keyword-detect",
-                            id:that.attr('data-id')
-                        },
-                        function(data){
-                            if(!data.success) layer.msg(data.msg);
                         },
                         'json'
                     );
