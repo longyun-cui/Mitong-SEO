@@ -664,8 +664,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "初始排名",
+                        "width": "40px",
+                        "title": "初始<br>排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -673,7 +673,7 @@
                         }
                     },
                     {
-                        "width": "64px",
+                        "width": "72px",
                         "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
@@ -692,8 +692,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "最新消费",
+                        "width": "40px",
+                        "title": "最新<br>消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -702,8 +702,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "达标天数",
+                        "width": "40px",
+                        "title": "达标<br>天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -712,8 +712,8 @@
                         }
                     },
                     {
-                        "width": "32px",
-                        "title": "累计消费",
+                        "width": "40px",
+                        "title": "累计<br>消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -1184,7 +1184,8 @@
                             else
                             {
                                 layer.msg(data.msg);
-                                location.reload();
+//                                location.reload();
+                                $("#item-review-cancel").click();
                             }
                         }
                     };
