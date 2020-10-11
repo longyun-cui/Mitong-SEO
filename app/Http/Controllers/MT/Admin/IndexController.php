@@ -31,7 +31,36 @@ class IndexController extends Controller
 
 
 
+    /*
+     * 用户基本信息
+     */
 
+    // 返回【主页】视图
+    public function view_info_index()
+    {
+        return $this->repo->view_info_index();
+    }
+
+    // 编辑【代理商】
+    public function operate_info_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_info_edit();
+        else if (request()->isMethod('post')) return $this->repo->operate_info_save(request()->all());
+    }
+
+    // 编辑【代理商】
+    public function operate_info_password_reset()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_info_password_reset();
+        else if (request()->isMethod('post')) return $this->repo->operate_info_password_reset_save(request()->all());
+    }
+
+
+
+
+    /*
+     * 用户系统
+     */
 
     // 【修改密码】
     public function operate_user_change_password()

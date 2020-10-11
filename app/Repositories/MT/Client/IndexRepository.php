@@ -111,6 +111,128 @@ class IndexRepository {
 
 
 
+    /*
+     * 用户基本信息
+     */
+
+    // 返回【基本信息】视图
+    public function view_info_index()
+    {
+        $me = Auth::guard('client')->user();
+        return view('mt.client.entrance.info.index')->with(['data'=>$me]);
+    }
+
+    // 返回【编辑基本信息】视图
+    public function view_info_edit()
+    {
+        $me = Auth::guard('client')->user();
+        return view('mt.client.entrance.info.edit')->with(['data'=>$me]);
+    }
+    // 保存【基本信息】
+    public function operate_info_save($post_data)
+    {
+        $me = Auth::guard('client')->user();
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $mine_data = $post_data;
+            unset($mine_data['operate']);
+            unset($mine_data['operate_id']);
+            $bool = $me->fill($mine_data)->save();
+            if($bool)
+            {
+                // 头像
+                if(!empty($post_data["portrait_img"]))
+                {
+                    // 删除原文件
+                    $mine_original_file = $me->portrait_img;
+                    if(!empty($mine_original_file) && file_exists(storage_path("resource/" . $mine_original_file)))
+                    {
+                        unlink(storage_path("resource/" . $mine_original_file));
+                    }
+
+                    $result = upload_file_storage($post_data["attachment"]);
+                    if($result["result"])
+                    {
+                        $me->portrait_img = $result["local"];
+                        $me->save();
+                    }
+                    else throw new Exception("upload-portrait-img-file-fail");
+                }
+
+            }
+            else throw new Exception("insert--item--fail");
+
+            DB::commit();
+            return response_success(['id'=>$me->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 返回【修改密码】视图
+    public function view_info_password_reset()
+    {
+        $me = Auth::guard('client')->user();
+        return view('mt.client.entrance.info.password-reset')->with(['data'=>$me]);
+    }
+    // 保存【密码】
+    public function operate_info_password_reset_save($post_data)
+    {
+        $messages = [
+            'password_pre.required' => '请输入旧密码',
+            'password_new.required' => '请输入新密码',
+            'password_confirm.required' => '请输入确认密码',
+        ];
+        $v = Validator::make($post_data, [
+            'password_pre' => 'required',
+            'password_new' => 'required',
+            'password_confirm' => 'required'
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $password_pre = request()->get('password_pre');
+        $password_new = request()->get('password_new');
+        $password_confirm = request()->get('password_confirm');
+
+        if($password_new == $password_confirm)
+        {
+            $me = Auth::guard('client')->user();
+            if(password_check($password_pre,$me->password))
+            {
+                $me->password = password_encode($password_new);
+                $bool = $me->save();
+                if($bool) return response_success([], '密码修改成功！');
+                else return response_fail([], '密码修改失败！');
+            }
+            else
+            {
+                return response_fail([], '原密码有误！');
+            }
+        }
+        else return response_error([],'两次密码输入不一致！');
+    }
+
+
+
+
     // 返回列表数据
     public function get_list_datatable($post_data)
     {

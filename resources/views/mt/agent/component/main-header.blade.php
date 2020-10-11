@@ -206,7 +206,7 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="{{ url('/agent/info') }}" class="btn btn-default btn-flat">个人资料</a>
+                                    <a href="{{ url('/agent/info/index') }}" class="btn btn-default btn-flat">个人资料</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="{{ url('/agent/logout') }}" class="btn btn-default btn-flat">退出</a>

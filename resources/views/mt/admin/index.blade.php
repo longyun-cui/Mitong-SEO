@@ -6,7 +6,7 @@
 @section('description','搜索引擎智能营销系统')
 
 @section('breadcrumb')
-    <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
+    <li><a href="{{ url('/admin') }}"><i class="fa fa-dashboard"></i>首页</a></li>
     <li><a href="#"><i class="fa "></i>Here</a></li>
 @endsection
 
