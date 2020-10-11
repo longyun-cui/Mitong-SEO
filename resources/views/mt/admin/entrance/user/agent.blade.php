@@ -5,7 +5,7 @@
 @section('header','【代理商】'.$user_data->username)
 @section('description')
     搜索引擎智能营销系统-米同科技
-    <a class="btn btn-xs bg-navy item-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
+    <a class="btn btn-xs bg-navy agent-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
 @endsection
 
 @section('breadcrumb')
@@ -438,7 +438,7 @@
 
 
             // 【登录】
-            $(document).on('click', ".item-login-submit", function() {
+            $(document).on('click', ".agent-login-submit", function() {
                 var that = $(this);
                 $.post(
                     "{{ url('/admin/user/agent-login') }}",
@@ -452,6 +452,30 @@
                         {
 //                            window.open('/agent/');
                             window.location.href = "/agent/";
+                        }
+                    },
+                    'json'
+                );
+            });
+
+
+
+
+            // 【登录】
+            $("#item-main-body").on('click', ".item-login-submit", function() {
+                var that = $(this);
+                $.post(
+                    "{{ url('/admin/user/client-login') }}",
+                    {
+                        _token: $('meta[name="_token"]').attr('content'),
+                        id:that.attr('data-id')
+                    },
+                    function(data){
+                        if(!data.success) layer.msg(data.msg);
+                        else
+                        {
+//                            window.open('/agent/');
+                            window.location.href = "/client/";
                         }
                     },
                     'json'
