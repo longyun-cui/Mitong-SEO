@@ -162,7 +162,8 @@
                         "data": "keywords_count",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return '<a target="_blank" href="/client/business/site/keyword-list?id='+row.id+'">'+data+'</a>';
+//                            return '<a target="_blank" href="/client/business/site/keyword-list?id='+row.id+'">'+data+'</a>';
+                            return '<a href="/client/business/my-keyword-list?website='+row.website+'">'+data+'</a>';
                         }
                     },
                     {

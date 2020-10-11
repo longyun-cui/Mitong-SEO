@@ -4,7 +4,11 @@
 
 
 @section('header','【客户】'.$user_data->username)
-@section('description','搜索引擎智能营销系统-米同科技')
+@section('description')
+    搜索引擎智能营销系统-米同科技
+    <a class="btn btn-xs bg-navy item-login-submit" style="margin-left:16px;" data-id="{{ request('id') }}">登录</a>
+@endsection
+
 
 
 @section('breadcrumb')
@@ -134,7 +138,8 @@
                         <td></td>
                         <td>
                             <select name="keywordstatus" class="form-control form-filter">
-                                <option value ="0">全部</option>
+                                <option value ="默认" selected="selected">默认</option>
+                                <option value ="全部">全部</option>
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
                                 <option value ="合作停">合作停</option>
@@ -1160,6 +1165,30 @@
         $(".item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
             window.location.href = "/admin/user/edit?id="+that.attr('data-id');
+        });
+
+
+
+
+        // 【登录】
+        $(document).on('click', ".item-login-submit", function() {
+            var that = $(this);
+            $.post(
+                "{{ url('/admin/user/client-login') }}",
+                {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    id:that.attr('data-id')
+                },
+                function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else
+                    {
+//                        window.open('/client/');
+                        window.location.href = "/client/";
+                    }
+                },
+                'json'
+            );
         });
 
 

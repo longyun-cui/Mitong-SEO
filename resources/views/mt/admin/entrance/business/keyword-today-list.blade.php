@@ -19,19 +19,23 @@
                 <h4>今日概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $data['keyword_count'] or 0 }}</span> 个
+                        优化关键词 <span class="text-red font-20px">{{ $data['keyword_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        检测 <span class="text-red font-24px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
+                        检测 <span class="text-red font-20px">{{ $data['keyword_detect_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标 <span class="text-red font-24px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
+                        达标 <span class="text-red font-20px">{{ $data['keyword_standard_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        达标消费 <span class="text-red font-24px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
+                        上次率 <span class="text-red font-20px">{{ $data['keyword_standard_rate'] or 0 }}</span>
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        达标消费 <span class="text-red font-20px">{{ $data['keyword_standard_fund_sum'] or 0 }}</span> 元
                     </span>
 
                     {{--<span style="margin-right:12px;">--}}
@@ -47,7 +51,7 @@
                     {{--</span>--}}
 
                     <span style="margin-right:12px;">
-                        <a class="text-green font-18px" href="/admin/business/download/keyword-today"><button>下载今日关键词</button></a>
+                        <a class="text-green font-16px" href="/admin/business/download/keyword-today"><button>下载今日关键词</button></a>
                     </span>
                 </div>
             </div>
@@ -474,7 +478,7 @@
                         "width": "32px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
@@ -576,8 +580,8 @@
                         }
                     },
                     {
-                        "width": "40px",
-                        "title": "最新 排名",
+                        "width": "64px",
+                        "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {

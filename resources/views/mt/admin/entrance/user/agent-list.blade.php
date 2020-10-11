@@ -39,7 +39,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>代理商</th>
                         <th>代理类型</th>
                         <th>子代理数/上级代理</th>
@@ -306,8 +306,8 @@
                         }
                     },
                     {
-                        'width':"128px",
-                        "title": "子代理数/上级代理",
+                        'width':"72px",
+                        "title": "子代理数 / 上级代理",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -335,7 +335,7 @@
                         }
                     },
                     {
-                        'width':"64px",
+                        'width':"48px",
                         "title": "客户数量",
                         "data": "id",
                         'orderable': false,

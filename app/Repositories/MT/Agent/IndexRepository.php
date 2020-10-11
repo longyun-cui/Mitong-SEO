@@ -120,7 +120,10 @@ class IndexRepository {
         $query = User::select('*')
 //        $query = User::select('id','pid','epid','username','usergroup','createtime')
             ->with('parent','ep','fund')
-            ->withCount(['sites','keywords'])
+            ->withCount([
+                'sites'=>function ($query) { $query->where('status',1)->whereIn('sitestatus',['优化中','待审核']); },
+                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); }
+            ])
             ->where('userstatus','正常')->where('status',1)->where('pid',$agent_id)->whereIn('usergroup',['Service'])
             ->orderby("id","desc");
 

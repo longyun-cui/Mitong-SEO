@@ -39,7 +39,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>客户</th>
                         <th>站点</th>
                         <th>关键词</th>
@@ -223,14 +223,14 @@
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/item/'+data+'">'+row.username+'</a>';
+                                return '<a target="_blank" href="/agent/user/client?id='+data+'">'+row.username+'</a>';
                             }
                         },
                         {
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/agent/user/client-site-list/'+data+'">'+row.sites_count+'</a>';
+                                return '<a target="_blank" href="/agent/user/client?id='+data+'">'+row.sites_count+'</a>';
 
                             }
                         },
@@ -238,7 +238,7 @@
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/agent/user/client-keyword-list/'+data+'">'+row.keywords_count+'</a>';
+                                return '<a target="_blank" href="/agent/user/client?id='+data+'">'+row.keywords_count+'</a>';
 
                             }
                         },

@@ -673,7 +673,7 @@
                         }
                     },
                     {
-                        "width": "56px",
+                        "width": "64px",
                         "title": "最新排名",
                         "data": "latestranking",
                         'orderable': true,

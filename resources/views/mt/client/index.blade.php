@@ -112,27 +112,27 @@
                 <h4>财务概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red" style="font-size:24px;">{{ number_format((int)$user_data->fund_total) }}</span> 个
+                        资金总额 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_total) }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金总额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_total) }}</span> 元
+                        资金总额 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_total) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        累计消费 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_expense) }}</span> 元
+                        累计消费 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_expense) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        资金余额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_balance) }}</span> 元
+                        资金余额 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_balance) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        可用金额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_available) }}</span> 元
+                        可用金额 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_available) }}</span> 元
                     </span>
 
                     <span style="margin-right:12px;">
-                        冻结金额 <span class="text-red font-24px">{{ number_format((int)$user_data->fund_frozen) }}</span> 元
+                        冻结金额 <span class="text-red font-20px">{{ number_format((int)$user_data->fund_frozen) }}</span> 元
                     </span>
                 </div>
             </div>
@@ -149,27 +149,31 @@
                 <h4>关键词优化</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        站点数 <span class="text-red" style="font-size:24px;">{{ $user_data->sites_count or '' }}</span> 个
+                        站点数 <span class="text-red font-20px">{{ $user_data->sites_count or '' }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        关键词数 <span class="text-red font-24px">{{ $user_data->keywords_count or '' }}</span> 元
+                        关键词数 <span class="text-red font-20px">{{ $user_data->keywords_count or '' }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        优化关键词数 <span class="text-red" style="font-size:24px;">{{ $index_data->keyword_count or 0 }}</span> 个
+                        优化关键词数 <span class="text-red font-20px">{{ $index_data->keyword_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        检测关键词数 <span class="text-red font-24px">{{ $index_data->keyword_detect_count or 0 }}</span> 个
+                        检测关键词数 <span class="text-red font-20px">{{ $index_data->keyword_detect_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        今日上词 <span class="text-red font-24px">{{ $index_data->keyword_standard_count or 0 }}</span> 个
+                        今日上词 <span class="text-red font-20px">{{ $index_data->keyword_standard_count or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        今日消费 <span class="text-red font-24px">{{ $index_data->keyword_standard_cost_sum or 0 }}</span> 元
+                        上词率 <span class="text-red font-20px">{{ $index_data->keyword_standard_rate or 0 }}</span>
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日消费 <span class="text-red font-20px">{{ $index_data->keyword_standard_cost_sum or 0 }}</span> 元
                     </span>
                 </div>
             </div>

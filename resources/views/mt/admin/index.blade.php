@@ -157,7 +157,7 @@
                 <h4>关键词优化</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        优化关键词 <span class="text-red" style="font-size:24px;">{{ $index_data['keyword_count'] or 0 }}</span> 个
+                        优化关键词 <span class="text-red font-24px">{{ $index_data['keyword_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -166,6 +166,10 @@
 
                     <span style="margin-right:12px;">
                         达标 <span class="text-red font-24px">{{ $index_data['keyword_standard_count'] or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        上次率 <span class="text-red font-24px">{{ $index_data['keyword_standard_rate'] or '0%' }}</span>
                     </span>
 
                     <span style="margin-right:12px;">
@@ -186,11 +190,11 @@
                 <h4>用户概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</span> 个
+                        代理商 <span class="text-red font-24px">{{ $index_data['agent_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
-                        1级代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent1_count'] or 0 }}</span> 个
+                        1级代理商 <span class="text-red font-24px">{{ $index_data['agent1_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -215,7 +219,7 @@
                 <h4>代理商概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        代理商 <span class="text-red" style="font-size:24px;">{{ $index_data['agent_count'] or 0 }}</span> 个
+                        代理商 <span class="text-red font-24px">{{ $index_data['agent_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">
@@ -240,7 +244,7 @@
                 <h4>客户概览</h4>
                 <div>
                     <span style="margin-right:12px;">
-                        客户 <span class="text-red" style="font-size:24px;">{{ $index_data['client_count'] or 0 }}</span> 个
+                        客户 <span class="text-red font-24px">{{ $index_data['client_count'] or 0 }}</span> 个
                     </span>
 
                     <span style="margin-right:12px;">

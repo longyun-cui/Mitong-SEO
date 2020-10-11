@@ -138,6 +138,8 @@ class IndexRepository {
         $index_data['keyword_standard_count'] = $keyword_standard_data["keyword_standard_count"];
         $index_data['keyword_standard_cost_sum'] = $keyword_standard_data["keyword_standard_cost_sum"];
 
+        $index_data['keyword_standard_rate'] = round($index_data['keyword_standard_count']/$keyword_count*100)."％";
+
 
 
         return view('mt.admin.index')
@@ -295,7 +297,10 @@ class IndexRepository {
 //        $query = User::select('id','pid','epid','username','usergroup','createtime')
 //            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
             ->with('parent','ep','fund')
-            ->withCount(['sites','keywords'])
+            ->withCount([
+                'sites'=>function ($query) { $query->where('status',1)->whereIn('sitestatus',['优化中','待审核']); },
+                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); }
+            ])
             ->where(['userstatus'=>'正常','status'=>1])
             ->whereIn('usergroup',['Service']);
 
@@ -547,14 +552,17 @@ class IndexRepository {
             ]);
     }
 
-    // 返回【客户列表】数据
+    // 返回【代理商-客户列表】数据
     public function get_user_agent_client_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
         $id = $post_data["id"];
         $query = User::select('*')
             ->with('parent','ep','fund')
-            ->withCount(['sites','keywords'])
+            ->withCount([
+                'sites'=>function ($query) { $query->where('status',1)->whereIn('sitestatus',['优化中','待审核']); },
+                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); }
+            ])
             ->where('pid',$id)
             ->where(['userstatus'=>'正常','status'=>1])
             ->whereIn('usergroup',['Service']);
@@ -593,17 +601,39 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【关键词】列表
+    // 返回【用户-关键词】列表
     public function get_user_client_keyword_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
         $id = $post_data["id"];
         $query = SEOKeyword::select('*')->with('creator')->where('createuserid',$id);
 
-        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
         if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
         if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
-        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+//        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "默认")
+            {
+                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
+            }
+            else if($post_data['keywordstatus'] == "全部")
+            {
+            }
+            else if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+        else
+        {
+            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
+        }
 
         $total = $query->count();
 
@@ -1122,7 +1152,7 @@ class IndexRepository {
         $me = Auth::guard("admin")->user();
         $query = SEOSite::select('*')->with('creator')
             ->withCount([
-                'keywords',
+                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); },
                 'keywords as standard_today_count'=>function ($query) {
                     $query->where('standardstatus','已达标');
                 },
@@ -1333,6 +1363,8 @@ class IndexRepository {
         // 已达标关键词消费
         $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
+
+        $data['keyword_standard_rate'] = round($data['keyword_standard_count']/$keyword_count*100)."％";
 
 
 //        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);

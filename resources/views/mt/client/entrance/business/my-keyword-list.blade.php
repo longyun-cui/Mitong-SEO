@@ -12,6 +12,47 @@
 @endsection
 
 @section('content')
+{{--关键词优化--}}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="callout callout-green">
+                <h4>关键词优化</h4>
+                <div>
+                    <span style="margin-right:12px;">
+                        站点数 <span class="text-red font-20px">{{ $user_data->sites_count or '0' }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        关键词数 <span class="text-red font-20px">{{ $user_data->keywords_count or '0' }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        优化关键词数 <span class="text-red font-20px">{{ $data->keyword_count or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        检测关键词数 <span class="text-red font-20px">{{ $data->keyword_detect_count or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日上词 <span class="text-red font-20px">{{ $data->keyword_standard_count or 0 }}</span> 个
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        上词率 <span class="text-red font-20px">{{ $data->keyword_standard_rate or 0 }}</span> 元
+                    </span>
+
+                    <span style="margin-right:12px;">
+                        今日消费 <span class="text-red font-20px">{{ $data->keyword_standard_cost_sum or 0 }}</span> 元
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="row">
     <div class="col-md-12">
         <!-- BEGIN PORTLET-->
@@ -61,7 +102,7 @@
                         <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" value="{{ request('website') }}" /></td>
                         <td>
                             <select name="searchengine" class="form-control form-filter">
                                 <option value ="0">全部</option>

@@ -43,11 +43,7 @@ class IndexController extends Controller
     // 返回【我的关键词】视图
     public function view_my_keyword_list()
     {
-        if(request()->isMethod('get'))
-        {
-            return view('mt.client.entrance.business.my-keyword-list')
-                ->with(['sidebar_business_active'=>'active','sidebar_business_my_keyword_list_active'=>'active']);
-        }
+        if(request()->isMethod('get')) return $this->repo->show_my_business_keyword_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_my_keyword_list_datatable(request()->all());
     }
 

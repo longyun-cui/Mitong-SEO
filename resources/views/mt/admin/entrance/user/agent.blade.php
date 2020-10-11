@@ -192,7 +192,7 @@
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/admin/user/client-site-list/'+data+'">'+row.sites_count+'</a>';
+                                return '<a target="_blank" href="/admin/user/client?id='+data+'">'+row.sites_count+'</a>';
 
                             }
                         },
@@ -202,7 +202,7 @@
                             "data": "id",
                             'orderable': false,
                             render: function(data, type, row, meta) {
-                                return '<a target="_blank" href="/admin/user/client-keyword-list/'+data+'">'+row.keywords_count+'</a>';
+                                return '<a target="_blank" href="/admin/user/client?id='+data+'">'+row.keywords_count+'</a>';
 
                             }
                         },

@@ -87,15 +87,15 @@
 
 
             {{--通知&公告管理--}}
-            <li class="header">通知&公告管理</li>
+            <li class="header _none">通知&公告管理</li>
 
-            <li class="treeview">
+            <li class="treeview _none">
                 <a href="{{ url('/agent/notice/notice-list') }}">
                     <i class="fa fa-envelope"></i> <span>全部通知</span>
                 </a>
             </li>
 
-            <li class="treeview">
+            <li class="treeview _none">
                 <a href="{{ url('/agent/notice/my-notice-list') }}">
                     <i class="fa fa-envelope"></i> <span>我的公告</span>
                 </a>

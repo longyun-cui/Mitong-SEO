@@ -4,9 +4,11 @@ namespace App\Repositories\MT\Client;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
+use App\Models\MT\FundFreezeRecord;
 use App\Models\MT\SEOSite;
-use App\Models\MT\SEOKeyword;
 use App\Models\MT\SEOCart;
+use App\Models\MT\SEOKeyword;
+use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\Item;
 
 use App\Repositories\Common\CommonRepository;
@@ -95,6 +97,8 @@ class IndexRepository {
             );
         $index_data->keyword_standard_count = number_format((int)$keyword_standard_data->keyword_standard_count);
         $index_data->keyword_standard_cost_sum = number_format((int)$keyword_standard_data->keyword_standard_cost_sum);
+
+        $index_data->keyword_standard_rate = round($index_data->keyword_standard_count/$keyword_count*100)."％";
 
 
         return view('mt.client.index')
@@ -186,7 +190,49 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【关键词列表】数据
+
+    // 返回【我的关键词】视图
+    public function show_my_business_keyword_list()
+    {
+        $me = Auth::guard("client")->user();
+        $me_id = $me->id;
+        $data = $me;
+
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$me_id)->count();
+        $data->keyword_count = number_format((int)$keyword_count);
+
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$me_id)
+            ->count();
+        $data->keyword_detect_count = number_format((int)$keyword_detect_count);
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$me_id)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+        $data->keyword_standard_count = number_format((int)$keyword_standard_data->keyword_standard_count);
+        $data->keyword_standard_cost_sum = number_format((int)$keyword_standard_data->keyword_standard_cost_sum);
+
+        $data->keyword_standard_rate = round($data->keyword_standard_count/$keyword_count*100)."％";
+
+
+        return view('mt.client.entrance.business.my-keyword-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_active'=>'active',
+                'sidebar_business_my_keyword_list_active'=>'active'
+            ]);
+    }
+    // 返回【我的关键词列表】数据
     public function get_business_my_keyword_list_datatable($post_data)
     {
         $mine = Auth::guard("client")->user();
@@ -250,6 +296,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
+
 
     // 返回【关键词购物车列表】数据
     public function get_business_my_keyword_cart_list_datatable($post_data)
