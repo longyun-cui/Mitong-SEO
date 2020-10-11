@@ -1168,6 +1168,7 @@
         });
         // 【审核】提交
         $("#modal-body").on('click', "#item-review-submit", function() {
+
             var that = $(this);
             layer.msg('确定"审核"么', {
                 time: 0
@@ -1186,6 +1187,7 @@
                                 layer.msg(data.msg);
 //                                location.reload();
                                 $("#item-review-cancel").click();
+                                $('#datatable_ajax').DataTable().ajax.reload();
                             }
                         }
                     };
