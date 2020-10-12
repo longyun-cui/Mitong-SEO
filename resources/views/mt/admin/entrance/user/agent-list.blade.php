@@ -295,8 +295,8 @@
                         }
                     },
                     {
-                        'width':"64px",
-                        "title": "代理类型",
+                        'width':"72px",
+                        "title": "代理<br>类型",
                         "data": "usergroup",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -307,7 +307,7 @@
                     },
                     {
                         'width':"72px",
-                        "title": "子代理数 / 上级代理",
+                        "title": "子代理数 /<br>上级代理",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -336,7 +336,7 @@
                     },
                     {
                         'width':"48px",
-                        "title": "客户数量",
+                        "title": "客户<br>数量",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -349,8 +349,8 @@
                         }
                     },
                     {
-                        'width':"80px",
-                        "title": "资金总额",
+                        'width':"72px",
+                        "title": "资金<br>总额",
                         "data": "fund_total",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -359,8 +359,8 @@
                         }
                     },
                     {
-                        'width':"80px",
-                        "title": "资金余额",
+                        'width':"72px",
+                        "title": "资金<br>余额",
                         "data": "fund_balance",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -392,9 +392,10 @@
 //                        }
 //                    },
                     {
+                        'width':"80px",
+                        "title": "创建<br>时间",
                         'data': 'createtime',
                         'orderable': true,
-                        'width':"96px",
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data);
