@@ -822,7 +822,7 @@ class IndexRepository {
             {
                 $sub_agent->increment('fund_total',$amount);
                 $sub_agent->increment('fund_balance',$amount);
-                $mine->decrement('fund_total',$amount);
+
                 $mine->decrement('fund_balance',$amount);
             }
             else throw new Exception("insert--fund-record--fail");
