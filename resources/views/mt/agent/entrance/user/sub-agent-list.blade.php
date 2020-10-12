@@ -173,6 +173,66 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modal-password-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">修改密码</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-change-password-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="change-password" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--用户ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">新密码</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="password" class="form-control form-filter" name="user-password" value="">
+                                    6-20位英文、数值、下划线构成
+                                </div>
+                            </div>
+                            {{--用户名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">确认密码</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="password" class="form-control form-filter" name="user-password-confirm" value="">
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-change-password-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-change-password-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 
@@ -306,12 +366,12 @@
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                '<a class="btn btn-xs item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
+                                '<a class="btn btn-xs bg-primary item-recharge-show" data-id="'+data+'" data-name="'+row.username+'">充值/退款</a>'+
                                 {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                '<a class="btn btn-xs item-password-submit" data-id="'+data+'">密码</a>'+
-                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>'+
-                            '<a class="btn btn-xs item-login-submit" data-id="'+data+'">登录</a>';
+                                '<a class="btn btn-xs bg-navy bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
+                                '<a class="btn btn-xs bg-navy item-change-password-show" data-id="'+data+'">修改密码</a>'+
+                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                '<a class="btn btn-xs bg-navy item-login-submit" data-id="'+data+'">登录</a>';
                             return html;
                         }
                     }
@@ -490,6 +550,50 @@
                         },
                         'json'
                     );
+                }
+            });
+        });
+
+
+
+
+        // 显示【修改密码】
+        $("#item-main-body").on('click', ".item-change-password-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('input[name=user-password]').val('');
+            $('input[name=user-password-confirm]').val('');
+            $('#modal-password-body').modal('show');
+        });
+        // 【修改密码】取消
+        $("#modal-password-body").on('click', "#item-change-password-cancel", function() {
+            $('input[name=id]').val('');
+            $('input[name=user-password]').val('');
+            $('input[name=user-password-confirm]').val('');
+            $('#modal-password-body').modal('hide');
+        });
+        // 【修改密码】提交
+        $("#modal-password-body").on('click', "#item-change-password-submit", function() {
+            var that = $(this);
+            layer.msg('确定"修改"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    var options = {
+                        url: "{{ url('/agent/user/change-password') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+                                $('#modal-password-body').modal('hide');
+                            }
+                        }
+                    };
+                    $("#form-change-password-modal").ajaxSubmit(options);
                 }
             });
         });

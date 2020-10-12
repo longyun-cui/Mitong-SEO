@@ -33,6 +33,8 @@ Route::group([], function () {
         Route::match(['get','post'], '/info/password-reset', $controller.'@operate_info_password_reset');
 
 
+        Route::match(['get','post'], '/user/change-password', $controller.'@operate_user_change_password');
+
         Route::match(['get','post'], '/user/agent', $controller.'@view_user_agent');
         Route::match(['get','post'], '/user/client', $controller.'@view_user_client');
 

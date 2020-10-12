@@ -58,6 +58,17 @@ class IndexController extends Controller
 
 
 
+    /*
+     * 用户系统
+     */
+
+    // 【修改密码】
+    public function operate_user_change_password()
+    {
+        return $this->repo->operate_user_change_password(request()->all());
+    }
+
+
     // 返回【代理商列表】视图
     public function view_user_sub_agent_list()
     {
