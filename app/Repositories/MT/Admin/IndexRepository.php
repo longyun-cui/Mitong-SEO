@@ -68,8 +68,10 @@ class IndexRepository {
         $consumption_data[1]['data'] = $data2->keyBy('day');
 
 
-        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])->where('fund_expense_daily','>',0)
-            ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
+        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])
+            ->where('fund_expense_daily','>',0)
+            ->whereRaw("fund_balance < (fund_expense_daily * 7)")
+            ->get();
 
 
 //        $agent_num = User::where(['usergroup'=>'Agent'])->count();

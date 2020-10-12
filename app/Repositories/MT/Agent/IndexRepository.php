@@ -62,8 +62,19 @@ class IndexRepository {
         $agent->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
         $agent->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
 
+
+        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])
+            ->where('pid',$me->id)
+            ->where('fund_expense_daily','>',0)
+            ->whereRaw("fund_balance < (fund_expense_daily * 7)")
+            ->get();
+
         $agent_data = $agent;
-        return view('mt.agent.index')->with(['agent_data'=>$agent_data]);
+        return view('mt.agent.index')
+            ->with([
+                'agent_data'=>$agent_data,
+                'insufficient_clients'=>$insufficient_clients
+            ]);
     }
 
 
