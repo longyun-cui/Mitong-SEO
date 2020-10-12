@@ -348,7 +348,11 @@ class IndexRepository {
         $data->keyword_standard_count = number_format((int)$keyword_standard_data->keyword_standard_count);
         $data->keyword_standard_cost_sum = number_format((int)$keyword_standard_data->keyword_standard_cost_sum);
 
-        $data->keyword_standard_rate = round($data->keyword_standard_count/$keyword_count*100)."％";
+        if($keyword_count > 0)
+        {
+            $data->keyword_standard_rate = round($data->keyword_standard_count/$keyword_count*100)."％";
+        }
+        else $data->keyword_standard_rate = "--";
 
 
         return view('mt.client.entrance.business.my-keyword-list')

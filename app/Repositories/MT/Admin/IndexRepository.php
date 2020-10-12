@@ -138,7 +138,11 @@ class IndexRepository {
         $index_data['keyword_standard_count'] = $keyword_standard_data["keyword_standard_count"];
         $index_data['keyword_standard_cost_sum'] = $keyword_standard_data["keyword_standard_cost_sum"];
 
-        $index_data['keyword_standard_rate'] = round($index_data['keyword_standard_count']/$keyword_count*100)."％";
+        if($keyword_count > 0)
+        {
+            $index_data['keyword_standard_rate'] = round($index_data['keyword_standard_count']/$keyword_count*100)."％";
+        }
+        else $index_data['keyword_standard_rate'] = "--";
 
 
 
@@ -1522,7 +1526,12 @@ class IndexRepository {
         $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
 
-        $data['keyword_standard_rate'] = round($data['keyword_standard_count']/$keyword_count*100)."％";
+
+        if($keyword_count > 0)
+        {
+            $data['keyword_standard_rate'] = round($data['keyword_standard_count']/$keyword_count*100)."％";
+        }
+        else $data['keyword_standard_rate'] = "--";
 
 
 //        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
