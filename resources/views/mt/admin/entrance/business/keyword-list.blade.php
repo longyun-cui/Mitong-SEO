@@ -1185,24 +1185,34 @@
                 $checked.push($(this).val());
             });
 
-            $.post(
-                "{{ url('/admin/business/keyword-review-bulk') }}",
-                {
-                    _token: $('meta[name="_token"]').attr('content'),
-                    operate: "keyword-review-bulk",
-                    bulk_keyword_id: $checked,
-                    bulk_keyword_status:$('select[name="bulk-review-keyword-status"]').val()
-                },
-                function(data){
-                    if(!data.success) layer.msg(data.msg);
-                    else
-                    {
-//                        location.reload();
-                        $('#datatable_ajax').DataTable().ajax.reload();
-                    }
-                },
-                'json'
-            );
+            layer.msg('确定"批量审核"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    $.post(
+                        "{{ url('/admin/business/keyword-review-bulk') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate: "keyword-review-bulk",
+                            bulk_keyword_id: $checked,
+                            bulk_keyword_status:$('select[name="bulk-review-keyword-status"]').val()
+                        },
+                        function(data){
+                            layer.close(index);
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
+                        },
+                        'json'
+                    );
+
+                }
+            });
+
+
         });
 
 
@@ -1244,6 +1254,7 @@
                         // target: "#div2",
                         success: function (data) {
 
+                            layer.close(index);
                             $("#item-review-cancel").click();
 
                             if(!data.success) layer.msg(data.msg);
@@ -1331,6 +1342,7 @@
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
@@ -1358,6 +1370,7 @@
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
@@ -1370,6 +1383,8 @@
                 }
             });
         });
+
+
 
 
         // 【下载】

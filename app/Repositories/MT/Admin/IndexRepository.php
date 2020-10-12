@@ -3723,7 +3723,7 @@ class IndexRepository {
         if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
 
         $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
 
         $work_order = Item::find($id);
         return response_success($work_order,"");

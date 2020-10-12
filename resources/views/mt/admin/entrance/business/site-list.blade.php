@@ -748,10 +748,10 @@
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
-                                layer.close(index);
 //                                location.reload();
                                 $('#datatable_ajax').DataTable().ajax.reload();
                             }
@@ -776,10 +776,10 @@
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
-                                layer.close(index);
 //                                location.reload();
                                 $('#datatable_ajax').DataTable().ajax.reload();
                             }
