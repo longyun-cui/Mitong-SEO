@@ -3696,7 +3696,7 @@ class IndexRepository {
     }
 
 
-    // 获取【站点】详情
+    // 获取【工单】详情
     public function operate_business_work_order_get($post_data)
     {
         $messages = [
@@ -3725,7 +3725,7 @@ class IndexRepository {
         return response_success($work_order,"");
 
     }
-    // 推送【站点】
+    // 推送【工单】
     public function operate_business_work_order_push($post_data)
     {
         $messages = [
@@ -3774,7 +3774,7 @@ class IndexRepository {
         }
 
     }
-    // 删除【站点】
+    // 删除【工单】
     public function operate_business_work_order_delete($post_data)
     {
         $messages = [
@@ -4138,6 +4138,14 @@ class IndexRepository {
 //        {
 //            $query->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
 //        }
+
+        if(!empty($post_data['receiver']))
+        {
+            $receiver = $post_data['receiver'];
+            $query->whereHas('user', function ($query1) use($receiver) { $query1->where('username', 'like', $receiver); } );
+        }
+
+
 
         $total = $query->count();
 

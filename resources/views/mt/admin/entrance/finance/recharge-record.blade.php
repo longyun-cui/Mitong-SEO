@@ -47,7 +47,7 @@
                     <tr>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="creator" /></td>
-                        <td></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="receiver" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -109,6 +109,7 @@
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
                         d.creator = $('input[name="creator"]').val();
+                        d.receiver = $('input[name="receiver"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -156,7 +157,7 @@
                         "data": "amount",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            return parseInt(data).toLocaleString();
                         }
                     },
                     {

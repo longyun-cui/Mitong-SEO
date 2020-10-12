@@ -38,5 +38,10 @@ class FundRechargeRecord extends Model
         return $this->belongsTo('App\Models\MT\User','createuserid','id');
     }
 
+    function receiver()
+    {
+        return $this->belongsTo('App\Models\MT\User','createuserid','id');
+    }
+
 
 }

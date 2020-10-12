@@ -147,7 +147,7 @@
                         "data": "amount",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+                            return parseInt(data).toLocaleString();
                         }
                     },
                     {
