@@ -99,7 +99,117 @@
 </div>
 
 
+{{--站点审核--}}
 <div class="modal fade" id="modal-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">站点审核</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="review" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--站点ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-id"></span>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-site-name"></span>
+                                </div>
+                            </div>
+                            {{--站点--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-website"></span>
+                                </div>
+                            </div>
+                            {{--FTP--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">FTP</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-ftp"></span>
+                                </div>
+                            </div>
+                            {{--管理后台--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">管理后台</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="review-managebackground"></span>
+                                </div>
+                            </div>
+                            {{--审核意见--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">审核结果</label>
+                                <div class="col-md-8 ">
+                                    <select name="sitestatus" class="form-control form-filter">
+                                        <option value ="0">请选择</option>
+                                        <option value ="待审核">待审核</option>
+                                        <option value ="优化中">优化中</option>
+                                        <option value ="合作停">合作停</option>
+                                        <option value ="被拒绝">被拒绝</option>
+                                    </select>
+                                </div>
+                            </div>
+                            {{--备注--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">备注</label>
+                                <div class="col-md-8 ">
+                                    {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
+                                    <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
+                                </div>
+                            </div>
+                            {{--说明--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">说明</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{--站点详情--}}
+<div class="modal fade" id="modal-detail-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
         <div class="row">
@@ -253,7 +363,7 @@
                         'orderable': false,
                         render: function(data, type, row, meta) {
 //                            return data;
-                            return '<span href="javascript:void(0);" class="item-site-show text-blue _pointer" data-user-id="'+row.creator.id+'" data-username="'+row.creator.username+'" data-name="'+data+'" data-website="'+row.website+'" data-ftp="'+row.ftp+'" data-managebackground="'+row.managebackground+'">'+data+'</span>'
+                            return '<span href="javascript:void(0);" class="item-site-detail-show text-blue _pointer" data-user-id="'+row.creator.id+'" data-username="'+row.creator.username+'" data-name="'+data+'" data-website="'+row.website+'" data-ftp="'+row.ftp+'" data-managebackground="'+row.managebackground+'">'+data+'</span>'
                         }
                     },
                     {
@@ -393,15 +503,35 @@
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            var $work_order_html = '';
+
+                            var $cooperation_html = '';
+                            var $review_html = '<a class="btn btn-xs btn-default disabled">审核</a>';
+                            var $delete_html = '<a class="btn btn-xs btn-default disabled">删除</a>';
+                            var $work_order_create_html = '<a class="btn btn-xs btn-default disabled">+工单</a>';
+                            var $work_order_html = '<a class="btn btn-xs btn-default disabled">Ta的工单</a>';
+
                             if(row.work_order_count > 0)
                             {
                                 $work_order_html = '<a class="btn btn-xs bg-navy item-work-order-link" data-id="'+data+'" >Ta的工单</a>';
                             }
-                            else
+
+                            if(row.status == 1)
                             {
-                                $work_order_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >Ta的工单</a>';
+                                if(row.sitestatus == '优化中')
+                                {
+                                    $cooperation_html = '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>';
+                                    $work_order_create_html = '<a class="btn btn-xs bg-navy item-work-order-create-link" data-id="'+data+'">+工单</a>';
+                                }
+                                else if(row.sitestatus == '合作停')
+                                {
+                                    $cooperation_html = '<a class="btn btn-xs bg-primary item-start-submit" data-id="'+data+'" >再合作</a>';
+                                }
+
+                                $review_html = '<a class="btn btn-xs bg-primary item-review-show" data-id="'+data+'" data-name="'+row.sitename+'" data-website="'+row.website+'" data-ftp="'+row.ftp+'" data-managebackground="'+row.managebackground+'">审核</a>';
+
+                                $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             }
+
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -409,10 +539,13 @@
 //                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
 //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs bg-navy item-work-order-create-link" data-id="'+data+'">+工单</a>'+
+//                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
+                                $review_html+
+                                $work_order_create_html+
                                 $work_order_html+
-                                '<a class="btn btn-xs bg-navy item-stop-submit" data-id="'+data+'" >合作停</a>'+
-                                '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
+//                                $cooperation_html+
+                                $delete_html+
+                                '';
                             return html;
                         }
                     }
@@ -518,6 +651,9 @@
             window.open("/admin/business/site/work-order-list?site-id="+that.attr('data-id'));
         });
 
+
+
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
@@ -542,6 +678,61 @@
             });
         });
 
+
+
+
+        // 【审核】显示
+        $("#item-main-body").on('click', ".item-review-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.review-site-id').html(that.attr('data-id'));
+            $('.review-site-name').html(that.attr('data-name'));
+            $('.review-website').html(that.attr('data-website'));
+            $('.review-ftp').html(that.attr('data-ftp'));
+            $('.review-managebackground').html(that.attr('data-managebackground'));
+            $('#modal-body').modal('show');
+        });
+        // 【审核】取消
+        $("#modal-body").on('click', "#item-review-cancel", function() {
+            $('.review-user-id').html('');
+            $('.review-user-name').html('');
+            $('.review-website').html('');
+            $('#modal-body').modal('hide');
+        });
+        // 【审核】提交
+        $("#modal-body").on('click', "#item-review-submit", function() {
+            var that = $(this);
+            layer.msg('确定"审核"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    var options = {
+                        url: "{{ url('/admin/business/site-review') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+
+                            $("#item-review-cancel").click();
+
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
+                        }
+                    };
+                    $("#form-edit-modal").ajaxSubmit(options);
+                }
+            });
+        });
+
+
+
+
         // 【合作停】
         $("#item-main-body").on('click', ".item-stop-submit", function() {
             var that = $(this);
@@ -558,14 +749,18 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+                                layer.close(index);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
                 }
             });
         });
-
         // 【再合作】
         $("#item-main-body").on('click', ".item-start-submit", function() {
             var that = $(this);
@@ -582,7 +777,12 @@
                         },
                         function(data){
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+                                layer.close(index);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -591,8 +791,10 @@
         });
 
 
+
+
         // 显示【站点详情】
-        $("#item-main-body").on('click', ".item-site-show", function() {
+        $("#item-main-body").on('click', ".item-site-detail-show", function() {
             var that = $(this);
             $('input[name=id]').val(that.attr('data-id'));
             $('.site-user-id').html(that.attr('data-user-id'));
@@ -601,7 +803,7 @@
             $('.site-website').html(that.attr('data-website'));
             $('.site-ftp').html(that.attr('data-ftp'));
             $('.site-managebackground').html(that.attr('data-managebackground'));
-            $('#modal-body').modal('show');
+            $('#modal-detail-body').modal('show');
         });
 
 

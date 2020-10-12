@@ -109,6 +109,8 @@
     </div>
 </div>
 
+
+{{--站点审核--}}
 <div class="modal fade" id="modal-body">
     <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
 
@@ -204,6 +206,101 @@
                             <div class="col-md-8 col-md-offset-2">
                                 <button type="button" class="btn btn-success" id="item-review-submit"><i class="fa fa-check"></i> 提交</button>
                                 <button type="button" class="btn btn-default" id="item-review-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{--站点详情--}}
+<div class="modal fade" id="modal-detail-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">站点详情</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="recharge" readonly>
+                            <input type="hidden" name="id" value="0" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--用户ID--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">用户ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="site-user-id"></span>
+                                </div>
+                            </div>
+                            {{--用户名--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">用户名</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="site-username"></span>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-name"></span>
+                                </div>
+                            </div>
+                            {{--站点地址--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点地址</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-website"></span>
+                                </div>
+                            </div>
+                            {{--FTP--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">FTP</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-ftp"></span>
+                                </div>
+                            </div>
+                            {{--管理后台--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">管理后台</label>
+                                <div class="col-md-8 ">
+                                    <span class="site-managebackground"></span>
+                                </div>
+                            </div>
+                            {{--说明--}}
+                            <div class="form-group _none">
+                                <label class="control-label col-md-2">说明</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <span class="">正数为充值，负数为退款，退款金额不能超过资金余额。</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row _none">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-site-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default modal-cancel" id="item-site-cancel">取消</button>
                             </div>
                         </div>
                     </div>
@@ -430,53 +527,6 @@
             $('input[name="bulk-site-id"]').prop('checked',this.checked);//checked为true时为默认显示的状态
         });
 
-        // 【审核】显示
-        $("#item-main-body").on('click', ".item-review-show", function() {
-            var that = $(this);
-            $('input[name=id]').val(that.attr('data-id'));
-            $('.review-site-id').html(that.attr('data-id'));
-            $('.review-site-name').html(that.attr('data-name'));
-            $('.review-website').html(that.attr('data-website'));
-            $('.review-ftp').html(that.attr('data-ftp'));
-            $('.review-managebackground').html(that.attr('data-managebackground'));
-            $('#modal-body').modal('show');
-        });
-
-        // 【审核】取消
-        $("#modal-body").on('click', "#item-review-cancel", function() {
-            $('.review-user-id').html('');
-            $('.review-user-name').html('');
-            $('.review-website').html('');
-            $('#modal-body').modal('hide');
-        });
-
-        // 【审核】提交
-        $("#modal-body").on('click', "#item-review-submit", function() {
-            var that = $(this);
-            layer.msg('确定"审核"么', {
-                time: 0
-                ,btn: ['确定', '取消']
-                ,yes: function(index){
-
-                    var options = {
-                        url: "{{ url('/admin/business/site-review') }}",
-                        type: "post",
-                        dataType: "json",
-                        // target: "#div2",
-                        success: function (data) {
-                            if(!data.success) layer.msg(data.msg);
-                            else
-                            {
-                                layer.msg(data.msg);
-                                location.reload();
-                            }
-                        }
-                    };
-                    $("#form-edit-modal").ajaxSubmit(options);
-                }
-            });
-        });
-
         // 【批量审核】【站点】
         $("#item-content-body").on('click', '#bulk-review-submit', function() {
             var $checked = [];
@@ -509,6 +559,60 @@
             });
 
         });
+
+
+
+
+        // 【审核】显示
+        $("#item-main-body").on('click', ".item-review-show", function() {
+            var that = $(this);
+            $('input[name=id]').val(that.attr('data-id'));
+            $('.review-site-id').html(that.attr('data-id'));
+            $('.review-site-name').html(that.attr('data-name'));
+            $('.review-website').html(that.attr('data-website'));
+            $('.review-ftp').html(that.attr('data-ftp'));
+            $('.review-managebackground').html(that.attr('data-managebackground'));
+            $('#modal-body').modal('show');
+        });
+        // 【审核】取消
+        $("#modal-body").on('click', "#item-review-cancel", function() {
+            $('.review-user-id').html('');
+            $('.review-user-name').html('');
+            $('.review-website').html('');
+            $('#modal-body').modal('hide');
+        });
+        // 【审核】提交
+        $("#modal-body").on('click', "#item-review-submit", function() {
+            var that = $(this);
+            layer.msg('确定"审核"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    var options = {
+                        url: "{{ url('/admin/business/site-review') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+
+                            $("#item-review-cancel").click();
+
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
+                        }
+                    };
+                    $("#form-edit-modal").ajaxSubmit(options);
+                }
+            });
+        });
+
+
 
 
         // 【删除】【待审核】【站点】

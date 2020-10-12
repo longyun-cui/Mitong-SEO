@@ -2890,11 +2890,12 @@ class IndexRepository {
                 $keyword = SEOKeyword::find($keyword_id);
                 if($keyword)
                 {
+                    $keyword_status_original = $keyword->keywordstatus;
                     $keyword_price = $keyword->price;
                     $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
                     if($keyword_owner)
                     {
-                        if($keyword_status == "优化中")
+                        if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
                         {
                             if($keyword_owner->fund_available < ($keyword_price * 30))
                             {
@@ -2905,6 +2906,7 @@ class IndexRepository {
                     else return response_error([],'用户不存在，刷新页面试试！');
                 }
                 else return response_error([],'关键词不存在，刷新页面试试！');
+
 
                 $keyword_data["reviewuserid"] = $me->id;
                 $keyword_data["reviewusername"] = $me->username;
@@ -2918,7 +2920,7 @@ class IndexRepository {
                 $cart->price = $keyword_price;
                 $cart->save();
 
-                if($keyword_status == "优化中")
+                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
                 {
                     $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
                     $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
