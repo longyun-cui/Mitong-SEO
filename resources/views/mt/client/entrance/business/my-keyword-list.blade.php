@@ -321,7 +321,7 @@
                         'orderable': true,
                         render: function(data, type, row, meta) {
                             var $gif = '';
-                            $gif = '<img src="/seo/img/up1.gif" style="vertical-align:middle;float:right;">';
+                            $gif = '<span style="width:17px;height:25px;vertical-align:middle;float:right;">';
                             if(data < row.initialranking)
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
