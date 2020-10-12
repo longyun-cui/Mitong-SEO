@@ -352,7 +352,7 @@
                         'width':"80px",
                         "title": "资金总额",
                         "data": "fund_total",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.totalfunds;
                             return parseInt(data).toLocaleString();
@@ -362,7 +362,7 @@
                         'width':"80px",
                         "title": "资金余额",
                         "data": "fund_balance",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
 //                            return row.fund == null ? '-' : row.fund.balancefunds;
                             return '<b class="">'+parseInt(data).toLocaleString()+'</b>';
