@@ -98,7 +98,11 @@ class IndexRepository {
         $index_data->keyword_standard_count = number_format((int)$keyword_standard_data->keyword_standard_count);
         $index_data->keyword_standard_cost_sum = number_format((int)$keyword_standard_data->keyword_standard_cost_sum);
 
-        $index_data->keyword_standard_rate = round($index_data->keyword_standard_count/$keyword_count*100)."％";
+        if($keyword_count > 0)
+        {
+            $index_data->keyword_standard_rate = round($index_data->keyword_standard_count/$keyword_count*100)."％";
+        }
+        else $index_data->keyword_standard_rate = "--";
 
 
         return view('mt.client.index')
