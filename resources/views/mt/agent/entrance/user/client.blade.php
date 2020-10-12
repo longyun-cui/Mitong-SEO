@@ -299,7 +299,7 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-                <div class="caption">
+                <div class="caption _none">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
                     <a href="javascript:void(0);">
@@ -314,7 +314,7 @@
                     <thead>
                     <tr role='row' class='heading'>
                         <th>序号</th>
-                        <th>选择</th>
+                        {{--<th>选择</th>--}}
                         <th>ID</th>
                         <th></th>
                         <th></th>
@@ -322,11 +322,11 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th>历史数据</th>
+                        {{--<th>操作</th>--}}
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
-                        <td></td>
+                        {{--<td></td>--}}
                         <td></td>
                         <td></td>
                         <td></td>
@@ -338,7 +338,7 @@
                                 <option value ="1">已达标</option>
                             </select></td>
                         <td></td>
-                        <td>
+                        <td class="_none">
                             <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
@@ -362,7 +362,7 @@
                 <!-- datatable end -->
             </div>
 
-            <div class="box-footer">
+            <div class="box-footer _none">
                 <div class="row" style="margin:16px 0;">
                     <div class="col-md-offset-0 col-md-4 col-sm-8 col-xs-12">
                         {{--<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>--}}
@@ -959,14 +959,14 @@
                         "targets": 0,
                         'orderable': false
                     },
-                    {
-                        "title": "选择",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return '<label><input type="checkbox" name="bulk-detect-record-id" class="minimal" value="'+data+'"></label>';
-                        }
-                    },
+//                    {
+//                        "title": "选择",
+//                        "data": "id",
+//                        'orderable': false,
+//                        render: function(data, type, row, meta) {
+//                            return '<label><input type="checkbox" name="bulk-detect-record-id" class="minimal" value="'+data+'"></label>';
+//                        }
+//                    },
                     {
                         "title": "ID",
                         "data": "id",
@@ -1034,25 +1034,26 @@
                             return $date;
                         }
                     },
-                    {
-                        "title": "操作",
-                        'data': 'id',
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            var $date = row.detect_time.trim().split(" ")[0];
-                            var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
+                    {{--{--}}
+                        {{--"title": "操作",--}}
+                        {{--'data': 'id',--}}
+                        {{--'orderable': false,--}}
+                        {{--render: function(data, type, row, meta) {--}}
+                            {{--var $date = row.detect_time.trim().split(" ")[0];--}}
+                            {{--var html =--}}
+{{--//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+--}}
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                //                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-                                '<a class="btn btn-xs item-set-rank-show" data-id="'+data+
-                                '" data-name="'+row.keyword+'" data-rank="'+row.rank+'" data-date="'+$date+
-                                '">指定排名</a>';
-                            return html;
-                        }
-                    }
+                                {{--//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+--}}
+{{--//                                '<a class="btn btn-xs item-set-rank-show" data-id="'+data+--}}
+{{--//                                '" data-name="'+row.keyword+'" data-rank="'+row.rank+'" data-date="'+$date+--}}
+{{--//                                '">指定排名</a>'--}}
+                                {{--+'';--}}
+                            {{--return html;--}}
+                        {{--}--}}
+                    {{--}--}}
                 ],
                 "drawCallback": function (settings) {
 
