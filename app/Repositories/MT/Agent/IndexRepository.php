@@ -916,8 +916,10 @@ class IndexRepository {
             {
                 $client->increment('fund_total',$amount);
                 $client->increment('fund_balance',$amount);
+                $client->increment('fund_available',$amount);
                 $mine->decrement('fund_total',$amount);
                 $mine->decrement('fund_balance',$amount);
+                $mine->decrement('fund_available',$amount);
             }
             else throw new Exception("insert--fund-record--fail");
 
