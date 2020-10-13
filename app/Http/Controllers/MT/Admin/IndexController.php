@@ -468,7 +468,7 @@ class IndexController extends Controller
     public function view_business_work_order_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_work_order_list();
-        else if(request()->isMethod('post')) return $this->repo->get_business_work_order_datatable(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_work_order_list_datatable(request()->all());
     }
     // 返回【工单】详情
     public function operate_business_work_order_get()
@@ -565,6 +565,33 @@ class IndexController extends Controller
     public function operate_download_keyword_detect()
     {
         $this->repo->operate_download_keyword_detect(request()->all());
+    }
+
+
+
+
+    /*
+     * 公告
+     */
+    // 返回【公告列表】视图
+    public function view_notice_notice_all()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_notice_notice_all_list();
+        else if(request()->isMethod('post')) return $this->repo->get_notice_notice_all_list_datatable(request()->all());
+    }
+
+
+    // 新增【公告】
+    public function operate_notice_notice_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_notice_notice_create();
+        else if (request()->isMethod('post')) return $this->repo->operate_notice_notice_save(request()->all());
+    }
+    // 编辑【公告】
+    public function operate_notice_notice_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_notice_notice_edit();
+        else if (request()->isMethod('post')) return $this->repo->operate_notice_notice_save(request()->all());
     }
 
 

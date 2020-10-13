@@ -138,6 +138,12 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/download/keyword-detect', $controller.'@operate_download_keyword_detect');
 
 
+        Route::match(['get','post'], '/notice/notice-all', $controller.'@view_notice_notice_all');
+
+        Route::match(['get','post'], '/notice/notice-create', $controller.'@operate_notice_notice_create');
+        Route::match(['get','post'], '/notice/notice-edit', $controller.'@operate_notice_notice_edit');
+
+
     });
 
 

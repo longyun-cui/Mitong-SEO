@@ -1,8 +1,8 @@
 @extends('mt.admin.layout.layout')
 
-@section('create-text') 添加工单 @endsection
-@section('edit-text') 编辑工单 @endsection
-@section('list-text') 工单列表 @endsection
+@section('create-text') 添加公告 @endsection
+@section('edit-text') 编辑公告 @endsection
+@section('list-text') 公告列表 @endsection
 
 @section('head_title')
     @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif - 管理员后台 - 搜索引擎智能营销系统 - 米同科技
@@ -16,7 +16,7 @@
 
 @section('breadcrumb')
     <li><a href="{{ url('/admin') }}"><i class="fa fa-dashboard"></i> 首页</a></li>
-    <li><a href="{{ url('/admin/business/work-order-list') }}"><i class="fa "></i> @yield('list-text')</a></li>
+    <li><a href="{{ url('/admin/user/agent-list') }}"><i class="fa "></i> @yield('list-text')</a></li>
     <li><a href="#"><i class="fa "></i> Here</a></li>
 @endsection
 
@@ -39,51 +39,71 @@
                 {{csrf_field()}}
                 <input type="hidden" name="operate" value="{{ $operate or '' }}" readonly>
                 <input type="hidden" name="operate_id" value="{{ $operate_id or 0 }}" readonly>
-                <input type="hidden" name="site_id" value="{{ $site_data->id or 0 }}" readonly>
 
 
                 {{--类别--}}
-                <div class="form-group form-category _none">
+                <div class="form-group form-category">
                     <label class="control-label col-md-2">类别</label>
                     <div class="col-md-8">
                         <div class="btn-group">
 
+                            @if($operate == 'create' || ($operate == 'edit' && $data->usergroup == "Agent"))
                             <button type="button" class="btn">
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" name="category" value="1" checked="checked"> 工单
+                                        <input type="radio" name="usergroup" value="Agent" checked="checked"> 1级代理商
+                                        {{--<input type="radio" name="category" value="Agent"--}}
+                                               {{--@if($operate == 'edit' && $data->usergroup == "Agent") checked="checked" @endif--}}
+                                        {{--> 1级代理商--}}
                                     </label>
                                 </div>
                             </button>
+                            @endif
+
+                            @if($operate == 'edit' && $data->usergroup == "Agent2")
+                            <button type="button" class="btn">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="category" value="Agent2"
+                                           @if($operate == 'edit' && $data->usergroup == "Agent2") checked="checked" @endif
+                                        > 二级代理商
+                                    </label>
+                                </div>
+                            </button>
+                            @endif
 
                         </div>
                     </div>
                 </div>
 
 
-                {{--站点名称--}}
+                {{--用户名--}}
                 <div class="form-group">
-                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 站点名称</label>
+                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 用户名</label>
                     <div class="col-md-8 ">
-                        {{ $site_data->sitename or '' }}
-                        {{--<input type="text" class="form-control" placeholder="站点名称" value="{{ $site_data->sitename or '' }}" readonly>--}}
+                        <input type="text" class="form-control" name="username" placeholder="用户名" value="{{ $data->username or '' }}">
                     </div>
                 </div>
-
-                {{--WEBSITE--}}
+                {{--真实姓名--}}
                 <div class="form-group">
-                    <label class="control-label col-md-2"><sup class="text-red">*</sup> WEBSITE</label>
+                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 真实姓名</label>
                     <div class="col-md-8 ">
-                        {{ $site_data->website or '' }}
-                        {{--<input type="text" class="form-control" placeholder="WEBSITE" value="{{ $site_data->website or '' }}" readonly>--}}
+                        <input type="text" class="form-control" name="truename" placeholder="真实姓名" value="{{ $data->truename or '' }}">
                     </div>
                 </div>
-
-                {{--标题--}}
+                {{--企业全称--}}
                 <div class="form-group">
-                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 标题</label>
+                    <label class="control-label col-md-2"><sup class="text-red">*</sup> 企业全称</label>
                     <div class="col-md-8 ">
-                        <input type="text" class="form-control" name="title" placeholder="标题" value="{{ $data->title or '' }}">
+                        <input type="text" class="form-control" name="epname" placeholder="企业全称" value="{{ $data->epname or '' }}">
+                    </div>
+                </div>
+                {{--说明--}}
+                <div class="form-group _none">
+                    <label class="control-label col-md-2">描述</label>
+                    <div class="col-md-8 ">
+                        {{--<input type="text" class="form-control" name="description" placeholder="描述" value="{{$data->description or ''}}">--}}
+                        <textarea class="form-control" name="description" rows="3" cols="100%">{{ $data->description or '' }}</textarea>
                     </div>
                 </div>
 
@@ -194,35 +214,6 @@
                     </div>
                 </div>
 
-                {{--attachment 附件--}}
-                <div class="form-group">
-                    <label class="control-label col-md-2">附件</label>
-                    <div class="col-md-8 fileinput-group">
-
-                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                            <div class="fileinput-new thumbnail">
-                                <a target="_blank" href="/all/download-item-attachment?item-id={{ $data->id or 0 }}">
-                                    {{ $data->attachment_name or '' }}
-                                </a>
-                            </div>
-                            <div class="fileinput-preview fileinput-exists thumbnail">
-                            </div>
-                            <div class="btn-tool-group">
-                                <span class="btn-file">
-                                    <button class="btn btn-sm btn-primary fileinput-new">选择附件</button>
-                                    <button class="btn btn-sm btn-warning fileinput-exists">更改</button>
-                                    <input type="file" name="attachment" />
-                                </span>
-                                <span class="">
-                                    <button class="btn btn-sm btn-danger fileinput-exists" data-dismiss="fileinput">移除</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div id="titleImageError" style="color: #a94442"></div>
-
-                    </div>
-                </div>
-
                 {{--启用--}}
                 @if($operate == 'create')
                     <div class="form-group form-type _none">
@@ -286,7 +277,7 @@
         // 添加or编辑
         $("#edit-item-submit").on('click', function() {
             var options = {
-                url: "{{ url('/admin/business/site/work-order-edit') }}",
+                url: "{{ url('/admin/user/agent-edit') }}",
                 type: "post",
                 dataType: "json",
                 // target: "#div2",
@@ -295,7 +286,7 @@
                     else
                     {
                         layer.msg(data.msg);
-                        location.href = "{{ url('/admin/business/work-order-list') }}";
+                        location.href = "{{ url('/admin/user/agent-list') }}";
                     }
                 }
             };

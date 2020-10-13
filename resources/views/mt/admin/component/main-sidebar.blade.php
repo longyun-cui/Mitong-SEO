@@ -139,7 +139,7 @@
 
             <li class="treeview {{ $sidebar_work_order_list_active or '' }}">
                 <a href="{{ url('/admin/business/work-order-list') }}">
-                    <i class="fa fa-envelope"></i> <span>工单列表</span>
+                    <i class="fa fa-file-text text-green"></i> <span>工单列表</span>
                 </a>
             </li>
 
@@ -148,6 +148,30 @@
 
             {{--留言管理--}}
             <li class="header _none">公告&通知管理</li>
+
+            <li class="treeview {{ $sidebar_notice_notice_all_active or '' }} _none">
+                <a href="{{ url('/admin/notice/notice-all') }}">
+                    <i class="fa fa-envelope"></i> <span>全部公告</span>
+                </a>
+            </li>
+
+            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
+                <a href="{{ url('/admin/notice/notice-all') }}">
+                    <i class="fa fa-envelope"></i> <span>管理员发布</span>
+                </a>
+            </li>
+
+            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
+                <a href="{{ url('/admin/notice/admin-release') }}">
+                    <i class="fa fa-envelope"></i> <span>管理员发布</span>
+                </a>
+            </li>
+
+            <li class="treeview {{ $sidebar_notice_agent_active or '' }} _none">
+                <a href="{{ url('/admin/notice/agent-release') }}">
+                    <i class="fa fa-envelope"></i> <span>代理商发布</span>
+                </a>
+            </li>
 
             <li class="treeview {{ $sidebar_notice_active or '' }} _none">
                 <a href="#">
@@ -159,7 +183,9 @@
                 </a>
                 <ul class="treeview-menu">
                     <li class="{{ $sidebar_notice_all_active or '' }}">
-                        <a href="{{ url('/admin/notice/notice-all') }}"><i class="fa fa-circle-o"></i> <span>全部通知</span></a>
+                        <a href="{{ url('/admin/notice/notice-all') }}">
+                            <i class="fa fa-circle-o"></i> <span>全体通知</span>
+                        </a>
                     </li>
                     <li class="{{ $sidebar_notice_agent_active or '' }}">
                         <a href="{{ url('/admin/notice/notice-agent') }}"><i class="fa fa-circle-o"></i> <span>代理商公告</span></a>

@@ -3664,7 +3664,7 @@ class IndexRepository {
             ->with(['sidebar_work_order_list_active'=>'active menu-open']);
     }
     // 返回【工单】列表
-    public function get_business_work_order_datatable($post_data)
+    public function get_business_work_order_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
 
@@ -4468,6 +4468,190 @@ class IndexRepository {
             });
         })->export('xls');
         return response_success([]);
+    }
+
+
+
+
+    /*
+     * 公告&通知
+     */
+    // 返回【公告】视图
+    public function show_notice_notice_all_list()
+    {
+        return view('mt.admin.entrance.notice.notice-all-list')
+            ->with(['sidebar_notice_notice_all_active'=>'active']);
+    }
+    // 返回【公告】列表
+    public function get_notice_notice_all_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $query = Item::select('*')->with(['user'])->where('category',9);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+
+
+    // 返回【公告】视图
+    public function view_notice_notice_create()
+    {
+        $admin = Auth::guard('admin')->user();
+        $view_blade = 'mt.admin.entrance.notice.notice-edit';
+        return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
+    }
+
+    // 返回【公告】视图
+    public function view_notice_notice_edit()
+    {
+        $id = request("id",0);
+        $view_blade = 'mt.admin.entrance.notice.notice-edit';
+
+        if($id == 0)
+        {
+            return view($view_blade)->with(['operate'=>'create', 'operate_id'=>$id]);
+        }
+        else
+        {
+            $mine = User::with(['parent'])->find($id);
+            if($mine)
+            {
+                if(!in_array($mine->usergroup,['Agent','Agent2'])) return response("该用户不是代理商！", 404);
+                $mine->custom = json_decode($mine->custom);
+                $mine->custom2 = json_decode($mine->custom2);
+                $mine->custom3 = json_decode($mine->custom3);
+
+                return view($view_blade)->with(['operate'=>'edit', 'operate_id'=>$id, 'data'=>$mine]);
+            }
+            else return response("该用户不存在！", 404);
+        }
+    }
+
+    // 保存【公告】
+    public function operate_notice_notice_save($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'username.required' => '请输入用户名',
+            'mobileno.required' => '请输入电话',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'username' => 'required',
+            'mobileno' => 'required'
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $admin = Auth::guard('admin')->user();
+        if($admin->usergroup != "Manage") return response_error([],"你没有操作权限");
+
+
+        $operate = $post_data["operate"];
+        $operate_id = $post_data["operate_id"];
+
+        if($operate == 'create') // 添加 ( $id==0，添加一个新用户 )
+        {
+            $mine = new User;
+            $current_time = date('Y-m-d H:i:s');
+            $post_data["usergroup"] = "Agent";
+            $post_data["pid"] = $admin->id;
+            $post_data["createuserid"] = $admin->id;
+            $post_data["createtime"] = $current_time;
+            $post_data["userstatus"] = "正常";
+            $post_data["status"] = 1;
+            $post_data["userpass"] = basic_encrypt("123456");
+            $post_data["password"] = password_encode("123456");
+            $post_data["password_1"] = "123456";
+        }
+        else if($operate == 'edit') // 编辑
+        {
+            $mine = User::find($operate_id);
+            if(!$mine) return response_error([],"该用户不存在，刷新页面重试");
+        }
+        else return response_error([],"参数有误！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $mine_data = $post_data;
+            unset($mine_data['operate']);
+            unset($mine_data['operate_id']);
+            $bool = $mine->fill($mine_data)->save();
+            if($bool)
+            {
+                // 封面图片
+                if(!empty($post_data["cover"]))
+                {
+                    // 删除原封面图片
+                    $mine_cover_pic = $mine->cover_pic;
+                    if(!empty($mine_cover_pic) && file_exists(storage_path("resource/" . $mine_cover_pic)))
+                    {
+                        unlink(storage_path("resource/" . $mine_cover_pic));
+                    }
+
+                    $result = upload_storage($post_data["cover"]);
+                    if($result["result"])
+                    {
+                        $mine->cover_pic = $result["local"];
+                        $mine->save();
+                    }
+                    else throw new Exception("upload-cover-fail");
+                }
+
+            }
+            else throw new Exception("insert--user--fail");
+
+            DB::commit();
+            return response_success(['id'=>$mine->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
     }
 
 
