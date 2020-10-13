@@ -7,7 +7,9 @@ class Item extends Model
     //
     protected $table = "item";
     protected $fillable = [
-        'active', 'category', 'type', 'sort', 'user_id', 'item_id', 'menu_id', 'site_id', 'keyword_id',
+        'active', 'category', 'type', 'sort',
+        'user_id', 'creator_id',
+        'item_id', 'menu_id', 'site_id', 'keyword_id',
         'name', 'title', 'subtitle', 'description', 'content', 'custom', 'custom2', 'custom3',
         'cover_pic', 'link_url', 'attachment_name', 'attachment_src',
         'visit_num', 'share_num'
@@ -20,6 +22,11 @@ class Item extends Model
 //        return array(); // 原形返回；
 //        return array('created_at','updated_at');
 //    }
+
+    function creator()
+    {
+        return $this->belongsTo('App\Models\MT\User','creator_id','id');
+    }
 
     function user()
     {

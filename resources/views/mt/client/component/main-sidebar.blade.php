@@ -99,11 +99,11 @@
 
 
             {{--留言管理--}}
-            <li class="header _none">公告&通知管理</li>
+            <li class="header">公告&通知管理</li>
 
-            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
-                <a href="{{ url('/client/work/work-list') }}">
-                    <i class="fa fa-envelope"></i> <span>通知列表</span>
+            <li class="treeview {{ $sidebar_notice_notice_list_active or '' }}">
+                <a href="{{ url('/client/notice/notice-list') }}">
+                    <i class="fa fa-envelope"></i> <span>公告列表</span>
                 </a>
             </li>
 

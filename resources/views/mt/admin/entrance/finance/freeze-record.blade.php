@@ -128,17 +128,17 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "64px",
+                        "width": "48px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
                         "className": "text-left",
-                        "width": "160px",
+                        "width": "128px",
                         "title": "客户",
                         "data": "id",
                         'orderable': false,
@@ -148,7 +148,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "160px",
+                        "width": "",
                         "title": "关键词",
                         "data": "id",
                         'orderable': false,
@@ -158,7 +158,7 @@
                     },
                     {
                         "className": "text-left",
-                        "width": "160px",
+                        "width": "",
                         "title": "站点",
                         "data": "id",
                         'orderable': false,
@@ -167,7 +167,7 @@
                         }
                     },
                     {
-                        "width": "96px",
+                        "width": "80px",
                         "title": "搜索引擎",
                         "data": "id",
                         'orderable': false,
@@ -203,19 +203,24 @@
                         }
                     },
                     {
-                        "width": "112px",
+                        "width": "144px",
                         "title": "记录时间",
                         "data": "regtime",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
 //                            return data;
 //                            newDate = new Date(data*1000);
-//                            return newDate.toLocaleDateString('chinese',{hour12:false});
+//                            return newDate.toLocaleString('chinese',{hour12:false});
                             var $date = new Date(data*1000);
                             var $year = $date.getFullYear();
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
+                            var $hour = ('00'+$date.getHours()).slice(-2);
+                            var $minute = ('00'+$date.getMinutes()).slice(-2);
+                            var $second = ('00'+$date.getSeconds()).slice(-2);
+//                            return $year+'-'+$month+'-'+$day;
+                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute;
+//                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute+':'+$second;
                         }
                     },
                     {{--{--}}

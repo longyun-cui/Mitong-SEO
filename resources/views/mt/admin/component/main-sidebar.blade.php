@@ -147,27 +147,27 @@
 
 
             {{--留言管理--}}
-            <li class="header _none">公告&通知管理</li>
+            <li class="header">公告&通知管理</li>
 
-            <li class="treeview {{ $sidebar_notice_notice_all_active or '' }} _none">
-                <a href="{{ url('/admin/notice/notice-all') }}">
-                    <i class="fa fa-envelope"></i> <span>全部公告</span>
+            <li class="treeview {{ $sidebar_notice_notice_list_active or '' }}">
+                <a href="{{ url('/admin/notice/notice-list') }}">
+                    <i class="fa fa-envelope"></i> <span>公告列表</span>
                 </a>
             </li>
 
-            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
-                <a href="{{ url('/admin/notice/notice-all') }}">
-                    <i class="fa fa-envelope"></i> <span>管理员发布</span>
+            <li class="treeview {{ $sidebar_notice_my_notice_list_active or '' }}">
+                <a href="{{ url('/admin/notice/my-notice-list') }}">
+                    <i class="fa fa-envelope"></i> <span>我发布的</span>
                 </a>
             </li>
 
-            <li class="treeview {{ $sidebar_notice_all_active or '' }} _none">
+            <li class="treeview {{ $sidebar_notice_notice_admin_release_active or '' }} _none">
                 <a href="{{ url('/admin/notice/admin-release') }}">
                     <i class="fa fa-envelope"></i> <span>管理员发布</span>
                 </a>
             </li>
 
-            <li class="treeview {{ $sidebar_notice_agent_active or '' }} _none">
+            <li class="treeview {{ $sidebar_notice_notice_agent_release_active or '' }} _none">
                 <a href="{{ url('/admin/notice/agent-release') }}">
                     <i class="fa fa-envelope"></i> <span>代理商发布</span>
                 </a>

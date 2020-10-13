@@ -27,12 +27,16 @@ Route::group([], function () {
         Route::get('index', $controller.'@index');
 
 
+        // info
         Route::match(['get','post'], '/info/', $controller.'@view_info_index');
         Route::match(['get','post'], '/info/index', $controller.'@view_info_index');
         Route::match(['get','post'], '/info/edit', $controller.'@operate_info_edit');
         Route::match(['get','post'], '/info/password-reset', $controller.'@operate_info_password_reset');
 
 
+
+
+        // business
         Route::match(['get','post'], '/business/my-site-list', $controller.'@view_my_site_list');
         Route::match(['get','post'], '/business/my-keyword-list', $controller.'@view_my_keyword_list');
         Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
@@ -58,10 +62,19 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/my-work-order-complete', $controller.'@operate_business_my_work_order_complete');
 
 
+
+        // finance
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/overview-month', $controller.'@view_finance_overview_month');
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');
         Route::match(['get','post'], '/finance/expense-record', $controller.'@view_finance_expense_record');
+
+
+
+
+        // notice
+        Route::match(['get','post'], '/notice/notice-list', $controller.'@view_notice_notice_list');
+        Route::match(['get','post'], '/notice/notice-get', $controller.'@operate_notice_notice_get');
 
 
     });

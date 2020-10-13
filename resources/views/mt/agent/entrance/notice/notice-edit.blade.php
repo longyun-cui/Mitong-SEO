@@ -1,4 +1,4 @@
-@extends('mt.admin.layout.layout')
+@extends('mt.agent.layout.layout')
 
 @section('create-text') 添加公告 @endsection
 @section('edit-text') 编辑公告 @endsection
@@ -47,40 +47,14 @@
                     <div class="col-md-8">
                         <div class="btn-group">
 
-                            @if($operate == 'create' || ($operate == 'edit' && $data->type == 1))
-                            <button type="button" class="btn">
-                                <div class="radio">
-                                    <label>
-                                        {{--<input type="radio" name="sort" value="1" checked="checked"> 全体公告--}}
-                                        <input type="radio" name="type" value="1"
-                                           @if($operate == 'create' || ($operate == 'edit' && $data->type == 1)) checked="checked" @endif
-                                        > 全体公告
-                                    </label>
-                                </div>
-                            </button>
-                            @endif
-
-                            @if($operate == 'create' || ($operate == 'edit' && $data->type == 9))
-                            <button type="button" class="btn">
-                                <div class="radio">
-                                    <label>
-                                        {{--<input type="radio" name="sort" value="9" checked="checked"> 代理商公告--}}
-                                        <input type="radio" name="type" value="9"
-                                           @if($operate == 'edit' && $data->type == 9) checked="checked" @endif
-                                        > 代理商
-                                    </label>
-                                </div>
-                            </button>
-                            @endif
-
                             @if($operate == 'create' || ($operate == 'edit' && $data->type == 11))
                             <button type="button" class="btn">
                                 <div class="radio">
                                     <label>
                                         {{--<input type="radio" name="sort" value="9" checked="checked"> 代理商公告--}}
                                         <input type="radio" name="type" value="11"
-                                               @if($operate == 'edit' && $data->type == 11) checked="checked" @endif
-                                        > 客户
+                                               @if($operate == 'create' || ($operate == 'edit' && $data->type == 11)) checked="checked" @endif
+                                        > 我的客户
                                     </label>
                                 </div>
                             </button>
@@ -284,7 +258,7 @@
         // 添加or编辑
         $("#edit-item-submit").on('click', function() {
             var options = {
-                url: "{{ url('/admin/notice/notice-edit') }}",
+                url: "{{ url('/agent/notice/notice-edit') }}",
                 type: "post",
                 dataType: "json",
                 // target: "#div2",
@@ -293,7 +267,7 @@
                     else
                     {
                         layer.msg(data.msg);
-                        location.href = "{{ url('/admin/notice/notice-list') }}";
+                        location.href = "{{ url('/agent/notice/notice-list') }}";
                     }
                 }
             };

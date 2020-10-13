@@ -1,9 +1,9 @@
-@extends('mt.admin.layout.layout')
+@extends('mt.client.layout.layout')
 
-@section('head_title','公告列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','公告列表 - 搜索引擎智能营销系统')
 
 @section('header','公告列表')
-@section('description','搜索引擎智能营销系统-米同科技')
+@section('description','搜索引擎智能营销系统')
 
 
 @section('breadcrumb')
@@ -23,7 +23,7 @@
                 <div class="caption">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
-                    <a href="{{ url('/admin/notice/notice-edit') }}">
+                    <a href="{{ url('/admin/notice/notice-create') }}">
                         <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加公告</button>
                     </a>
                 </div>
@@ -44,13 +44,9 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
-                        <th></th>
                         <th>操作</th>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -102,7 +98,7 @@
                 <div class="box- box-info- form-container">
 
                     <div class="box-header with-border" style="margin:16px 0;">
-                        <h3 class="box-title">工单详情</h3>
+                        <h3 class="box-title">公告详情</h3>
                         <div class="box-tools pull-right">
                         </div>
                     </div>
@@ -111,52 +107,44 @@
                         <div class="box-body">
 
                             {{csrf_field()}}
-                            <input type="hidden" name="operate" value="work-order" readonly>
+                            <input type="hidden" name="operate" value="notice-get" readonly>
                             <input type="hidden" name="id" value="0" readonly>
 
                             {{--类别--}}
 
-
-                            {{--用户名--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">用户</label>
-                                <div class="col-md-8 control-label" style="text-align:left;">
-                                    <span class="work-order-username"></span>
-                                </div>
-                            </div>
-                            {{--站点名称--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点名称</label>
-                                <div class="col-md-8 ">
-                                    <span class="work-order-name"></span>
-                                </div>
-                            </div>
-                            {{--站点地址--}}
-                            <div class="form-group">
-                                <label class="control-label col-md-2">站点地址</label>
-                                <div class="col-md-8 ">
-                                    <span class="work-order-website"></span>
-                                </div>
-                            </div>
                             {{--标题--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">标题</label>
                                 <div class="col-md-8 ">
-                                    <div><b class="work-order-title"></b></div>
+                                    <div><b class="item-detail-title"></b></div>
+                                </div>
+                            </div>
+                            {{--副标题--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">副标题</label>
+                                <div class="col-md-8 ">
+                                    <div class="item-detail-subtitle"></div>
+                                </div>
+                            </div>
+                            {{--描述--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">描述</label>
+                                <div class="col-md-8 ">
+                                    <div class="item-detail-description"></div>
                                 </div>
                             </div>
                             {{--内容--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">内容</label>
                                 <div class="col-md-8 ">
-                                    <div class="work-order-content"></div>
+                                    <div class="item-detail-content"></div>
                                 </div>
                             </div>
                             {{--附件--}}
                             <div class="form-group">
                                 <label class="control-label col-md-2">附件</label>
                                 <div class="col-md-8 ">
-                                    <div class="work-order-attachment"></div>
+                                    <div class="item-detail-attachment"></div>
                                 </div>
                             </div>
                             {{--说明--}}
@@ -201,15 +189,15 @@
                 "serverSide": true,
                 "searching": false,
                 "ajax": {
-                    'url': "{{ url('/admin/notice/notice-all') }}",
+                    'url': "{{ url('/client/notice/notice-list') }}",
                     "type": 'POST',
                     "dataType" : 'json',
                     "data": function (d) {
                         d._token = $('meta[name="_token"]').attr('content');
-                        d.keyword = $('input[name="keyword"]').val();
-                        d.website = $('input[name="website"]').val();
-                        d.searchengine = $('select[name="searchengine"]').val();
-                        d.latest_ranking = $('select[name="latest_ranking"]').val();
+                        d.title = $('input[name="title"]').val();
+                        d.creator = $('input[name="creator"]').val();
+                        d.sort = $('select[name="sort"]').val();
+                        d.type = $('select[name="type"]').val();
 //                        d.nickname 	= $('input[name="nickname"]').val();
 //                        d.certificate_type_id = $('select[name="certificate_type_id"]').val();
 //                        d.certificate_state = $('select[name="certificate_state"]').val();
@@ -230,9 +218,19 @@
                         "width": "48px",
                         "title": "ID",
                         "data": "id",
-                        'orderable': false,
+                        "orderable": true,
                         render: function(data, type, row, meta) {
                             return data;
+                        }
+                    },
+                    {
+                        "className": "text-left",
+                        "width": "128px",
+                        "title": "发布者",
+                        "data": "creator_id",
+                        "orderable": false,
+                        render: function(data, type, row, meta) {
+                            return row.creator == null ? '未知' : '<span class="text-blue">'+row.creator.username+'</span>';
                         }
                     },
                     {
@@ -240,97 +238,44 @@
                         "width": "",
                         "title": "标题",
                         "data": "title",
-                        'orderable': false,
+                        "orderable": false,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
-                        "width": "160px",
-                        "title": "客户",
-                        "data": "user_id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.user == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.user.id+'">'+row.user.username+'</a>';
-                        }
-                    },
-                    {
-                        "width": "160px",
-                        "title": "站点",
-                        "data": "site_id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return row.site == null ? '未知' : row.site.website;
-                        }
-                    },
-                    {
-                        "width": "72px",
-                        "title": "创建时间",
-                        "data": "created_at",
-                        'orderable': false,
+                        "className": "",
+                        "width": "144px",
+                        "title": "发布时间",
+                        "data": "updated_at",
+                        "orderable": false,
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data*1000);
                             var $year = $date.getFullYear();
                             var $month = ('00'+($date.getMonth()+1)).slice(-2);
                             var $day = ('00'+($date.getDate())).slice(-2);
-                            return $year+'-'+$month+'-'+$day;
-                        }
-                    },
-                    {
-                        "width": "64px",
-                        "title": "状态",
-                        "data": "active",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-//                            return data;
-                            if(data == 0)
-                            {
-                                return '<small class="btn-xs bg-teal">待推送</small>';
-                            }
-                            else if(data == 1)
-                            {
-                                if(row.is_read == 0) return '<small class="btn-xs bg-olive">未读</small>';
-                                else if(row.is_read == 1) return '<small class="btn-xs bg-primary">已读</small>';
-                                else return "--";
-                            }
-                            else if(data == 9)
-                            {
-                                return '<small class="btn-xs bg-purple">已完成</small>';
-                            }
-                            else return "有误";
+                            var $hour = ('00'+$date.getHours()).slice(-2);
+                            var $minute = ('00'+$date.getMinutes()).slice(-2);
+                            var $second = ('00'+$date.getSeconds()).slice(-2);
+//                            return $year+'-'+$month+'-'+$day;
+                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute;
+//                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute+':'+$second;
                         }
                     },
                     {
                         "width": "192px",
                         "title": "操作",
                         "data": 'id',
-                        'orderable': false,
+                        "orderable": false,
                         render: function(data, type, row, meta) {
-                            if(row.active == 0)
-                            {
-                                $html_1 =
-                                    '<a class="btn btn-xs bg-navy item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                    '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                    '<a class="btn btn-xs bg-navy item-push-submit" data-id="'+data+'" >推送</a>'+
-                                    '';
-                            }
-                            else
-                            {
-                                $html_1 =
-                                    '<a class="btn btn-xs btn-default disabled item-edit-submit" data-id="'+data+'">编辑</a>'+
-                                    '<a class="btn btn-xs btn-default disabled item-delete-submit" data-id="'+data+'" >删除</a>'+
-                                    '<a class="btn btn-xs btn-default disabled item-push-submit" data-id="'+data+'" >推送</a>'+
-                                    '';
-                            }
                             var html =
 //                                    '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                    '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
 //                                    '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
 //                                    '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
                                     {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-                                    $html_1+
-                                    '<a class="btn btn-xs bg-primary item-work-order-show" data-id="'+data+'" data-username="'+row.user.username+'" data-name="'+row.site.sitename+'" data-website="'+row.site.website+'">查看详情</a>'+
+                                    '<a class="btn btn-xs bg-primary item-detail-show" data-id="'+data+'">查看详情</a>'+
                                     '';
                             return html;
                         }
@@ -408,7 +353,7 @@
     $(function() {
 
         // 表格【查询】
-        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+        $(".item-main-body").on('keyup', ".item-search-keyup", function(event) {
             if(event.keyCode ==13)
             {
                 $("#filter-submit").click();
@@ -427,25 +372,30 @@
             window.open("/statistics/item?id="+that.attr('data-id'));
         });
 
+
+
+
         // 【编辑】
         $("#item-main-body").on('click', ".item-edit-submit", function() {
             var that = $(this);
-            window.location.href = "/admin/business/site/work-order-edit?id="+that.attr('data-id');
+            window.location.href = "/admin/notice/notice-edit?id="+that.attr('data-id');
         });
 
 
+
+
         // 【显示详情】
-        $("#item-main-body").on('click', ".item-work-order-show", function() {
+        $("#item-main-body").on('click', ".item-detail-show", function() {
             var that = $(this);
             var $data = new Object();
             $.ajax({
                 type:"post",
                 dataType:'json',
                 async:false,
-                url: "{{ url('/admin/business/work-order-get') }}",
+                url: "{{ url('/client/notice/notice-get') }}",
                 data: {
                     _token: $('meta[name="_token"]').attr('content'),
-                    operate:"work-order-get",
+                    operate:"notice-get",
                     id:that.attr('data-id')
                 },
                 success:function(data){
@@ -457,20 +407,19 @@
                 }
             });
             $('input[name=id]').val(that.attr('data-id'));
-            $('.work-order-user-id').html(that.attr('data-user-id'));
-            $('.work-order-username').html(that.attr('data-username'));
-            $('.work-order-name').html(that.attr('data-name'));
-            $('.work-order-website').html(that.attr('data-website'));
-            $('.work-order-title').html($data.title);
-            $('.work-order-content').html($data.content);
+            $('.item-detail-title').html($data.title);
+            $('.item-detail-subtitle').html($data.subtitle);
+            $('.item-detail-description').html($data.description);
+            $('.item-detail-content').html($data.content);
             if($data.attachment_name)
             {
                 var $attachment_html = $data.attachment_name+'&nbsp&nbsp&nbsp&nbsp'+'<a href="/all/download-item-attachment?item-id='+$data.id+'">下载</a>';
-                $('.work-order-attachment').html($attachment_html);
+                $('.item-detail-attachment').html($attachment_html);
             }
             $('#modal-body').modal('show');
 
         });
+
 
         // 【推送】
         $("#item-main-body").on('click', ".item-push-submit", function() {
@@ -480,15 +429,21 @@
                 ,btn: ['确定', '取消']
                 ,yes: function(index){
                     $.post(
-                        "{{ url('/admin/business/work-order-push') }}",
+                        "{{ url('/admin/notice/notice-push') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
-                            operate: "work-order-push",
+                            operate: "notice-push",
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+                                layer.msg(data.msg);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );
@@ -507,12 +462,18 @@
                         "{{ url('/admin/notice/notice-delete') }}",
                         {
                             _token: $('meta[name="_token"]').attr('content'),
-                            operate: "work-order-delete",
+                            operate: "notice-delete",
                             id:that.attr('data-id')
                         },
                         function(data){
+                            layer.close(index);
                             if(!data.success) layer.msg(data.msg);
-                            else location.reload();
+                            else
+                            {
+                                layer.msg(data.msg);
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
                         },
                         'json'
                     );

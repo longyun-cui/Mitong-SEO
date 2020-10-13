@@ -265,5 +265,55 @@ class IndexController extends Controller
 
 
 
+    /*
+     * 公告
+     */
+    // 新增【公告】
+    public function operate_notice_notice_create()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_notice_notice_create();
+        else if (request()->isMethod('post')) return $this->repo->operate_notice_notice_save(request()->all());
+    }
+    // 编辑【公告】
+    public function operate_notice_notice_edit()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_notice_notice_edit(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->operate_notice_notice_save(request()->all());
+    }
+
+
+    // 返回【公告列表】视图
+    public function view_notice_notice_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_notice_notice_list();
+        else if(request()->isMethod('post')) return $this->repo->get_notice_notice_list_datatable(request()->all());
+    }
+
+    // 返回【我发布的公告】视图
+    public function view_notice_my_notice_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_notice_my_notice_list();
+        else if(request()->isMethod('post')) return $this->repo->get_notice_my_notice_list_datatable(request()->all());
+    }
+
+
+    // 返回【工单】详情
+    public function operate_notice_notice_get()
+    {
+        return $this->repo->operate_notice_notice_get(request()->all());
+    }
+    // 删除【工单】
+    public function operate_notice_notice_push()
+    {
+        return $this->repo->operate_notice_notice_push(request()->all());
+    }
+    // 删除【工单】
+    public function operate_notice_notice_delete()
+    {
+        return $this->repo->operate_notice_notice_delete(request()->all());
+    }
+
+
+
 
 }

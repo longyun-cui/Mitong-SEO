@@ -4,9 +4,12 @@ namespace App\Repositories\MT\Agent;
 use App\Models\MT\User;
 use App\Models\MT\ExpenseRecord;
 use App\Models\MT\FundRechargeRecord;
-use App\Models\MT\SEOKeywordDetectRecord;
+use App\Models\MT\FundFreezeRecord;
 use App\Models\MT\SEOSite;
+use App\Models\MT\SEOCart;
 use App\Models\MT\SEOKeyword;
+use App\Models\MT\SEOKeywordDetectRecord;
+use App\Models\MT\Item;
 
 use App\Repositories\Common\CommonRepository;
 use Response, Auth, Validator, DB, Exception;
@@ -418,7 +421,6 @@ class IndexRepository {
                 'user_data'=>$user_data
             ]);
     }
-
     // 返回【客户-关键词】列表
     public function get_user_client_keyword_list_datatable($post_data)
     {
@@ -492,7 +494,6 @@ class IndexRepository {
         $view_blade = 'mt.agent.entrance.user.sub-agent-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
     }
-
     // 返回【编辑二级代理商】视图
     public function view_user_sub_agent_edit()
     {
@@ -520,7 +521,6 @@ class IndexRepository {
             else return response("该用户不存在！", 404);
         }
     }
-
     // 保存【二级代理商】
     public function operate_user_sub_agent_save($post_data)
     {
@@ -629,7 +629,6 @@ class IndexRepository {
         $view_blade = 'mt.agent.entrance.user.client-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
     }
-
     // 返回【编辑客户】视图
     public function view_user_client_edit()
     {
@@ -657,7 +656,6 @@ class IndexRepository {
             else return response("该用户不存在！", 404);
         }
     }
-
     // 保存【客户】
     public function operate_user_client_save($post_data)
     {
@@ -1161,11 +1159,165 @@ class IndexRepository {
 
 
 
-    // 返回列表数据
-    public function get_list_datatable($post_data)
+    /*
+     * 公告&通知
+     */
+    // 返回【添加公告】视图
+    public function view_notice_notice_create()
     {
-        $org_id = Auth::guard("admin")->user()->org_id;
-        $query = Item::select("*")->where('org_id',$org_id)->with(['admin','menu']);
+        $me = Auth::guard('agent')->user();
+        $view_blade = 'mt.agent.entrance.notice.notice-edit';
+        return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
+    }
+    // 返回【编辑公告】视图
+    public function view_notice_notice_edit($post_data)
+    {
+        $me = Auth::guard('agent')->user();
+        if(!in_array($me->usergroup,['Agent','Agent2'])) return response("你没有权限操作！", 404);
+
+        $id = $post_data["id"];
+        $mine = Item::with(['user'])->find($id);
+        if(!$mine) return response_error([],"该公告不存在，刷新页面试试！");
+        if($mine->creator_id != $me->id) return response_error([],"该公告不是你的，你没有权限操作！");
+
+        $view_blade = 'mt.agent.entrance.notice.notice-edit';
+
+        if($id == 0)
+        {
+            return view($view_blade)->with(['operate'=>'create', 'operate_id'=>$id]);
+        }
+        else
+        {
+            $mine = Item::with(['user'])->find($id);
+            if($mine)
+            {
+                $mine->custom = json_decode($mine->custom);
+                $mine->custom2 = json_decode($mine->custom2);
+                $mine->custom3 = json_decode($mine->custom3);
+
+                return view($view_blade)->with(['operate'=>'edit', 'operate_id'=>$id, 'data'=>$mine]);
+            }
+            else return response("该公告不存在！", 404);
+        }
+    }
+    // 保存【公告】
+    public function operate_notice_notice_save($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'title.required' => '请输入标题',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'title' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $me = Auth::guard('agent')->user();
+        if(!in_array($me->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
+
+
+        $operate = $post_data["operate"];
+        $operate_id = $post_data["operate_id"];
+
+        if($operate == 'create') // 添加 ( $id==0，添加一个新用户 )
+        {
+            $mine = new Item;
+            $post_data["category"] = 9;
+            $post_data["sort"] = 9;
+            $post_data["creator_id"] = $me->id;
+        }
+        else if($operate == 'edit') // 编辑
+        {
+            $mine = Item::find($operate_id);
+            if(!$mine) return response_error([],"该公告不存在，刷新页面重试！");
+            if($mine->creator_id != $me->id) return response_error([],"该公告不是你的，你没有权限操作！");
+        }
+        else return response_error([],"参数有误！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $mine_data = $post_data;
+            unset($mine_data['operate']);
+            unset($mine_data['operate_id']);
+            $bool = $mine->fill($mine_data)->save();
+            if($bool)
+            {
+                // 封面图片
+                if(!empty($post_data["cover"]))
+                {
+                    // 删除原封面图片
+                    $mine_cover_pic = $mine->cover_pic;
+                    if(!empty($mine_cover_pic) && file_exists(storage_path("resource/" . $mine_cover_pic)))
+                    {
+                        unlink(storage_path("resource/" . $mine_cover_pic));
+                    }
+
+                    $result = upload_storage($post_data["cover"]);
+                    if($result["result"])
+                    {
+                        $mine->cover_pic = $result["local"];
+                        $mine->save();
+                    }
+                    else throw new Exception("upload-cover-fail");
+                }
+            }
+            else throw new Exception("insert--item--fail");
+
+            DB::commit();
+            return response_success(['id'=>$mine->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+    // 返回【公告列表】视图
+    public function show_notice_notice_list()
+    {
+        return view('mt.agent.entrance.notice.notice-list')
+            ->with(['sidebar_notice_notice_list_active'=>'active']);
+    }
+    // 返回【公告列表】数据
+    public function get_notice_notice_list_datatable($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+
+        $query = Item::select('*')->with(['creator'])->where('category',9)
+            ->where( function($query) use($me) {
+                $query->where('creator_id',$me->id)->orWhere( function($query1) {
+                    $query1->where('active',1)->whereIn('type',[1,9]);
+                });
+            });
+
+        if(!empty($post_data['title'])) $query->where('title', 'like', "%{$post_data['title']}%");
+        if(!empty($post_data['creator']))
+        {
+            $creator = $post_data['creator'];
+            $query->whereHas('creator',function ($query1) use ($creator)  { $query1->where('username', 'like', "%{$creator}%"); });
+        }
+        if(!empty($post_data['sort'])) $query->where('sort',$post_data['sort']);
+        if(!empty($post_data['type'])) $query->where('type',$post_data['type']);
+
         $total = $query->count();
 
         $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
@@ -1191,58 +1343,73 @@ class IndexRepository {
         {
             $list[$k]->encode_id = encode($v->id);
         }
+//        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回添加视图
-    public function view_create()
-    {
-        $admin = Auth::guard('admin')->user();
-        $org_id = $admin->org_id;
-        $org = Softorg::with(['menus'=>function ($query1) {$query1->orderBy('order','asc');}])->find($org_id);
-        return view('admin.activity.edit')->with(['org'=>$org]);
-    }
-    // 返回编辑视图
-    public function view_edit()
-    {
-        $id = request("id",0);
-        $decode_id = decode($id);
-        if(!$decode_id) return response("参数有误", 404);
 
-        if($decode_id == 0)
+    // 返回【公告列表】视图
+    public function show_notice_my_notice_list()
+    {
+        return view('mt.agent.entrance.notice.my-notice-list')
+            ->with(['sidebar_notice_my_notice_list_active'=>'active']);
+    }
+    // 返回【公告列表】数据
+    public function get_notice_my_notice_list_datatable($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+
+        $query = Item::select('*')->with(['creator'])->where('category',9)->where('creator_id',$me->id);
+
+        if(!empty($post_data['title'])) $query->where('title', 'like', "%{$post_data['title']}%");
+        if(!empty($post_data['creator']))
         {
-            $org = Softorg::with(['menus'=>function ($query1) {$query1->orderBy('order','asc');}])->find($decode_id);
-            return view('admin.activity.edit')->with(['operate'=>'create', 'encode_id'=>$id, 'org'=>$org]);
+            $creator = $post_data['creator'];
+            $query->whereHas('creator',function ($query1) use ($creator)  { $query1->where('username', 'like', "%{$creator}%"); });
         }
-        else
+        if(!empty($post_data['sort'])) $query->where('sort',$post_data['sort']);
+        if(!empty($post_data['type'])) $query->where('type',$post_data['type']);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
         {
-            $activity = Activity::with([
-                'menu',
-                'org' => function ($query) { $query->with([
-                    'menus'=>function ($query1) {$query1->orderBy('order','asc');}
-                ]); },
-            ])->find($decode_id);
-            if($activity)
-            {
-                unset($activity->id);
-                return view('admin.activity.edit')->with(['operate'=>'edit', 'encode_id'=>$id, 'data'=>$activity]);
-            }
-            else return response("活动不存在！", 404);
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
         }
+        else $query->orderBy("updated_at", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
     }
 
-    // 保存数据
-    public function save($post_data)
+
+    // 获取【公告详情】
+    public function operate_notice_notice_get($post_data)
     {
         $messages = [
-            'id.required' => '参数有误',
-            'name.required' => '请输入名称',
-            'title.required' => '请输入标题',
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
         ];
         $v = Validator::make($post_data, [
+            'operate' => 'required',
             'id' => 'required',
-            'name' => 'required',
-            'title' => 'required'
         ], $messages);
         if ($v->fails())
         {
@@ -1250,274 +1417,116 @@ class IndexRepository {
             return response_error([],$messages->first());
         }
 
-        $start = $post_data["start"];
-        $end = $post_data["end"];
-        if(!empty($start) && !empty($end))
-        {
-            $start_time = strtotime($post_data["start"]);
-            $end_time = strtotime($post_data["end"]);
-            if($start_time >= $end_time)
-            {
-                return response_error([],"时间有误，开始时间大于结束时间！");
-            }
-            else
-            {
-                $post_data["start_time"] = $start_time;
-                $post_data["end_time"] = $end_time;
-            }
-        }
-        else return response_error([],"时间有误！");
+        $operate = $post_data["operate"];
+        if($operate != 'notice-get') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
 
-//        是否报名功能
-        $is_apply = $post_data["is_apply"];
-        if($is_apply == 1)
+        $me = Auth::guard('agent')->user();
+        if(!in_array($me->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
+
+        $work_order = Item::find($id);
+        return response_success($work_order,"");
+
+    }
+    // 推送【公告】
+    public function operate_notice_notice_push($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
         {
-            $apply_start = $post_data["apply_start"];
-            $apply_end = $post_data["apply_end"];
-            if(!empty($apply_start) && !empty($apply_end))
-            {
-                $apply_start_time = strtotime($post_data["apply_start"]);
-                $apply_end_time = strtotime($post_data["apply_end"]);
-                if($apply_start_time >= $apply_end_time)
-                {
-                    return response_error([],"报名时间有误，开始时间大于结束时间！");
-                }
-                else
-                {
-                    $post_data["apply_start_time"] = $apply_start_time;
-                    $post_data["apply_end_time"] = $apply_end_time;
-                }
-            }
-            else return response_error([],"报名时间有误！");
+            $messages = $v->errors();
+            return response_error([],$messages->first());
         }
 
-//        是否签到功能
-        $is_sign = $post_data["is_sign"];
-        if($is_sign == 1)
-        {
-            $sign_start = $post_data["sign_start"];
-            $sign_end = $post_data["sign_end"];
-            if(!empty($sign_start) && !empty($sign_end))
-            {
-                $sign_start_time = strtotime($post_data["sign_start"]);
-                $sign_end_time = strtotime($post_data["sign_end"]);
-                if($sign_start_time >= $sign_end_time)
-                {
-                    return response_error([],"签到时间有误，开始时间大于结束时间！");
-                }
-                else
-                {
-                    $post_data["sign_start_time"] = $sign_start_time;
-                    $post_data["sign_end_time"] = $sign_end_time;
-                }
-            }
-            else return response_error([],"签到时间有误！");
-        }
-        else unset($post_data["sign_type"]);
+        $operate = $post_data["operate"];
+        if($operate != 'notice-push') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
 
+        $me = Auth::guard('agent')->user();
+        if(!in_array($me->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
 
-        $admin = Auth::guard('admin')->user();
+        $notice = Item::find($id);
+        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+        if($notice->creator_id != $me->id) return response_error([],"该公告不是你的，你没有权限操作！");
 
-        $id = decode($post_data["id"]);
-        $operate = decode($post_data["operate"]);
-        if(intval($id) !== 0 && !$id) return response_error();
-
+        // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            if($id == 0) // $id==0，添加一个新的活动
-            {
-                $activity = new Activity;
-                $post_data["admin_id"] = $admin->id;
-                $post_data["org_id"] = $admin->org_id;
-            }
-            else // 修改活动
-            {
-                $activity = Activity::find($id);
-                if(!$activity) return response_error([],"该活动不存在，刷新页面重试");
-                if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
-            }
-
-            $bool = $activity->fill($post_data)->save();
-            if($bool)
-            {
-                $encode_id = encode($activity->id);
-                // 目标URL
-                $url = 'http://www.softorg.cn/activity?id='.$encode_id;
-                // 保存位置
-                $qrcode_path = 'resource/org/'.$admin->id.'/unique/activities';
-                if(!file_exists(storage_path($qrcode_path)))
-                    mkdir(storage_path($qrcode_path), 0777, true);
-                // qrcode图片文件
-                $qrcode = $qrcode_path.'/qrcode_activity_'.$encode_id.'.png';
-                QrCode::errorCorrection('H')->format('png')->size(160)->margin(0)->encoding('UTF-8')->generate($url,storage_path($qrcode));
-
-
-                if(!empty($post_data["cover"]))
-                {
-                    $upload = new CommonRepository();
-                    $result = $upload->upload($post_data["cover"], 'org-'. $admin->id.'-unique-activities' , 'cover_activity_'.$encode_id);
-                    if($result["status"])
-                    {
-                        $activity->cover_pic = $result["data"];
-                        $activity->save();
-                    }
-                    else throw new Exception("upload-cover-fail");
-                }
-
-                $softorg = Softorg::find($admin->org_id);
-                $create = new CommonRepository();
-                $org_name = $softorg->name;
-                $logo_path = '/resource/'.$softorg->logo;
-                $title = $activity->title;
-                $name = $qrcode_path.'/qrcode__activity_'.$encode_id.'.png';
-                $create->create_qrcode_image($org_name, '活动', $title, $qrcode, $logo_path, $name);
-            }
-            else throw new Exception("insert-activity-fail");
-
-            $item = Item::where(['org_id'=>$admin->org_id,'sort'=>3,'itemable_id'=>$activity->id])->first();
-            if($item)
-            {
-                $item->menu_id = $post_data["menu_id"];
-                $item->updated_at = time();
-                $bool1 = $item->save();
-                if(!$bool1) throw new Exception("update-item-fail");
-            }
-            else
-            {
-                $item = new Item;
-                $item_data["sort"] = 3;
-                $item_data["org_id"] = $admin->org_id;
-                $item_data["admin_id"] = $admin->id;
-                $item_data["menu_id"] = $post_data["menu_id"];
-                $item_data["itemable_id"] = $activity->id;
-                $item_data["itemable_type"] = 'App\Models\Activity';
-                $bool1 = $item->fill($item_data)->save();
-                if($bool1)
-                {
-                    $activity->item_id = $item->id;
-                    $bool2 = $activity->save();
-                    if(!$bool2) throw new Exception("update-activity-item_id-fail");
-                }
-                else throw new Exception("insert-item-fail");
-            }
+            $notice->active = 1;
+            $bool = $notice->save();
+            if(!$bool) throw new Exception("update--item--fail");
 
             DB::commit();
-            return response_success(['id'=>$encode_id]);
+            return response_success([],"操作成功！");
         }
         catch (Exception $e)
         {
             DB::rollback();
+            $msg = '操作失败，请重试！';
             $msg = $e->getMessage();
 //            exit($e->getMessage());
-            return response_fail([],'操作失败，请重试！');
+            return response_fail([],$msg);
         }
+
     }
-
-    // 删除
-    public function delete($post_data)
+    // 删除【公告】
+    public function operate_notice_notice_delete($post_data)
     {
-        $admin = Auth::guard('admin')->user();
-        $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试");
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
 
-        $activity = Activity::find($id);
-        if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
+        $operate = $post_data["operate"];
+        if($operate != 'notice-delete') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
 
+        $me = Auth::guard('agent')->user();
+        if(!in_array($me->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
+
+        $notice = Item::find($id);
+        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+        if($notice->creator_id != $me->id) return response_error([],"该公告不是你的，你没有权限操作！");
+
+        // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $bool = $activity->delete();
-            if($bool)
-            {
-                $item = Item::find($activity->item_id);
-                if($item)
-                {
-                    $bool1 = $item->delete();
-                    if(!$bool1) throw new Exception("delete-item--fail");
-                }
-            }
-            else throw new Exception("delete-activity--fail");
+            $bool = $notice->delete();
+            if(!$bool) throw new Exception("delete--item--fail");
 
             DB::commit();
-            return response_success([]);
+            return response_success([],"操作成功！");
         }
         catch (Exception $e)
         {
             DB::rollback();
-            return response_fail([],'删除失败，请重试');
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
         }
 
-    }
-
-    // 启用
-    public function enable($post_data)
-    {
-        $admin = Auth::guard('admin')->user();
-        $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试");
-
-        $activity = Activity::find($id);
-        if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
-        $update["active"] = 1;
-        DB::beginTransaction();
-        try
-        {
-            $bool = $activity->fill($update)->save();
-            if($bool)
-            {
-                $item = Item::find($activity->item_id);
-                if($item)
-                {
-                    $bool1 = $item->fill($update)->save();
-                    if(!$bool1) throw new Exception("update-item--fail");
-                }
-            }
-            else throw new Exception("update-activity--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            return response_fail([],'启用失败，请重试');
-        }
-    }
-
-    // 禁用
-    public function disable($post_data)
-    {
-        $admin = Auth::guard('admin')->user();
-        $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试");
-
-        $activity = Activity::find($id);
-        if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
-        $update["active"] = 9;
-        DB::beginTransaction();
-        try
-        {
-            $bool = $activity->fill($update)->save();
-            if($bool)
-            {
-                $item = Item::find($activity->item_id);
-                if($item)
-                {
-                    $bool1 = $item->fill($update)->save();
-                    if(!$bool1) throw new Exception("update-item--fail");
-                }
-            }
-            else throw new Exception("update-activity--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            return response_fail([],'禁用失败，请重试');
-        }
     }
 
 

@@ -42,12 +42,16 @@ Route::group([], function () {
         Route::get('index', $controller.'@index');
 
 
+        // info
         Route::match(['get','post'], '/info/', $controller.'@view_info_index');
         Route::match(['get','post'], '/info/index', $controller.'@view_info_index');
         Route::match(['get','post'], '/info/edit', $controller.'@operate_info_edit');
         Route::match(['get','post'], '/info/password-reset', $controller.'@operate_info_password_reset');
 
 
+
+
+        // user
         Route::match(['get','post'], '/user/change-password', $controller.'@operate_user_change_password');
 
         Route::match(['get','post'], '/user/agent-list', $controller.'@view_user_agent_list');
@@ -75,6 +79,9 @@ Route::group([], function () {
         Route::match(['get','post'], '/user/client-delete', $controller.'@operate_user_client_delete');
 
 
+
+
+        // business
         Route::match(['get','post'], '/business/select2_agent', $controller.'@operate_business_select2_agent');
 
 
@@ -125,6 +132,14 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/work-order-delete', $controller.'@operate_business_work_order_delete');
 
 
+        Route::match(['get','post'], '/business/download/', $controller.'@operate_download');
+        Route::match(['get','post'], '/business/download/keyword-today', $controller.'@operate_download_keyword_today');
+        Route::match(['get','post'], '/business/download/keyword-detect', $controller.'@operate_download_keyword_detect');
+
+
+
+
+        // finance
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/overview-month', $controller.'@view_finance_overview_month');
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');
@@ -133,15 +148,18 @@ Route::group([], function () {
         Route::match(['get','post'], '/finance/freeze-record', $controller.'@view_finance_freeze_record');
 
 
-        Route::match(['get','post'], '/business/download/', $controller.'@operate_download');
-        Route::match(['get','post'], '/business/download/keyword-today', $controller.'@operate_download_keyword_today');
-        Route::match(['get','post'], '/business/download/keyword-detect', $controller.'@operate_download_keyword_detect');
 
 
-        Route::match(['get','post'], '/notice/notice-all', $controller.'@view_notice_notice_all');
-
+        // notice
         Route::match(['get','post'], '/notice/notice-create', $controller.'@operate_notice_notice_create');
         Route::match(['get','post'], '/notice/notice-edit', $controller.'@operate_notice_notice_edit');
+
+        Route::match(['get','post'], '/notice/notice-list', $controller.'@view_notice_notice_list');
+        Route::match(['get','post'], '/notice/my-notice-list', $controller.'@view_notice_my_notice_list');
+        Route::match(['get','post'], '/notice/notice-get', $controller.'@operate_notice_notice_get');
+        Route::match(['get','post'], '/notice/notice-push', $controller.'@operate_notice_notice_push');
+        Route::match(['get','post'], '/notice/notice-delete', $controller.'@operate_notice_notice_delete');
+
 
 
     });

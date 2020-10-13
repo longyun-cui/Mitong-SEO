@@ -230,5 +230,24 @@ class IndexController extends Controller
 
 
 
+    /*
+     * 公告
+     */
+    // 返回【公告列表】视图
+    public function view_notice_notice_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_notice_notice_list();
+        else if(request()->isMethod('post')) return $this->repo->get_notice_notice_list_datatable(request()->all());
+    }
+
+
+    // 返回【工单】详情
+    public function operate_notice_notice_get()
+    {
+        return $this->repo->operate_notice_notice_get(request()->all());
+    }
+
+
+
 
 }

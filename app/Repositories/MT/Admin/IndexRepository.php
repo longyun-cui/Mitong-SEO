@@ -4476,63 +4476,23 @@ class IndexRepository {
     /*
      * 公告&通知
      */
-    // 返回【公告】视图
-    public function show_notice_notice_all_list()
-    {
-        return view('mt.admin.entrance.notice.notice-all-list')
-            ->with(['sidebar_notice_notice_all_active'=>'active']);
-    }
-    // 返回【公告】列表
-    public function get_notice_notice_all_list_datatable($post_data)
-    {
-        $me = Auth::guard("admin")->user();
-
-        $query = Item::select('*')->with(['user'])->where('category',9);
-
-        $total = $query->count();
-
-        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
-        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
-        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
-
-        if(isset($post_data['order']))
-        {
-            $columns = $post_data['columns'];
-            $order = $post_data['order'][0];
-            $order_column = $order['column'];
-            $order_dir = $order['dir'];
-
-            $field = $columns[$order_column]["data"];
-            $query->orderBy($field, $order_dir);
-        }
-        else $query->orderBy("id", "desc");
-
-        if($limit == -1) $list = $query->get();
-        else $list = $query->skip($skip)->take($limit)->get();
-
-        foreach ($list as $k => $v)
-        {
-            $list[$k]->encode_id = encode($v->id);
-        }
-//        dd($list->toArray());
-        return datatable_response($list, $draw, $total);
-    }
-
-
-
-
-    // 返回【公告】视图
+    // 返回【添加公告】视图
     public function view_notice_notice_create()
     {
         $admin = Auth::guard('admin')->user();
         $view_blade = 'mt.admin.entrance.notice.notice-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
     }
-
-    // 返回【公告】视图
-    public function view_notice_notice_edit()
+    // 返回【编辑公告】视图
+    public function view_notice_notice_edit($post_data)
     {
-        $id = request("id",0);
+        $me = Auth::guard('admin')->user();
+        if(!in_array($me->usergroup,['Manage'])) return response("你没有权限操作！", 404);
+
+        $id = $post_data["id"];
+        $mine = Item::with(['user'])->find($id);
+        if(!$mine) return response_error([],"该公告不存在，刷新页面试试！");
+
         $view_blade = 'mt.admin.entrance.notice.notice-edit';
 
         if($id == 0)
@@ -4541,32 +4501,28 @@ class IndexRepository {
         }
         else
         {
-            $mine = User::with(['parent'])->find($id);
+            $mine = Item::with(['user'])->find($id);
             if($mine)
             {
-                if(!in_array($mine->usergroup,['Agent','Agent2'])) return response("该用户不是代理商！", 404);
                 $mine->custom = json_decode($mine->custom);
                 $mine->custom2 = json_decode($mine->custom2);
                 $mine->custom3 = json_decode($mine->custom3);
 
                 return view($view_blade)->with(['operate'=>'edit', 'operate_id'=>$id, 'data'=>$mine]);
             }
-            else return response("该用户不存在！", 404);
+            else return response("该公告不存在！", 404);
         }
     }
-
     // 保存【公告】
     public function operate_notice_notice_save($post_data)
     {
         $messages = [
             'operate.required' => '参数有误',
-            'username.required' => '请输入用户名',
-            'mobileno.required' => '请输入电话',
+            'title.required' => '请输入标题',
         ];
         $v = Validator::make($post_data, [
             'operate' => 'required',
-            'username' => 'required',
-            'mobileno' => 'required'
+            'title' => 'required',
         ], $messages);
         if ($v->fails())
         {
@@ -4575,8 +4531,8 @@ class IndexRepository {
         }
 
 
-        $admin = Auth::guard('admin')->user();
-        if($admin->usergroup != "Manage") return response_error([],"你没有操作权限");
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
 
 
         $operate = $post_data["operate"];
@@ -4584,22 +4540,15 @@ class IndexRepository {
 
         if($operate == 'create') // 添加 ( $id==0，添加一个新用户 )
         {
-            $mine = new User;
-            $current_time = date('Y-m-d H:i:s');
-            $post_data["usergroup"] = "Agent";
-            $post_data["pid"] = $admin->id;
-            $post_data["createuserid"] = $admin->id;
-            $post_data["createtime"] = $current_time;
-            $post_data["userstatus"] = "正常";
-            $post_data["status"] = 1;
-            $post_data["userpass"] = basic_encrypt("123456");
-            $post_data["password"] = password_encode("123456");
-            $post_data["password_1"] = "123456";
+            $mine = new Item;
+            $post_data["category"] = 9;
+            $post_data["sort"] = 1;
+            $post_data["creator_id"] = $me->id;
         }
         else if($operate == 'edit') // 编辑
         {
-            $mine = User::find($operate_id);
-            if(!$mine) return response_error([],"该用户不存在，刷新页面重试");
+            $mine = Item::find($operate_id);
+            if(!$mine) return response_error([],"该公告不存在，刷新页面重试！");
         }
         else return response_error([],"参数有误！");
 
@@ -4636,12 +4585,242 @@ class IndexRepository {
                     }
                     else throw new Exception("upload-cover-fail");
                 }
-
             }
-            else throw new Exception("insert--user--fail");
+            else throw new Exception("insert--item--fail");
 
             DB::commit();
             return response_success(['id'=>$mine->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+    // 返回【公告列表】视图
+    public function show_notice_notice_list()
+    {
+        return view('mt.admin.entrance.notice.notice-list')
+            ->with(['sidebar_notice_notice_list_active'=>'active']);
+    }
+    // 返回【公告列表】数据
+    public function get_notice_notice_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $query = Item::select('*')->with(['creator'])->where('category',9);
+
+        if(!empty($post_data['title'])) $query->where('title', 'like', "%{$post_data['title']}%");
+        if(!empty($post_data['creator']))
+        {
+            $creator = $post_data['creator'];
+            $query->whereHas('creator',function ($query1) use ($creator)  { $query1->where('username', 'like', "%{$creator}%"); });
+        }
+        if(!empty($post_data['sort'])) $query->where('sort',$post_data['sort']);
+        if(!empty($post_data['type'])) $query->where('type',$post_data['type']);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("updated_at", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 返回【公告列表】视图
+    public function show_notice_my_notice_list()
+    {
+        return view('mt.admin.entrance.notice.my-notice-list')
+            ->with(['sidebar_notice_my_notice_list_active'=>'active']);
+    }
+    // 返回【公告列表】数据
+    public function get_notice_my_notice_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $query = Item::select('*')->with(['creator'])->where('category',9)->where('creator_id',$me->id);
+
+        if(!empty($post_data['title'])) $query->where('title', 'like', "%{$post_data['title']}%");
+        if(!empty($post_data['creator']))
+        {
+            $creator = $post_data['creator'];
+            $query->whereHas('creator',function ($query1) use ($creator)  { $query1->where('username', 'like', "%{$creator}%"); });
+        }
+        if(!empty($post_data['sort'])) $query->where('sort',$post_data['sort']);
+        if(!empty($post_data['type'])) $query->where('type',$post_data['type']);
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("updated_at", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+    // 获取【公告详情】
+    public function operate_notice_notice_get($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'notice-get') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if(!in_array($me->usergroup,['Manage'])) return response_error([],"你没有操作权限！");
+
+        $work_order = Item::find($id);
+        return response_success($work_order,"");
+
+    }
+    // 推送【公告】
+    public function operate_notice_notice_push($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'notice-push') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $notice = Item::find($id);
+        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $notice->active = 1;
+            $bool = $notice->save();
+            if(!$bool) throw new Exception("update--item--fail");
+
+            DB::commit();
+            return response_success([],"操作成功！");
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 删除【公告】
+    public function operate_notice_notice_delete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'notice-delete') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $notice = Item::find($id);
+        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $bool = $notice->delete();
+            if(!$bool) throw new Exception("delete--item--fail");
+
+            DB::commit();
+            return response_success([],"操作成功！");
         }
         catch (Exception $e)
         {
