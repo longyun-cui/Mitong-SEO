@@ -62,14 +62,20 @@ class IndexController extends Controller
      * 用户系统
      */
 
-    // 【修改密码】
+    // 【代理商&客户】修改-密码
     public function operate_user_change_password()
     {
         return $this->repo->operate_user_change_password(request()->all());
     }
 
+    // 【代理商】SELECT2
+    public function operate_business_select2_agent()
+    {
+        return $this->repo->operate_business_select2_agent(request()->all());
+    }
 
-    // 返回【代理商列表】视图
+
+    // 【代理商】返回-列表-视图
     public function view_user_agent_list()
     {
         if(request()->isMethod('get'))
@@ -80,24 +86,16 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_user_agent_list_datatable(request()->all());
     }
 
-    // 返回【客户列表】视图
-    public function view_user_client_list()
-    {
-        if(request()->isMethod('get')) return $this->repo->view_user_client_list();
-        else if(request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
-    }
 
 
 
-
-    // 新增【代理商】
+    // 【代理商】添加
     public function operate_user_agent_create()
     {
         if(request()->isMethod('get')) return $this->repo->view_user_agent_create();
         else if (request()->isMethod('post')) return $this->repo->operate_user_agent_save(request()->all());
     }
-
-    // 编辑【代理商】
+    // 【代理商】编辑
     public function operate_user_agent_edit()
     {
         if(request()->isMethod('get')) return $this->repo->view_user_agent_edit();
@@ -108,22 +106,14 @@ class IndexController extends Controller
 
 
 
-    // 返回【代理商详情】
+    // 【代理商】返回-详情页
     public function view_user_agent()
     {
         if(request()->isMethod('get')) return $this->repo->view_user_agent(request()->all());
         else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
     }
 
-    // 返回【客户详情】
-    public function view_user_client()
-    {
-        if(request()->isMethod('get')) return $this->repo->view_user_client(request()->all());
-        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
-    }
-
-
-    // 返回【代理商详情】【客户列表】
+    // 【代理商】返回-详情页-客户列表
     public function view_user_agent_client_list()
     {
         if(request()->isMethod('get'))
@@ -133,7 +123,70 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_user_agent_client_list_datatable(request()->all());
     }
 
-    // 返回【客户详情】【关键词列表】
+
+    // 【代理商】登录
+    public function operate_user_agent_login()
+    {
+        $agent_id = request()->get('id');
+        $agent = User::where('id',$agent_id)->first();
+        Auth::guard('agent')->login($agent,true);
+        return response_success();
+    }
+    // 【代理商】删除
+    public function operate_user_agent_delete()
+    {
+        return $this->repo->operate_user_agent_delete(request()->all());
+    }
+
+
+    // 【代理商】充值-1级代理商
+    public function operate_user_agent_recharge()
+    {
+        return $this->repo->operate_user_agent_recharge(request()->all());
+    }
+
+
+    // 【代理商】关闭-充值限制
+    public function operate_user_agent_recharge_limit_close()
+    {
+        return $this->repo->operate_user_agent_recharge_limit_close(request()->all());
+    }
+    // 【代理商】开启-充值限制
+    public function operate_user_agent_recharge_limit_open()
+    {
+        return $this->repo->operate_user_agent_recharge_limit_open(request()->all());
+    }
+
+    // 【代理商】关闭-二级代理商
+    public function operate_user_agent_sub_agent_close()
+    {
+        return $this->repo->operate_user_agent_sub_agent_close(request()->all());
+    }
+    // 【代理商】开启-二级代理商
+    public function operate_user_agent_sub_agent_open()
+    {
+        return $this->repo->operate_user_agent_sub_agent_open(request()->all());
+    }
+
+
+
+
+
+
+    // 【客户】返回-列表-视图
+    public function view_user_client_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client_list();
+        else if(request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+
+    // 【客户】返回-详情页
+    public function view_user_client()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_user_client(request()->all());
+        else if (request()->isMethod('post')) return $this->repo->get_user_client_list_datatable(request()->all());
+    }
+    // 【客户】返回-详情页-关键词列表
     public function view_user_client_keyword_list()
     {
         if(request()->isMethod('get'))
@@ -143,50 +196,15 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_user_client_keyword_list_datatable(request()->all());
     }
 
-
-
-
-    // 【1级代理商】充值
-    public function operate_user_agent_recharge()
+    // 【客户】登录
+    public function operate_user_client_login()
     {
-        return $this->repo->operate_user_agent_recharge(request()->all());
+        $client_id = request()->get('id');
+        $client = User::where('id',$client_id)->first();
+        Auth::guard('client')->login($client,true);
+        return response_success();
     }
-
-    // 关闭【代理商】充值限制
-    public function operate_user_agent_recharge_limit_close()
-    {
-        return $this->repo->operate_user_agent_recharge_limit_close(request()->all());
-    }
-
-    // 开启【代理商】充值限制
-    public function operate_user_agent_recharge_limit_open()
-    {
-        return $this->repo->operate_user_agent_recharge_limit_open(request()->all());
-    }
-
-
-    // 关闭【代理商】充值限制
-    public function operate_user_agent_sub_agent_close()
-    {
-        return $this->repo->operate_user_agent_sub_agent_close(request()->all());
-    }
-
-    // 开启【代理商】充值限制
-    public function operate_user_agent_sub_agent_open()
-    {
-        return $this->repo->operate_user_agent_sub_agent_open(request()->all());
-    }
-
-
-
-
-    // 删除【代理商】
-    public function operate_user_agent_delete()
-    {
-        return $this->repo->operate_user_agent_delete(request()->all());
-    }
-
-    // 删除【客户】
+    // 【客户】删除
     public function operate_user_client_delete()
     {
         return $this->repo->operate_user_client_delete(request()->all());
@@ -195,32 +213,9 @@ class IndexController extends Controller
 
 
 
-    // 登录【代理商】
-    public function operate_user_agent_login()
-    {
-        $agent_id = request()->get('id');
-        $agent = User::where('id',$agent_id)->first();
-        Auth::guard('agent')->login($agent,true);
-        return response_success();
-    }
-
-    // 登录【客户】
-    public function operate_user_client_login()
-    {
-        $client_id = request()->get('id');
-        $client = User::where('id',$client_id)->first();
-        Auth::guard('client')->login($client,true);
-        return response_success();
-    }
 
 
 
-
-    // SELECT2【站点】
-    public function operate_business_select2_agent()
-    {
-        return $this->repo->operate_business_select2_agent(request()->all());
-    }
 
 
 
@@ -228,28 +223,7 @@ class IndexController extends Controller
     /*
      * 业务系统
      */
-
-    // 返回【关键词查询】视图
-    public function operate_keyword_search()
-    {
-        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
-        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
-    }
-
-    // 返回【关键词推荐】视图
-    public function operate_keyword_recommend()
-    {
-        return $this->repo->operate_business_keyword_recommend(request()->all());
-    }
-
-    // 返回【关键词推荐】视图
-    public function operate_keyword_search_export()
-    {
-        return $this->repo->operate_business_keyword_search_export(request()->all());
-    }
-
-
-    // 返回【站点列表】视图
+    // 【站点】返回-列表-视图
     public function view_business_site_list()
     {
         if(request()->isMethod('get'))
@@ -262,8 +236,7 @@ class IndexController extends Controller
         }
         else if(request()->isMethod('post')) return $this->repo->get_business_site_list_datatable(request()->all());
     }
-
-    // 返回【待审核站点列表】视图
+    // 【站点】返回-待审核列表-视图
     public function view_business_site_todo_list()
     {
         if(request()->isMethod('get'))
@@ -278,35 +251,55 @@ class IndexController extends Controller
     }
 
 
-    // 返回【关键词列表】视图
+
+
+    // 【关键词】返回-查询-视图
+    public function operate_keyword_search()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
+        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
+    }
+    // 【关键词】返回-推荐-视图
+    public function operate_keyword_recommend()
+    {
+        return $this->repo->operate_business_keyword_recommend(request()->all());
+    }
+    // 【关键词】导出-查询-结果
+    public function operate_keyword_search_export()
+    {
+        return $this->repo->operate_business_keyword_search_export(request()->all());
+    }
+
+
+    // 【关键词】返回-列表-视图
     public function view_business_keyword_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
     }
 
-    // 返回【今日关键词列表】视图
+    // 【今日关键词】返回-列表-视图
     public function view_business_keyword_today_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_today_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_list_datatable(request()->all());
     }
 
-    // 返回【今日关键词列表】视图
+    // 【今日关键词】返回-列表-视图
     public function view_business_keyword_today_newly_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_today_newly_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_today_newly_list_datatable(request()->all());
     }
 
-    // 返回【异常关键词列表】视图
+    // 【异常关键词】返回-列表-视图
     public function view_business_keyword_anomaly_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_anomaly_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_anomaly_list_datatable(request()->all());
     }
 
-    // 返回【待审核关键词列表】视图
+    // 【待审核关键词】返回-列表-视图
     public function view_business_keyword_todo_list()
     {
         if(request()->isMethod('get'))
@@ -323,26 +316,26 @@ class IndexController extends Controller
 
 
 
-    // 返回【关键词检测记录】视图
+    // 【关键词检测记录】返回-列表-视图
     public function view_business_keyword_detect_record()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
     }
 
-    // 添加【关键词检测记录】
+    // 【关键词检测记录】添加
     public function operate_business_keyword_detect_create_rank()
     {
         return $this->repo->operate_business_keyword_detect_create_rank(request()->all());
     }
 
-    // 修改【关键词检测记录】
+    // 【关键词检测记录】修改
     public function operate_business_keyword_detect_set_rank()
     {
         return $this->repo->operate_business_keyword_detect_set_rank(request()->all());
     }
 
-    // 批量修改【关键词检测记录】
+    // 【关键词检测记录】批量修改
     public function operate_business_keyword_detect_set_rank_bulk()
     {
         return $this->repo->operate_business_keyword_detect_set_rank_bulk(request()->all());
@@ -352,87 +345,102 @@ class IndexController extends Controller
 
 
 
-    // 审核【站点】
+    // 【站点】审核
     public function operate_business_site_review()
     {
         return $this->repo->operate_business_site_review(request()->all());
     }
-    // 批量审核【站点】
+    // 【站点】批量审核
     public function operate_business_site_review_bulk()
     {
         return $this->repo->operate_business_site_review_bulk(request()->all());
     }
 
-
-    // 审核【关键词】
-    public function operate_business_keyword_review()
-    {
-        return $this->repo->operate_business_keyword_review(request()->all());
-    }
-    // 批量审核【关键词】
-    public function operate_business_keyword_review_bulk()
-    {
-        return $this->repo->operate_business_keyword_review_bulk(request()->all());
-    }
-
-
-
-
-    // 删除【待选站点】
+    // 【待选站点】删除
     public function operate_business_site_todo_delete()
     {
         return $this->repo->operate_business_site_todo_delete(request()->all());
     }
-    // 批量删除【待选站点】
+    // 【待选站点】批量删除
     public function operate_business_site_todo_delete_bulk()
     {
         return $this->repo->operate_business_site_todo_delete_bulk(request()->all());
     }
 
-    // 删除【待选关键词】
+
+    // 【站点】获取-详情
+    public function operate_business_site_get()
+    {
+        return $this->repo->operate_business_site_get(request()->all());
+    }
+    // 【站点】删除
+    public function operate_business_site_delete()
+    {
+        return $this->repo->operate_business_site_delete(request()->all());
+    }
+    // 【站点】合作停
+    public function operate_business_site_stop()
+    {
+        return $this->repo->operate_business_site_stop(request()->all());
+    }
+    // 【站点】再合作
+    public function operate_business_site_start()
+    {
+        return $this->repo->operate_business_site_start(request()->all());
+    }
+    // 【站点】编辑
+    public function operate_business_site_edit()
+    {
+        return $this->repo->operate_business_site_save(request()->all());
+    }
+
+
+
+
+    // 【关键词】审核
+    public function operate_business_keyword_review()
+    {
+        return $this->repo->operate_business_keyword_review(request()->all());
+    }
+    // 【关键词】批量审核
+    public function operate_business_keyword_review_bulk()
+    {
+        return $this->repo->operate_business_keyword_review_bulk(request()->all());
+    }
+
+    // 【待选关键词】删除
     public function operate_business_keyword_todo_delete()
     {
         return $this->repo->operate_business_keyword_todo_delete(request()->all());
     }
-    // 批量删除【待选关坚持】
+    // 【待选关坚持】批量删除
     public function operate_business_keyword_todo_delete_bulk()
     {
         return $this->repo->operate_business_keyword_todo_delete_bulk(request()->all());
     }
 
 
-
-
-    // 删除【站点】
-    public function operate_business_site_delete()
+    // 【关键词】获取-详情
+    public function operate_business_keyword_get()
     {
-        return $this->repo->operate_business_site_delete(request()->all());
+        return $this->repo->operate_business_keyword_get(request()->all());
     }
-    // 删除【关键词】
+    // 【关键词】删除
     public function operate_business_keyword_delete()
     {
         return $this->repo->operate_business_keyword_delete(request()->all());
     }
-
-
-    // 合作停【站点】
-    public function operate_business_site_stop()
+    // 【关键词】批量删除
+    public function operate_business_keyword_delete_bulk()
     {
-        return $this->repo->operate_business_site_stop(request()->all());
+        return $this->repo->operate_business_keyword_delete_bulk(request()->all());
     }
-    // 再合作【站点】
-    public function operate_business_site_start()
-    {
-        return $this->repo->operate_business_site_start(request()->all());
-    }
-
-
-    // 合作停【关键词】
+    // 【关键词】合作停
     public function operate_business_keyword_stop()
     {
         return $this->repo->operate_business_keyword_stop(request()->all());
     }
-    // 再合作【关键词】
+    // 【关键词】再合作
     public function operate_business_keyword_start()
     {
         return $this->repo->operate_business_keyword_start(request()->all());
@@ -444,43 +452,45 @@ class IndexController extends Controller
     /*
      * 工单管理
      */
-    // 新增【站点工单】
+    // 【站点工单】添加
     public function operate_business_site_work_order_create()
     {
         if(request()->isMethod('get')) return $this->repo->view_business_site_work_order_create(request()->all());
         else if (request()->isMethod('post')) return $this->repo->operate_business_site_work_order_save(request()->all());
     }
-    // 编辑【站点工单】
+    // 【站点工单】编辑
     public function operate_business_site_work_order_edit()
     {
         if(request()->isMethod('get')) return $this->repo->view_business_site_work_order_edit(request()->all());
         else if (request()->isMethod('post')) return $this->repo->operate_business_site_work_order_save(request()->all());
     }
 
-    // 返回【站点工单】视图
+
+    // 【站点工单】返回-列表-视图
     public function view_business_site_work_order_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_site_work_order_list(request()->all());
         else if(request()->isMethod('post')) return $this->repo->get_business_site_work_order_datatable(request()->all());
     }
 
-    // 返回【工单列表】视图
+
+    // 【工单】返回-列表-视图
     public function view_business_work_order_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_business_work_order_list();
         else if(request()->isMethod('post')) return $this->repo->get_business_work_order_list_datatable(request()->all());
     }
-    // 返回【工单】详情
+    // 【工单】获取详情
     public function operate_business_work_order_get()
     {
         return $this->repo->operate_business_work_order_get(request()->all());
     }
-    // 删除【工单】
+    // 【工单】推送
     public function operate_business_work_order_push()
     {
         return $this->repo->operate_business_work_order_push(request()->all());
     }
-    // 删除【工单】
+    // 【工单】删除
     public function operate_business_work_order_delete()
     {
         return $this->repo->operate_business_work_order_delete(request()->all());
@@ -492,20 +502,20 @@ class IndexController extends Controller
     /*
      * 财务系统
      */
-    // 返回【财务概览】视图
+    // 【财务概览】返回-列表-视图
     public function view_finance_overview()
     {
         if(request()->isMethod('get')) return $this->repo->show_finance_overview();
         else if(request()->isMethod('post')) return $this->repo->get_finance_overview_datatable(request()->all());
     }
-    // 返回【财务概览】视图
+    // 【财务概览】返回-列表-视图
     public function view_finance_overview_month()
     {
         if(request()->isMethod('get')) return $this->repo->show_finance_overview_month(request()->all());
         else if(request()->isMethod('post')) return $this->repo->get_finance_overview_month_datatable(request()->all());
     }
 
-    // 返回【财务概览】视图
+    // 【充值记录】返回-列表-视图
     public function view_finance_recharge_record()
     {
         if(request()->isMethod('get'))
@@ -516,7 +526,7 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_finance_recharge_record_datatable(request()->all());
     }
 
-    // 返回【财务概览】视图
+    // 【消费记录】返回-列表-视图
     public function view_finance_expense_record()
     {
 
@@ -528,7 +538,7 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_finance_expense_record_datatable(request()->all());
     }
 
-    // 返回【财务概览】视图
+    // 【消费记录】返回-列表-视图
     public function view_finance_expense_record_daily()
     {
 
@@ -540,7 +550,7 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_finance_expense_record_daily_datatable(request()->all());
     }
 
-    // 返回【冻结最近】视图
+    // 【冻结资金】返回-列表-视图
     public function view_finance_freeze_record()
     {
         if(request()->isMethod('get')) return $this->repo->show_finance_freeze_record();
@@ -573,13 +583,13 @@ class IndexController extends Controller
     /*
      * 公告
      */
-    // 新增【公告】
+    // 【公告】添加
     public function operate_notice_notice_create()
     {
         if(request()->isMethod('get')) return $this->repo->view_notice_notice_create();
         else if (request()->isMethod('post')) return $this->repo->operate_notice_notice_save(request()->all());
     }
-    // 编辑【公告】
+    // 【公告】编辑
     public function operate_notice_notice_edit()
     {
         if(request()->isMethod('get')) return $this->repo->view_notice_notice_edit(request()->all());
@@ -587,14 +597,14 @@ class IndexController extends Controller
     }
 
 
-    // 返回【公告列表】视图
+    // 【公告】返回-列表-视图
     public function view_notice_notice_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_notice_notice_list();
         else if(request()->isMethod('post')) return $this->repo->get_notice_notice_list_datatable(request()->all());
     }
 
-    // 返回【我发布的公告】视图
+    // 【公告】返回-我发布的公告-视图
     public function view_notice_my_notice_list()
     {
         if(request()->isMethod('get')) return $this->repo->show_notice_my_notice_list();
@@ -602,17 +612,17 @@ class IndexController extends Controller
     }
 
 
-    // 返回【工单】详情
+    // 【公告】返回-详情
     public function operate_notice_notice_get()
     {
         return $this->repo->operate_notice_notice_get(request()->all());
     }
-    // 删除【工单】
+    // 【公告】发布
     public function operate_notice_notice_push()
     {
         return $this->repo->operate_notice_notice_push(request()->all());
     }
-    // 删除【工单】
+    // 【公告】删除
     public function operate_notice_notice_delete()
     {
         return $this->repo->operate_notice_notice_delete(request()->all());

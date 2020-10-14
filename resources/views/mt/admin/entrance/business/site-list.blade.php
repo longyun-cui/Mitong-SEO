@@ -301,6 +301,86 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modal-edit-body">
+    <div class="col-md-8 col-md-offset-2" id="edit-ctn" style="margin-top:64px;margin-bottom:64px;background:#fff;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN PORTLET-->
+                <div class="box- box-info- form-container">
+
+                    <div class="box-header with-border" style="margin:16px 0;">
+                        <h3 class="box-title">编辑站点</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+
+                    <form action="" method="post" class="form-horizontal form-bordered" id="form-site-edit-modal">
+                        <div class="box-body">
+
+                            {{csrf_field()}}
+                            <input type="hidden" name="operate" value="site-edit" readonly>
+                            <input type="hidden" name="operate_id" value="0" class="site-edit-operate-id" readonly>
+
+                            {{--类别--}}
+
+
+                            {{--站点ID--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点ID</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <div><b class="site-edit-id"></b></div>
+                                </div>
+                            </div>
+                            {{--站点名称--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点名称</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="text" class="form-control form-filter site-edit-sitename" name="sitename" value="">
+                                </div>
+                            </div>
+                            {{--站点地址--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">站点地址</label>
+                                <div class="col-md-8 control-label" style="text-align:left;">
+                                    <input type="text" class="form-control form-filter site-edit-website" name="website" value="">
+                                </div>
+                            </div>
+                            {{--FTP--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">FTP</label>
+                                <div class="col-md-8 ">
+                                    <textarea class="form-control site-edit-ftp" name="ftp" rows="3" cols="100%" placeholder="请准确FTP信息,以便优化师调整">{{ $data->ftp or '' }}</textarea>
+                                </div>
+                            </div>
+                            {{--管理后台--}}
+                            <div class="form-group">
+                                <label class="control-label col-md-2">管理后台</label>
+                                <div class="col-md-8 ">
+                                    <textarea class="form-control site-edit-managebackground" name="managebackground" rows="3" cols="100%" placeholder="请填写后台管理账号,以便优化师调整">{{ $data->managebackground or '' }}</textarea>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <button type="button" class="btn btn-success" id="item-site-edit-submit"><i class="fa fa-check"></i> 提交</button>
+                                <button type="button" class="btn btn-default" id="item-site-edit-cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 
@@ -396,7 +476,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "今日达标",
+                        "title": "今日<br>达标",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -413,7 +493,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "今日消费",
+                        "title": "今日<br>消费",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -448,7 +528,7 @@
 //                    },
                     {
                         "width": "64px",
-                        "title": "累计消费",
+                        "title": "累计<br>消费",
                         "data": "id",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -506,6 +586,7 @@
 
                             var $cooperation_html = '';
                             var $review_html = '<a class="btn btn-xs btn-default disabled">审核</a>';
+                            var $edit_html = '<a class="btn btn-xs btn-default disabled">编辑</a>';
                             var $delete_html = '<a class="btn btn-xs btn-default disabled">删除</a>';
                             var $work_order_create_html = '<a class="btn btn-xs btn-default disabled">+工单</a>';
                             var $work_order_html = '<a class="btn btn-xs btn-default disabled">Ta的工单</a>';
@@ -532,6 +613,8 @@
                                 $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             }
 
+                            $edit_html = '<a class="btn btn-xs bg-navy item-edit-show" data-id="'+data+'" >编辑</a>';
+
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
 //                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
@@ -544,6 +627,7 @@
                                 $work_order_create_html+
                                 $work_order_html+
 //                                $cooperation_html+
+                                $edit_html+
                                 $delete_html+
                                 '';
                             return html;
@@ -639,6 +723,9 @@
             window.location.href = "/item/edit?id="+that.attr('data-id');
         });
 
+
+
+
         // 跳转【添加工单】
         $("#item-main-body").on('click', ".item-work-order-create-link", function() {
             var that = $(this);
@@ -713,14 +800,12 @@
                         dataType: "json",
                         // target: "#div2",
                         success: function (data) {
-
-                            $("#item-review-cancel").click();
-
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
                                 layer.msg(data.msg);
 //                                location.reload();
+                                $("#item-review-cancel").click();
                                 $('#datatable_ajax').DataTable().ajax.reload();
                             }
                         }
@@ -793,7 +878,7 @@
 
 
 
-        // 显示【站点详情】
+        // 【站点详情】显示
         $("#item-main-body").on('click', ".item-site-detail-show", function() {
             var that = $(this);
             $('input[name=id]').val(that.attr('data-id'));
@@ -804,6 +889,76 @@
             $('.site-ftp').html(that.attr('data-ftp'));
             $('.site-managebackground').html(that.attr('data-managebackground'));
             $('#modal-detail-body').modal('show');
+        });
+
+        // 【修改站点】显示
+        $("#item-main-body").on('click', ".item-edit-show", function() {
+            var that = $(this);
+            var $data = new Object();
+            $.ajax({
+                type:"post",
+                dataType:'json',
+                async:false,
+                url: "{{ url('/admin/business/site-get') }}",
+                data: {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    operate:"site-get",
+                    id:that.attr('data-id')
+                },
+                success:function(data){
+                    if(!data.success) layer.msg(data.msg);
+                    else
+                    {
+                        $data = data.data;
+                    }
+                }
+            });
+
+            $('input[name=operate_id].site-edit-operate-id').val($data.id);
+            $('.site-edit-id').html($data.id);
+            $('.site-edit-sitename').val($data.sitename);
+            $('.site-edit-website').val($data.website);
+            $('.site-edit-ftp').val($data.ftp);
+            $('.site-edit-managebackground').val($data.managebackground);
+            $('#modal-edit-body').modal('show');
+        });
+        // 【修改密码】取消
+        $("#modal-edit-body").on('click', "#item-site-edit-cancel", function() {
+            $('input[name=operate_id].site-edit-operate-id').val('');
+            $('.site-edit-id').html('');
+            $('.site-edit-sitename').val('');
+            $('.site-edit-website').val('');
+            $('.site-edit-ftp').val('');
+            $('.site-edit-managebackground').val('');
+            $('#modal-edit-body').modal('hide');
+        });
+        // 【修改密码】提交
+        $("#modal-edit-body").on('click', "#item-site-edit-submit", function() {
+            var that = $(this);
+            layer.msg('确定"提交"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    var options = {
+                        url: "{{ url('/admin/business/site-edit') }}",
+                        type: "post",
+                        dataType: "json",
+                        // target: "#div2",
+                        success: function (data) {
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                layer.msg(data.msg);
+                                $("#item-site-edit-cancel").click();
+//                                location.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
+                        }
+                    };
+                    $("#form-site-edit-modal").ajaxSubmit(options);
+                }
+            });
         });
 
 

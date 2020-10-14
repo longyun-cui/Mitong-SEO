@@ -163,20 +163,20 @@ class IndexRepository {
      * 用户基本信息
      */
 
-    // 返回【基本信息】视图
+    // 【基本信息】返回视图
     public function view_info_index()
     {
         $me = Auth::guard('admin')->user();
         return view('mt.admin.entrance.info.index')->with(['data'=>$me]);
     }
 
-    // 返回【编辑基本信息】视图
+    // 【基本信息】返回-编辑-视图
     public function view_info_edit()
     {
         $me = Auth::guard('admin')->user();
         return view('mt.admin.entrance.info.edit')->with(['data'=>$me]);
     }
-    // 保存【基本信息】
+    // 【基本信息】保存数据
     public function operate_info_save($post_data)
     {
         $me = Auth::guard('admin')->user();
@@ -231,13 +231,13 @@ class IndexRepository {
         }
     }
 
-    // 返回【修改密码】视图
+    // 【密码】返回修改视图
     public function view_info_password_reset()
     {
         $me = Auth::guard('admin')->user();
         return view('mt.admin.entrance.info.password-reset')->with(['data'=>$me]);
     }
-    // 保存【密码】
+    // 【密码】保存数据
     public function operate_info_password_reset_save($post_data)
     {
         $messages = [
@@ -284,7 +284,7 @@ class IndexRepository {
     /*
      * 用户系统
      */
-    // 【修改密码】
+    // 【代理商&用户】【修改密码】
     public function operate_user_change_password($post_data)
     {
         $messages = [
@@ -308,7 +308,7 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'change-password') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usertype != "admin") return response_error([],"你没有操作权限");
@@ -357,7 +357,38 @@ class IndexRepository {
     }
 
 
-    // 返回【代理商列表】数据
+    // 【select2】
+    public function operate_business_select2_agent($post_data)
+    {
+        $me = Auth::guard('admin')->user();
+        if(empty($post_data['keyword']))
+        {
+            $list =User::select(['id','username as text'])
+                ->where(['userstatus'=>'正常','status'=>1])
+                ->whereIn('usergroup',['Agent','Agent2'])
+                ->orderBy('id','desc')
+                ->get()
+                ->toArray();
+        }
+        else
+        {
+            $keyword = "%{$post_data['keyword']}%";
+            $list =User::select(['id','username as text'])
+                ->where(['userstatus'=>'正常','status'=>1])
+                ->whereIn('usergroup',['Agent','Agent2'])
+                ->where('sitename','like',"%$keyword%")
+                ->orderBy('id','desc')
+                ->get()
+                ->toArray();
+        }
+        array_unshift($list, ['id'=>0,'text'=>'【全部代理】']);
+        return $list;
+    }
+
+
+
+
+    // 【代理商】返回-列表-数据
     public function get_user_agent_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -403,86 +434,15 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【添加代理商】视图
-    public function view_user_client_list()
-    {
-        $me = Auth::guard('admin')->user();
 
-        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])->where('fund_expense_daily','>',0)
-            ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
-
-        $view_blade = 'mt.admin.entrance.user.client-list';
-        return view($view_blade)->with([
-            'sidebar_client_list_active'=>'active menu-open',
-            'insufficient_clients'=>$insufficient_clients
-        ]);
-    }
-    // 返回【客户列表】数据
-    public function get_user_client_list_datatable($post_data)
-    {
-        $admin_id = Auth::guard("admin")->user()->id;
-        $query = User::select('*')
-//        $query = User::select('id','pid','epid','username','usergroup','createtime')
-//            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
-            ->with('parent','ep','fund')
-            ->withCount([
-                'sites'=>function ($query) { $query->where('status',1)->whereIn('sitestatus',['优化中','待审核']); },
-                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); }
-            ])
-            ->where(['userstatus'=>'正常','status'=>1])
-            ->whereIn('usergroup',['Service']);
-
-        if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
-        if(!empty($post_data['agent_id']))
-        {
-            $agent_id = $post_data['agent_id'];
-            $query->whereHas('parent',function ($query1) use ($agent_id)  { $query1->where('id',$agent_id); });
-        }
-
-        $total = $query->count();
-
-        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
-        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
-        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
-
-        if(isset($post_data['order']))
-        {
-            $columns = $post_data['columns'];
-            $order = $post_data['order'][0];
-            $order_column = $order['column'];
-            $order_dir = $order['dir'];
-
-            $field = $columns[$order_column]["data"];
-            $query->orderBy($field, $order_dir);
-        }
-        else $query->orderBy("id", "desc");
-
-        if($limit == -1) $list = $query->get();
-        else $list = $query->skip($skip)->take($limit)->get();
-
-        foreach ($list as $k => $v)
-        {
-            $list[$k]->encode_id = encode($v->id);
-//            $v->fund_total = number_format($v->fund_total);
-//            $v->fund_expense = number_format($v->fund_expense);
-//            $v->fund_balance = number_format($v->fund_balance);
-        }
-//        dd($list->toArray());
-        return datatable_response($list, $draw, $total);
-    }
-
-
-
-
-    // 返回【添加代理商】视图
+    // 【代理商】返回-添加-视图
     public function view_user_agent_create()
     {
         $admin = Auth::guard('admin')->user();
         $view_blade = 'mt.admin.entrance.user.agent-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
     }
-
-    // 返回【编辑代理商】视图
+    // 【代理商】返回-编辑-视图
     public function view_user_agent_edit()
     {
         $id = request("id",0);
@@ -507,8 +467,7 @@ class IndexRepository {
             else return response("该用户不存在！", 404);
         }
     }
-
-    // 保存【代理商】
+    // 【代理商】保存数据
     public function operate_user_agent_save($post_data)
     {
         $messages = [
@@ -608,15 +567,13 @@ class IndexRepository {
     }
 
 
-
-
-    // 返回【代理商详情】视图
+    // 【代理商】返回-详情-视图
     public function view_user_agent($post_data)
     {
         $me = Auth::guard("admin")->user();
 
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $user = User::find($id);
         if($user)
@@ -633,59 +590,7 @@ class IndexRepository {
                 'user_data'=>$user
             ]);
     }
-
-    // 返回【客户详情】视图
-    public function view_user_client($post_data)
-    {
-        $me = Auth::guard("admin")->user();
-
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $user = User::find($id);
-        if($user)
-        {
-            if($user->usergroup != 'Service') return response_error([],"该用户不存在，刷新页面试试！");
-        }
-
-        $user_data = $user;
-
-
-        /*
-         * 关键词
-         */
-        // 今日优化关键词
-        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$id)->count();
-        $user_data->keyword_count = $keyword_count;
-
-        // 今日检测关键词
-        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
-            ->whereDate('detectiondate',date("Y-m-d"))
-            ->where('createuserid',$id)
-            ->count();
-        $user_data->keyword_detect_count = $keyword_detect_count;
-
-        // 今日达标关键词
-        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
-            ->whereDate('detectiondate',date("Y-m-d"))
-            ->where('createuserid',$id)
-            ->first(
-                array(
-                    \DB::raw('COUNT(*) as keyword_standard_count'),
-                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
-                )
-            );
-        $user_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
-        $user_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
-
-
-        return view('mt.admin.entrance.user.client')
-            ->with([
-                'user_data'=>$user_data
-            ]);
-    }
-
-    // 返回【代理商-客户列表】数据
+    // 【代理商】返回-客户列表-数据
     public function get_user_agent_client_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -734,380 +639,15 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【客户-关键词】列表
-    public function get_user_client_keyword_list_datatable($post_data)
-    {
-        $me = Auth::guard("admin")->user();
-        $id = $post_data["id"];
-        $query = SEOKeyword::select('*')->with('creator')->where('createuserid',$id);
 
-        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
-        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
-        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
-//        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
-        if(!empty($post_data['keywordstatus']))
-        {
-            if($post_data['keywordstatus'] == "默认")
-            {
-                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
-            }
-            else if($post_data['keywordstatus'] == "全部")
-            {
-            }
-            else if($post_data['keywordstatus'] == "已删除")
-            {
-                $query->where('status','!=',1);
-            }
-            else
-            {
-                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
-            }
-        }
-        else
-        {
-            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
-        }
-
-        $total = $query->count();
-
-        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
-        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
-        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
-
-        if(isset($post_data['order']))
-        {
-            $columns = $post_data['columns'];
-            $order = $post_data['order'][0];
-            $order_column = $order['column'];
-            $order_dir = $order['dir'];
-
-            $field = $columns[$order_column]["data"];
-            $query->orderBy($field, $order_dir);
-        }
-        else $query->orderBy("id", "desc");
-
-        if($limit == -1) $list = $query->get();
-        else $list = $query->skip($skip)->take($limit)->get();
-
-        foreach ($list as $k => $v)
-        {
-            $list[$k]->encode_id = encode($v->id);
-        }
-//        dd($list->toArray());
-        return datatable_response($list, $draw, $total);
-    }
-
-
-
-
-    // 【代理商】充值
-    public function operate_user_agent_recharge($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入用户名',
-            'recharge-amount.required' => '请输入用户名',
-            'recharge-amount.numeric' => '金额必须为数字',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-            'recharge-amount' => 'required|numeric',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'recharge') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $mine = Auth::guard('admin')->user();
-        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限");
-
-        $time = date('Y-m-d H:i:s');
-        $amount = $post_data['recharge-amount'];
-        // 充值金额不能为0
-        if($amount == 0) return response_error([],"充值金额不能为0！");
-
-        $agent = User::find($id);
-        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($agent->usergroup,['Agent'])) return response_error([],"该用户不是1级代理商，你不能操作！");
-
-        // 退款金额应该小于资金余额
-        if($amount < 0)
-        {
-            if(($agent->fund_balance + $amount) < 0) return response_error([],"退款金额不能超过该账户余额");
-        }
-
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $FundRechargeRecord = New FundRechargeRecord;
-            $FundRechargeRecord_data['owner_id'] = $mine->id;
-            $FundRechargeRecord_data['createuserid'] = $mine->id;
-            $FundRechargeRecord_data['createusername'] = $mine->username;
-            $FundRechargeRecord_data['createtime'] = $time;
-            $FundRechargeRecord_data['userid'] = $id;
-            $FundRechargeRecord_data['usertype'] = 'admin';
-            $FundRechargeRecord_data['status'] = 1;
-            $FundRechargeRecord_data['amount'] = $amount;
-
-            $bool = $FundRechargeRecord->fill($FundRechargeRecord_data)->save();
-            if($bool)
-            {
-                $agent->increment('fund_total',$amount);
-                $agent->increment('fund_balance',$amount);
-            }
-            else throw new Exception("insert--fund-record--fail");
-
-            DB::commit();
-            return response_success(['id'=>$agent->id]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-
-    // 关闭【代理商】充值限制
-    public function operate_user_agent_recharge_limit_close($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入用户名',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'recharge-limit-close') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $agent = User::find($id);
-        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["is_recharge_limit"] = 0;
-            $bool = $agent->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--user--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-    // 开启【代理商】充值限制
-    public function operate_user_agent_recharge_limit_open($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入用户名',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'recharge-limit-open') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $agent = User::find($id);
-        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["is_recharge_limit"] = 1;
-            $bool = $agent->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--user--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-
-
-
-
-    // 关闭【二级代理商】
-    public function operate_user_agent_sub_agent_close($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入用户名',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'sub-agent-close') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $agent = User::find($id);
-        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["isopen_subagent"] = 0;
-            $bool = $agent->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--user--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-    // 开启【二级代理商】
-    public function operate_user_agent_sub_agent_open($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入用户名',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'sub-agent-open') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $agent = User::find($id);
-        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
-        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["isopen_subagent"] = 1;
-            $bool = $agent->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--user--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-
-
-
-
-    // 删除【代理商】
+    // 【代理商】删除
     public function operate_user_agent_delete($post_data)
     {
         $mine = Auth::guard('admin')->user();
         if($mine->usergroup != "Manage") return response_error([],"你没有操作权限");
 
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该用户不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $agent = User::find($id);
         if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商");
@@ -1216,7 +756,487 @@ class IndexRepository {
         }
     }
 
-    // 删除【客户】
+    // 【代理商】充值
+    public function operate_user_agent_recharge($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+            'recharge-amount.required' => '请输入用户名',
+            'recharge-amount.numeric' => '金额必须为数字',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+            'recharge-amount' => 'required|numeric',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限");
+
+        $time = date('Y-m-d H:i:s');
+        $amount = $post_data['recharge-amount'];
+        // 充值金额不能为0
+        if($amount == 0) return response_error([],"充值金额不能为0！");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent'])) return response_error([],"该用户不是1级代理商，你不能操作！");
+
+        // 退款金额应该小于资金余额
+        if($amount < 0)
+        {
+            if(($agent->fund_balance + $amount) < 0) return response_error([],"退款金额不能超过该账户余额");
+        }
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $FundRechargeRecord = New FundRechargeRecord;
+            $FundRechargeRecord_data['owner_id'] = $mine->id;
+            $FundRechargeRecord_data['createuserid'] = $mine->id;
+            $FundRechargeRecord_data['createusername'] = $mine->username;
+            $FundRechargeRecord_data['createtime'] = $time;
+            $FundRechargeRecord_data['userid'] = $id;
+            $FundRechargeRecord_data['usertype'] = 'admin';
+            $FundRechargeRecord_data['status'] = 1;
+            $FundRechargeRecord_data['amount'] = $amount;
+
+            $bool = $FundRechargeRecord->fill($FundRechargeRecord_data)->save();
+            if($bool)
+            {
+                $agent->increment('fund_total',$amount);
+                $agent->increment('fund_balance',$amount);
+            }
+            else throw new Exception("insert--fund-record--fail");
+
+            DB::commit();
+            return response_success(['id'=>$agent->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+    // 【代理商】关闭-充值限制
+    public function operate_user_agent_recharge_limit_close($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge-limit-close') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["is_recharge_limit"] = 0;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【代理商】开启-充值限制
+    public function operate_user_agent_recharge_limit_open($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'recharge-limit-open') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["is_recharge_limit"] = 1;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+    // 【代理商】关闭-二级代理商
+    public function operate_user_agent_sub_agent_close($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'sub-agent-close') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["isopen_subagent"] = 0;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【代理商】开启-二级代理商
+    public function operate_user_agent_sub_agent_open($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入用户名',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'sub-agent-open') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $agent = User::find($id);
+        if(!$agent) return response_error([],"该用户不存在，刷新页面重试");
+        if(!in_array($agent->usergroup,['Agent','Agent2'])) return response_error([],"该用户不是代理商，你不能操作！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["isopen_subagent"] = 1;
+            $bool = $agent->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--user--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+
+    // 【客户】返回-列表-视图
+    public function view_user_client_list()
+    {
+        $me = Auth::guard('admin')->user();
+
+        $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])->where('fund_expense_daily','>',0)
+            ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
+
+        $view_blade = 'mt.admin.entrance.user.client-list';
+        return view($view_blade)->with([
+            'sidebar_client_list_active'=>'active menu-open',
+            'insufficient_clients'=>$insufficient_clients
+        ]);
+    }
+    // 【客户】返回-列表-数据
+    public function get_user_client_list_datatable($post_data)
+    {
+        $admin_id = Auth::guard("admin")->user()->id;
+        $query = User::select('*')
+//        $query = User::select('id','pid','epid','username','usergroup','createtime')
+//            ->whereHas('fund', function ($query1) { $query1->where('totalfunds', '>=', 1000); } )
+            ->with('parent','ep','fund')
+            ->withCount([
+                'sites'=>function ($query) { $query->where('status',1)->whereIn('sitestatus',['优化中','待审核']); },
+                'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); }
+            ])
+            ->where(['userstatus'=>'正常','status'=>1])
+            ->whereIn('usergroup',['Service']);
+
+        if(!empty($post_data['username'])) $query->where('username', 'like', "%{$post_data['username']}%");
+        if(!empty($post_data['agent_id']))
+        {
+            $agent_id = $post_data['agent_id'];
+            $query->whereHas('parent',function ($query1) use ($agent_id)  { $query1->where('id',$agent_id); });
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+//            $v->fund_total = number_format($v->fund_total);
+//            $v->fund_expense = number_format($v->fund_expense);
+//            $v->fund_balance = number_format($v->fund_balance);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 【客户】返回-详情-视图
+    public function view_user_client($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！！");
+
+        $user = User::find($id);
+        if($user)
+        {
+            if($user->usergroup != 'Service') return response_error([],"该用户不存在，刷新页面试试！");
+        }
+
+        $user_data = $user;
+
+
+        /*
+         * 关键词
+         */
+        // 今日优化关键词
+        $keyword_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])->where('createuserid',$id)->count();
+        $user_data->keyword_count = $keyword_count;
+
+        // 今日检测关键词
+        $keyword_detect_count = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->count();
+        $user_data->keyword_detect_count = $keyword_detect_count;
+
+        // 今日达标关键词
+        $keyword_standard_data = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'已达标'])
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->where('createuserid',$id)
+            ->first(
+                array(
+                    \DB::raw('COUNT(*) as keyword_standard_count'),
+                    \DB::raw('SUM(price) as keyword_standard_cost_sum')
+                )
+            );
+        $user_data->keyword_standard_count = $keyword_standard_data->keyword_standard_count;
+        $user_data->keyword_standard_cost_sum = $keyword_standard_data->keyword_standard_cost_sum;
+
+
+        return view('mt.admin.entrance.user.client')
+            ->with([
+                'user_data'=>$user_data
+            ]);
+    }
+    // 【客户】返回-关键词列表-数据
+    public function get_user_client_keyword_list_datatable($post_data)
+    {
+        $me = Auth::guard("admin")->user();
+        $id = $post_data["id"];
+        $query = SEOKeyword::select('*')->with('creator')->where('createuserid',$id);
+
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+//        if(!empty($post_data['keywordstatus'])) $query->where('keywordstatus', $post_data['keywordstatus'])->where('status', 1);
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "默认")
+            {
+                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
+            }
+            else if($post_data['keywordstatus'] == "全部")
+            {
+            }
+            else if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+        else
+        {
+            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 【客户】删除
     public function operate_user_client_delete($post_data)
     {
         $admin = Auth::guard('admin')->user();
@@ -1277,40 +1297,13 @@ class IndexRepository {
 
 
 
-    // 【select2】
-    public function operate_business_select2_agent($post_data)
-    {
-        $me = Auth::guard('admin')->user();
-        if(empty($post_data['keyword']))
-        {
-            $list =User::select(['id','username as text'])
-                ->where(['userstatus'=>'正常','status'=>1])
-                ->whereIn('usergroup',['Agent','Agent2'])
-                ->orderBy('id','desc')
-                ->get()
-                ->toArray();
-        }
-        else
-        {
-            $keyword = "%{$post_data['keyword']}%";
-            $list =User::select(['id','username as text'])
-                ->where(['userstatus'=>'正常','status'=>1])
-                ->whereIn('usergroup',['Agent','Agent2'])
-                ->where('sitename','like',"%$keyword%")
-                ->orderBy('id','desc')
-                ->get()
-                ->toArray();
-        }
-        array_unshift($list, ['id'=>0,'text'=>'【全部代理】']);
-        return $list;
-    }
 
 
 
     /*
      * 业务系统
      */
-    // 返回【站点】列表
+    // 【站点】返回-列表-数据
     public function get_business_site_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -1365,8 +1358,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
-
-    // 返回【待审核站点】列表
+    // 【站点】返回-待审核列表-数据
     public function get_business_site_todo_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -1403,7 +1395,479 @@ class IndexRepository {
     }
 
 
-    // 返回【关键词】视图
+    // 【站点】审核
+    public function operate_business_site_review($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
+
+        $current_time = date('Y-m-d H:i:s');
+        $site_status = $post_data["sitestatus"];
+        if(!in_array($site_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+
+
+        $site = SEOSite::find($id);
+        if($site)
+        {
+        }
+        else return response_error([],'账户不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $site_data["reviewuserid"] = $mine->id;
+            $site_data["reviewusername"] = $mine->username;
+            $site_data["reviewdate"] = $current_time;
+            $site_data["sitestatus"] = $site_status;
+
+            $bool = $site->fill($site_data)->save();
+            if(!$bool) throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+    // 【站点】批量审核
+    public function operate_business_site_review_bulk($post_data)
+    {
+        $messages = [
+            'bulk_site_id.required' => '请选择站点！',
+            'bulk_site_status.required' => '请选择状态！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_site_id' => 'required',
+            'bulk_site_status' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+//        dd($post_data);
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $site_status = $post_data["bulk_site_status"];
+        if(!in_array($site_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $current_time = date('Y-m-d H:i:s');
+
+            $site_ids = $post_data["bulk_site_id"];
+            foreach($site_ids as $key => $site_id)
+            {
+                if(intval($site_id) !== 0 && !$site_id) return response_error([],"id有误，刷新页面试试！");
+
+                $site = SEOSite::where(["id"=>$site_id,"sitestatus"=>"待审核"])->first();
+                if(!$site) return response_error([],'账户不存在，刷新页面试试！');
+
+                $site_data["reviewuserid"] = $me->id;
+                $site_data["reviewusername"] = $me->username;
+                $site_data["reviewdate"] = $current_time;
+                $site_data["sitestatus"] = $site_status;
+
+                $bool = $site->fill($site_data)->save();
+                if(!$bool) throw new Exception("update--site--fail");
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 【待选站点】删除
+    public function operate_business_site_todo_delete($post_data)
+    {
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $item = SEOSite::find($id);
+        if(!$item) return response_error([],'站点不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $item->content;
+            $cover_pic = $item->cover_pic;
+
+            // 删除【该条目】
+//            $item->pivot_menus()->detach(); // 删除相关目录
+            $bool = $item->delete();
+            if(!$bool) throw new Exception("delete--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+    // 【待选站点】批量删除
+    public function operate_business_site_todo_delete_bulk($post_data)
+    {
+        $messages = [
+            'bulk_site_id.required' => '请选择站点！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_site_id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+//        dd($post_data);
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $site_ids = $post_data["bulk_site_id"];
+            foreach($site_ids as $key => $site_id)
+            {
+                if(intval($site_id) !== 0 && !$site_id) return response_error([],"该站点不存在，刷新页面试试！");
+
+                $item = SEOSite::where(["id"=>$site_id,"sitestatus"=>"待审核"])->first();
+                if(!$item) return response_error([],'站点不存在，刷新页面试试！');
+
+                $content = $item->content;
+                $cover_pic = $item->cover_pic;
+
+                // 删除【该条目】
+//                $item->pivot_menus()->detach(); // 删除相关目录
+                $bool = $item->delete();
+                if(!$bool) throw new Exception("delete--site--fail");
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+
+    // 【站点】获取-详情
+    public function operate_business_site_get($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'site-get') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $item = SEOSite::find($id);
+        if(!$item) return response_error([],"该内容不存在，刷新页面试试！");
+        return response_success($item,"");
+
+    }
+    // 【站点】删除
+    public function operate_business_site_delete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'delete-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["status"] = 0;
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【站点】合作停
+    public function operate_business_site_stop($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'stop-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["sitestatus"] = "合作停";
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【站点】再合作
+    public function operate_business_site_start($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'start-site') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["sitestatus"] = "优化中";
+            $bool = $site->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--site--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【站点】保存数据
+    public function operate_business_site_save($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'sitename.required' => '请输入站点名',
+            'website.required' => '请输入站点',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'sitename' => 'required',
+            'website' => 'required'
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+
+        $operate = $post_data["operate"];
+        if($operate != 'site-edit') return response_error([],"参数有误！");
+        $id = $post_data["operate_id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！！");
+
+        $site = SEOSite::find($id);
+        if(!$site) return response_error([],"该站点不存在，刷新页面重试！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($post_data['custom']))
+            {
+                $post_data['custom'] = json_encode($post_data['custom']);
+            }
+
+            $site_data = $post_data;
+            unset($site_data['operate']);
+            unset($site_data['operate_id']);
+            $bool = $site->fill($site_data)->save();
+            if($bool)
+            {
+                // 封面图片
+                if(!empty($post_data["cover"]))
+                {
+                    // 删除原封面图片
+                    $site_cover_pic = $site->cover_pic;
+                    if(!empty($site_cover_pic) && file_exists(storage_path("resource/" . $site_cover_pic)))
+                    {
+                        unlink(storage_path("resource/" . $site_cover_pic));
+                    }
+
+                    $result = upload_storage($post_data["cover"]);
+                    if($result["result"])
+                    {
+                        $site->cover_pic = $result["local"];
+                        $site->save();
+                    }
+                    else throw new Exception("upload-cover-fail");
+                }
+
+                $keyword_data['sitename'] = $site_data['sitename'];
+                $keyword_data['website'] = $site_data['website'];
+                $keywords_count = SEOKeyword::where('siteid',$id)->count();
+                $bool_1 = SEOKeyword::where('siteid',$id)->update($keyword_data);
+                if($keywords_count != $bool_1)  return response_error([],"update--keyword-fail");
+
+            }
+            else throw new Exception("insert--site--fail");
+
+            DB::commit();
+            return response_success(['id'=>$site->id]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 【关键词】返回-列表-视图
     public function show_business_keyword_list()
     {
         $data = [];
@@ -1445,7 +1909,7 @@ class IndexRepository {
                 'sidebar_business_keyword_list_active'=>'active'
             ]);
     }
-    // 返回【关键词】列表
+    // 【关键词】返回-列表-数据
     public function get_business_keyword_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -1502,8 +1966,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-
-    // 返回【今日关键词】视图
+    // 【今日关键词】返回-列表-视图
     public function show_business_keyword_today_list()
     {
         $data = [];
@@ -1557,7 +2020,7 @@ class IndexRepository {
                 'sidebar_business_keyword_today_active'=>'active'
             ]);
     }
-    // 返回【今日关键词】列表
+    // 【今日关键词】返回-列表-数据
     public function get_business_keyword_today_list_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -1615,8 +2078,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-
-    // 返回【今日新增上词关键词】视图
+    // 【今日新增上词关键词】返回-列表-视图
     public function show_business_keyword_today_newly_list()
     {
         $data = [];
@@ -1663,7 +2125,7 @@ class IndexRepository {
                 'sidebar_business_keyword_today_newly_active'=>'active'
             ]);
     }
-    // 返回【今日新增上词关键词】列表
+    // 【今日新增上词关键词】返回-列表-数据
     public function get_business_keyword_today_newly_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -1734,8 +2196,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-
-    // 返回【异常关键词】视图
+    // 【异常关键词】返回-列表-视图
     public function show_business_keyword_anomaly_list()
     {
         $data = [];
@@ -1747,7 +2208,7 @@ class IndexRepository {
                 'sidebar_business_keyword_anomaly_active'=>'active'
             ]);
     }
-    // 返回【异常关键词】列表
+    // 【异常关键词】返回-列表-数据
     public function get_business_keyword_anomaly_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -1814,8 +2275,7 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-
-    // 返回【待审核关键词】列表
+    // 【待审核关键词】返回-列表-数据
     public function get_business_keyword_todo_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -1865,7 +2325,541 @@ class IndexRepository {
 
 
 
-    // 返回【关键词检测】视图
+    // 【关键词】审核
+    public function operate_business_keyword_review($post_data)
+    {
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $current_time = date('Y-m-d H:i:s');
+        $keyword_status = $post_data["keywordstatus"];
+        $keyword_price = $post_data["review-price"];
+        if(!in_array($keyword_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+
+        $keyword = SEOKeyword::find($id);
+        if($keyword)
+        {
+            $keyword_status_original = $keyword->keywordstatus;
+            $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+            if($keyword_owner)
+            {
+                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
+                {
+                    if($keyword_owner->fund_available < ($keyword_price * 30))
+                    {
+                        return response_error([],'用户可用余额不足！');
+                    }
+                }
+            }
+            else return response_error([],'用户不存在，刷新页面试试！');
+        }
+        else return response_error([],'关键词不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $keyword_data["reviewuserid"] = $me->id;
+            $keyword_data["reviewusername"] = $me->username;
+            $keyword_data["reviewdate"] = $current_time;
+            $keyword_data["keywordstatus"] = $keyword_status;
+            $keyword_data["price"] = $keyword_price;
+
+            $bool = $keyword->fill($keyword_data)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
+            {
+
+                $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
+                $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
+                $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
+                $keyword_owner->save();
+
+                $cart = SEOCart::find($keyword->cartid);
+                $cart->price = $keyword_price;
+                $cart->save();
+
+                $freeze = new FundFreezeRecord;
+                $freeze_date["owner_id"] = $keyword->createuserid;
+                $freeze_date["siteid"] = $keyword->siteid;
+                $freeze_date["keywordid"] = $keyword->id;
+                $freeze_date["freezefunds"] = $keyword_price * 30;
+                $freeze_date["createuserid"] = $me->id;
+                $freeze_date["createusername"] = $me->username;
+                $freeze_date["reguser"] = $me->username;
+                $freeze_date["regtime"] = time();
+                $bool_1 = $freeze->fill($freeze_date)->save();
+                if($bool_1)
+                {
+                }
+                else throw new Exception("insert--freeze--fail");
+            }
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+    // 【关键词】批量审核
+    public function operate_business_keyword_review_bulk($post_data)
+    {
+        $messages = [
+            'bulk_keyword_id.required' => '请选择站点！',
+            'bulk_keyword_status.required' => '请选择状态！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_keyword_id' => 'required',
+            'bulk_keyword_status' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+//        dd($post_data);
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $keyword_status = $post_data["bulk_keyword_status"];
+        if(!in_array($keyword_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $current_time = date('Y-m-d H:i:s');
+
+            $keyword_ids = $post_data["bulk_keyword_id"];
+            foreach($keyword_ids as $key => $keyword_id)
+            {
+                if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"id有误，刷新页面试试！");
+
+                $keyword = SEOKeyword::find($keyword_id);
+                if($keyword)
+                {
+                    $keyword_status_original = $keyword->keywordstatus;
+                    $keyword_price = $keyword->price;
+                    $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
+                    if($keyword_owner)
+                    {
+                        if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
+                        {
+                            if($keyword_owner->fund_available < ($keyword_price * 30))
+                            {
+                                return response_error([],'用户可用余额不足！');
+                            }
+                        }
+                    }
+                    else return response_error([],'用户不存在，刷新页面试试！');
+                }
+                else return response_error([],'关键词不存在，刷新页面试试！');
+
+
+                $keyword_data["reviewuserid"] = $me->id;
+                $keyword_data["reviewusername"] = $me->username;
+                $keyword_data["reviewdate"] = $current_time;
+                $keyword_data["keywordstatus"] = $keyword_status;
+
+                $bool = $keyword->fill($keyword_data)->save();
+                if(!$bool) throw new Exception("update--keyword--fail");
+
+                $cart = SEOCart::find($keyword->cartid);
+                $cart->price = $keyword_price;
+                $cart->save();
+
+                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
+                {
+                    $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
+                    $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
+                    $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
+                    $keyword_owner->save();
+
+                    $freeze = new FundFreezeRecord;
+                    $freeze_date["owner_id"] = $keyword->createuserid;
+                    $freeze_date["siteid"] = $keyword->siteid;
+                    $freeze_date["keywordid"] = $keyword->id;
+                    $freeze_date["freezefunds"] = $keyword_price * 30;
+                    $freeze_date["createuserid"] = $me->id;
+                    $freeze_date["createusername"] = $me->username;
+                    $freeze_date["reguser"] = $me->username;
+                    $freeze_date["regtime"] = time();
+                    $bool_1 = $freeze->fill($freeze_date)->save();
+                    if(!$bool_1) throw new Exception("insert--freeze--fail");
+                }
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+    // 【待选关键词】删除
+    public function operate_business_keyword_todo_delete($post_data)
+    {
+        $mine = Auth::guard('admin')->user();
+        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $item = SEOKeyword::where(["id"=>$id,"keywordstatus"=>"待审核"])->first();
+        if(!$item) return response_error([],'关键词不存在，刷新页面试试！');
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $content = $item->content;
+            $cover_pic = $item->cover_pic;
+
+            // 删除【Cart】
+//            $deletedRows_1 = SEOCart::find($item->id)->delete();
+
+            // 删除【该条目】
+//            $item->pivot_menus()->detach(); // 删除相关目录
+            $bool = $item->delete();
+            if(!$bool) throw new Exception("delete--keyword--fail");
+
+            DB::commit();
+
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+    // 【待选关键词】批量删除
+    public function operate_business_keyword_todo_delete_bulk($post_data)
+    {
+        $messages = [
+            'bulk_keyword_id.required' => '请选择关键词！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_keyword_id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+//        dd($post_data);
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $keyword_ids = $post_data["bulk_keyword_id"];
+            foreach($keyword_ids as $key => $keyword_id)
+            {
+                if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"ID有误，刷新页面试试！");
+
+                $item = SEOKeyword::where(["id"=>$keyword_id,"keywordstatus"=>"待审核"])->first();
+                if(!$item) return response_error([],'关键词不存在，刷新页面试试！');
+
+                $content = $item->content;
+                $cover_pic = $item->cover_pic;
+
+                // 删除【Cart】
+//                $deletedRows_1 = SEOCart::find($item->id)->delete();
+
+                // 删除【该条目】
+//                $item->pivot_menus()->detach(); // 删除相关目录
+                $bool = $item->delete();
+                if(!$bool) throw new Exception("delete--keyword--fail");
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '删除失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+
+
+
+
+    // 【关键词】获取-详情
+    public function operate_business_keyword_get($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'keyword-get') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        $item = SEOKeyword::find($id);
+        if(!$item) return response_error([],"该内容不存在，刷新页面试试！");
+        return response_success($item,"");
+
+    }
+    // 【关键词】删除
+    public function operate_business_keyword_delete($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'delete-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["status"] = 0;
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【关键词】批量删除
+    public function operate_business_keyword_delete_bulk($post_data)
+    {
+        $messages = [
+            'bulk_keyword_id.required' => '请选择关键词！',
+        ];
+        $v = Validator::make($post_data, [
+            'bulk_keyword_id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $me = Auth::guard('admin')->user();
+        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $keyword_ids = $post_data["bulk_keyword_id"];
+            foreach($keyword_ids as $key => $keyword_id)
+            {
+                if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"参数ID有误！");
+
+                $keyword = SEOKeyword::find($keyword_id);
+                if($keyword)
+                {
+                    $update["status"] = 0;
+                    $bool = $keyword->fill($update)->save();
+                    if($bool)
+                    {
+                    }
+                    else throw new Exception("update--keyword--fail");
+                }
+                else return response_error([],'关键词不存在，刷新页面试试！');
+            }
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+    }
+    // 【关键词】合作停
+    public function operate_business_keyword_stop($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'stop-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["keywordstatus"] = "合作停";
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+    // 【关键词】再合作
+    public function operate_business_keyword_start($post_data)
+    {
+        $messages = [
+            'operate.required' => '参数有误',
+            'id.required' => '请输入关键词ID',
+        ];
+        $v = Validator::make($post_data, [
+            'operate' => 'required',
+            'id' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $operate = $post_data["operate"];
+        if($operate != 'start-keyword') return response_error([],"参数有误！");
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
+
+        $me = Auth::guard('admin')->user();
+        if($me->usertype != "admin") return response_error([],"你没有操作权限");
+
+        $keyword = SEOKeyword::find($id);
+        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
+
+        // 启动数据库事务
+        DB::beginTransaction();
+        try
+        {
+            $update["keywordstatus"] = "优化中";
+            $bool = $keyword->fill($update)->save();
+            if($bool)
+            {
+            }
+            else throw new Exception("update--keyword--fail");
+
+            DB::commit();
+            return response_success([]);
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            $msg = '操作失败，请重试！';
+            $msg = $e->getMessage();
+//            exit($e->getMessage());
+            return response_fail([],$msg);
+        }
+
+    }
+
+
+
+
+    // 【关键词排名】返回-列表-视图
     public function show_business_keyword_detect_record($post_data)
     {
         $id = $post_data["id"];
@@ -1873,7 +2867,7 @@ class IndexRepository {
         return view('mt.admin.entrance.business.keyword-detect-record')
             ->with(['data'=>$keyword_data]);
     }
-    // 返回【关键词检测】列表
+    // 【关键词排名】返回-列表-数据
     public function get_business_keyword_detect_record_datatable($post_data)
     {
         $mine = Auth::guard("admin")->user();
@@ -1919,7 +2913,7 @@ class IndexRepository {
     }
 
 
-    // 添加【关键词排名】
+    // 【关键词排名】添加
     public function operate_business_keyword_detect_create_rank($post_data)
     {
         $messages = [
@@ -2086,7 +3080,7 @@ class IndexRepository {
         }
 
     }
-    // 修改【关键词排名】
+    // 【关键词排名】修改
     public function operate_business_keyword_detect_set_rank($post_data)
     {
         $messages = [
@@ -2369,7 +3363,7 @@ class IndexRepository {
         }
 
     }
-    // 批量修改【关键词排名】
+    // 【关键词排名】批量修改
     public function operate_business_keyword_detect_set_rank_bulk($post_data)
     {
         $messages = [
@@ -2658,809 +3652,117 @@ class IndexRepository {
 
 
 
-    // 审核【站点】
-    public function operate_business_site_review($post_data)
+    // 【关键词】返回-查询-视图
+    public function view_business_keyword_search()
     {
+        $mine = Auth::guard('client')->user();
+        $view_blade = 'mt.admin.entrance.business.keyword-search';
+        return view($view_blade)->with([
+            'operate'=>'search',
+            'operate_id'=>0,
+            'sidebar_business_active'=>'active',
+            'sidebar_business_keyword_search_active'=>'active'
+        ]);
+    }
+    // 【关键词】返回-查询-结果
+    public function operate_business_keyword_search($post_data)
+    {
+        $messages = [
+            'keywords.required' => '关键词不能为空',
+        ];
+        $v = Validator::make($post_data, [
+            'keywords' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
         $mine = Auth::guard('admin')->user();
+        $mine_id = $mine->id;
         if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
 
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
-
-        $current_time = date('Y-m-d H:i:s');
-        $site_status = $post_data["sitestatus"];
-        if(!in_array($site_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+        $CommonRepository = new CommonRepository();
 
 
-        $site = SEOSite::find($id);
-        if($site)
-        {
-        }
-        else return response_error([],'账户不存在，刷新页面试试！');
+        $keywords = $post_data['keywords'];
 
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $site_data["reviewuserid"] = $mine->id;
-            $site_data["reviewusername"] = $mine->username;
-            $site_data["reviewdate"] = $current_time;
-            $site_data["sitestatus"] = $site_status;
+        // 将回车换行替换成逗号
+        $keywords = str_replace(array("\r\n", "\r", "\n"), ",", $keywords);
 
-            $bool = $site->fill($site_data)->save();
-            if(!$bool) throw new Exception("update--site--fail");
+//        //将回车换行替换成逗号
+//        $kws = str_replace(",","\r\n", $keywords);
+//        $kws = str_replace(",","\r", $keywords);
+//        $kws = str_replace(",","\n", $keywords);
 
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-    // 批量审核【站点】
-    public function operate_business_site_review_bulk($post_data)
-    {
-        $messages = [
-            'bulk_site_id.required' => '请选择站点！',
-            'bulk_site_status.required' => '请选择状态！',
-        ];
-        $v = Validator::make($post_data, [
-            'bulk_site_id' => 'required',
-            'bulk_site_status' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-//        dd($post_data);
+        $keyword_array = explode(',' , $keywords );
+        // 去重空值
+        $keyword_array = array_filter( $keyword_array );
+        // 去重操作
+        $keyword_array = array_values(array_unique( $keyword_array ));
 
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
+        $KeywordLengthPriceIndexOptions = config('seo.KeywordLengthPriceIndexOptions');
 
-        $site_status = $post_data["bulk_site_status"];
-        if(!in_array($site_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
+        $search_engine_keys = array_keys($KeywordLengthPriceIndexOptions);
 
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $current_time = date('Y-m-d H:i:s');
+        //组成字符
+        $keywords = implode(',' , $keyword_array);
 
-            $site_ids = $post_data["bulk_site_id"];
-            foreach($site_ids as $key => $site_id)
+        //
+        foreach ( $keyword_array as $key => $vo ){
+
+            // 去掉关键词前后的空额
+            //$vo = strtolower(trim($vo));
+            $vo = trim($vo);
+            $replace = array(" ","　","\n","\r","\t");
+            $vo = str_replace($replace, "", $vo);
+            $temp['keyword'] = $vo;
+            foreach ( $search_engine_keys as $vo2 )
             {
-                if(intval($site_id) !== 0 && !$site_id) return response_error([],"id有误，刷新页面试试！");
-
-                $site = SEOSite::where(["id"=>$site_id,"sitestatus"=>"待审核"])->first();
-                if(!$site) return response_error([],'账户不存在，刷新页面试试！');
-
-                $site_data["reviewuserid"] = $me->id;
-                $site_data["reviewusername"] = $me->username;
-                $site_data["reviewdate"] = $current_time;
-                $site_data["sitestatus"] = $site_status;
-
-                $bool = $site->fill($site_data)->save();
-                if(!$bool) throw new Exception("update--site--fail");
+                $temp[$vo2] = 0;
             }
+            $arr[] = $temp;
+        }
 
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
+        $list = $CommonRepository -> combKeywordSearchResults( $arr );
+        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
+        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
+//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
+//        $html = response($html)->getContent();
+
+
+        $recommend_list = $CommonRepository->get_keyword_recommend($post_data);
+        $recommend_html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$recommend_list])->__toString();
+
+        return response_success([
+            'list'=>json_encode($list),
+            'html'=>$html,
+            'recommend_list'=>json_encode($recommend_list),
+            'recommend_html'=>$recommend_html
+        ]);
+
     }
-
-    // 审核【关键词】
-    public function operate_business_keyword_review($post_data)
+    // 【关键词】导出-查询-结果
+    public function operate_business_keyword_search_export($post_data)
     {
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
-
-        $current_time = date('Y-m-d H:i:s');
-        $keyword_status = $post_data["keywordstatus"];
-        $keyword_price = $post_data["review-price"];
-        if(!in_array($keyword_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
-
-        $keyword = SEOKeyword::find($id);
-        if($keyword)
-        {
-            $keyword_status_original = $keyword->keywordstatus;
-            $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
-            if($keyword_owner)
-            {
-                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
-                {
-                    if($keyword_owner->fund_available < ($keyword_price * 30))
-                    {
-                        return response_error([],'用户可用余额不足！');
-                    }
-                }
-            }
-            else return response_error([],'用户不存在，刷新页面试试！');
-        }
-        else return response_error([],'关键词不存在，刷新页面试试！');
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $keyword_data["reviewuserid"] = $me->id;
-            $keyword_data["reviewusername"] = $me->username;
-            $keyword_data["reviewdate"] = $current_time;
-            $keyword_data["keywordstatus"] = $keyword_status;
-            $keyword_data["price"] = $keyword_price;
-
-            $bool = $keyword->fill($keyword_data)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--keyword--fail");
-
-            if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
-            {
-
-                $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
-                $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
-                $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
-                $keyword_owner->save();
-
-                $cart = SEOCart::find($keyword->cartid);
-                $cart->price = $keyword_price;
-                $cart->save();
-
-                $freeze = new FundFreezeRecord;
-                $freeze_date["owner_id"] = $keyword->createuserid;
-                $freeze_date["siteid"] = $keyword->siteid;
-                $freeze_date["keywordid"] = $keyword->id;
-                $freeze_date["freezefunds"] = $keyword_price * 30;
-                $freeze_date["createuserid"] = $me->id;
-                $freeze_date["createusername"] = $me->username;
-                $freeze_date["reguser"] = $me->username;
-                $freeze_date["regtime"] = time();
-                $bool_1 = $freeze->fill($freeze_date)->save();
-                if($bool_1)
-                {
-                }
-                else throw new Exception("insert--freeze--fail");
-            }
-
-            DB::commit();
-
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-    // 批量审核【关键词】
-    public function operate_business_keyword_review_bulk($post_data)
-    {
-        $messages = [
-            'bulk_keyword_id.required' => '请选择站点！',
-            'bulk_keyword_status.required' => '请选择状态！',
-        ];
-        $v = Validator::make($post_data, [
-            'bulk_keyword_id' => 'required',
-            'bulk_keyword_status' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-//        dd($post_data);
-
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        $keyword_status = $post_data["bulk_keyword_status"];
-        if(!in_array($keyword_status,['待审核','优化中','合作停','被拒绝'])) return response_error([],"审核参数有误！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $current_time = date('Y-m-d H:i:s');
-
-            $keyword_ids = $post_data["bulk_keyword_id"];
-            foreach($keyword_ids as $key => $keyword_id)
-            {
-                if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"id有误，刷新页面试试！");
-
-                $keyword = SEOKeyword::find($keyword_id);
-                if($keyword)
-                {
-                    $keyword_status_original = $keyword->keywordstatus;
-                    $keyword_price = $keyword->price;
-                    $keyword_owner = User::where("id",$keyword->createuserid)->lockForUpdate()->first();
-                    if($keyword_owner)
-                    {
-                        if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
-                        {
-                            if($keyword_owner->fund_available < ($keyword_price * 30))
-                            {
-                                return response_error([],'用户可用余额不足！');
-                            }
-                        }
-                    }
-                    else return response_error([],'用户不存在，刷新页面试试！');
-                }
-                else return response_error([],'关键词不存在，刷新页面试试！');
-
-
-                $keyword_data["reviewuserid"] = $me->id;
-                $keyword_data["reviewusername"] = $me->username;
-                $keyword_data["reviewdate"] = $current_time;
-                $keyword_data["keywordstatus"] = $keyword_status;
-
-                $bool = $keyword->fill($keyword_data)->save();
-                if(!$bool) throw new Exception("update--keyword--fail");
-
-                $cart = SEOCart::find($keyword->cartid);
-                $cart->price = $keyword_price;
-                $cart->save();
-
-                if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
-                {
-                    $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
-                    $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
-                    $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
-                    $keyword_owner->save();
-
-                    $freeze = new FundFreezeRecord;
-                    $freeze_date["owner_id"] = $keyword->createuserid;
-                    $freeze_date["siteid"] = $keyword->siteid;
-                    $freeze_date["keywordid"] = $keyword->id;
-                    $freeze_date["freezefunds"] = $keyword_price * 30;
-                    $freeze_date["createuserid"] = $me->id;
-                    $freeze_date["createusername"] = $me->username;
-                    $freeze_date["reguser"] = $me->username;
-                    $freeze_date["regtime"] = time();
-                    $bool_1 = $freeze->fill($freeze_date)->save();
-                    if(!$bool_1) throw new Exception("insert--freeze--fail");
-                }
-            }
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-
-
-
-
-    // 删除【待选站点】
-    public function operate_business_site_todo_delete($post_data)
-    {
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
-
-        $item = SEOSite::find($id);
-        if(!$item) return response_error([],'站点不存在，刷新页面试试！');
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $content = $item->content;
-            $cover_pic = $item->cover_pic;
-
-            // 删除【该条目】
-//            $item->pivot_menus()->detach(); // 删除相关目录
-            $bool = $item->delete();
-            if(!$bool) throw new Exception("delete--site--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-    // 批量删除【待选站点】
-    public function operate_business_site_todo_delete_bulk($post_data)
-    {
-        $messages = [
-            'bulk_site_id.required' => '请选择站点！',
-        ];
-        $v = Validator::make($post_data, [
-            'bulk_site_id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-//        dd($post_data);
-
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $site_ids = $post_data["bulk_site_id"];
-            foreach($site_ids as $key => $site_id)
-            {
-                if(intval($site_id) !== 0 && !$site_id) return response_error([],"该站点不存在，刷新页面试试！");
-
-                $item = SEOSite::where(["id"=>$site_id,"sitestatus"=>"待审核"])->first();
-                if(!$item) return response_error([],'站点不存在，刷新页面试试！');
-
-                $content = $item->content;
-                $cover_pic = $item->cover_pic;
-
-                // 删除【该条目】
-//                $item->pivot_menus()->detach(); // 删除相关目录
-                $bool = $item->delete();
-                if(!$bool) throw new Exception("delete--site--fail");
-            }
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-
-    // 删除【待选关键词】
-    public function operate_business_keyword_todo_delete($post_data)
-    {
-        $mine = Auth::guard('admin')->user();
-        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"id有误，刷新页面试试！");
-
-        $item = SEOKeyword::where(["id"=>$id,"keywordstatus"=>"待审核"])->first();
-        if(!$item) return response_error([],'关键词不存在，刷新页面试试！');
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $content = $item->content;
-            $cover_pic = $item->cover_pic;
-
-            // 删除【Cart】
-//            $deletedRows_1 = SEOCart::find($item->id)->delete();
-
-            // 删除【该条目】
-//            $item->pivot_menus()->detach(); // 删除相关目录
-            $bool = $item->delete();
-            if(!$bool) throw new Exception("delete--keyword--fail");
-
-            DB::commit();
-
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-    // 批量删除【待选关键词】
-    public function operate_business_keyword_todo_delete_bulk($post_data)
-    {
-        $messages = [
-            'bulk_keyword_id.required' => '请选择关键词！',
-        ];
-        $v = Validator::make($post_data, [
-            'bulk_keyword_id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-//        dd($post_data);
-
-        $me = Auth::guard('admin')->user();
-        if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $keyword_ids = $post_data["bulk_keyword_id"];
-            foreach($keyword_ids as $key => $keyword_id)
-            {
-                if(intval($keyword_id) !== 0 && !$keyword_id) return response_error([],"ID有误，刷新页面试试！");
-
-                $item = SEOKeyword::where(["id"=>$keyword_id,"keywordstatus"=>"待审核"])->first();
-                if(!$item) return response_error([],'关键词不存在，刷新页面试试！');
-
-                $content = $item->content;
-                $cover_pic = $item->cover_pic;
-
-                // 删除【Cart】
-//                $deletedRows_1 = SEOCart::find($item->id)->delete();
-
-                // 删除【该条目】
-//                $item->pivot_menus()->detach(); // 删除相关目录
-                $bool = $item->delete();
-                if(!$bool) throw new Exception("delete--keyword--fail");
-            }
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '删除失败，请重试';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-    }
-
-
-
-
-    // 删除【站点】
-    public function operate_business_site_delete($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'delete-site') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $site = SEOSite::find($id);
-        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["status"] = 0;
-            $bool = $site->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--site--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-    // 删除【关键词】
-    public function operate_business_keyword_delete($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'delete-keyword') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $keyword = SEOKeyword::find($id);
-        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["status"] = 0;
-            $bool = $keyword->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--keyword--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-
-
-    // 合作停【站点】
-    public function operate_business_site_stop($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'stop-site') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $site = SEOSite::find($id);
-        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["sitestatus"] = "合作停";
-            $bool = $site->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--site--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-    // 再合作【站点】
-    public function operate_business_site_start($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'start-site') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $site = SEOSite::find($id);
-        if(!$site) return response_error([],"该站点不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["sitestatus"] = "优化中";
-            $bool = $site->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--site--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-
-
-    // 合作停【关键词】
-    public function operate_business_keyword_stop($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'stop-keyword') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $keyword = SEOKeyword::find($id);
-        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["keywordstatus"] = "合作停";
-            $bool = $keyword->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--keyword--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
-    }
-    // 再合作【关键词】
-    public function operate_business_keyword_start($post_data)
-    {
-        $messages = [
-            'operate.required' => '参数有误',
-            'id.required' => '请输入关键词ID',
-        ];
-        $v = Validator::make($post_data, [
-            'operate' => 'required',
-            'id' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $operate = $post_data["operate"];
-        if($operate != 'start-keyword') return response_error([],"参数有误！");
-        $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该关键词不存在，刷新页面试试！");
-
-        $me = Auth::guard('admin')->user();
-        if($me->usertype != "admin") return response_error([],"你没有操作权限");
-
-        $keyword = SEOKeyword::find($id);
-        if(!$keyword) return response_error([],"该关键词不存在，刷新页面重试");
-
-        // 启动数据库事务
-        DB::beginTransaction();
-        try
-        {
-            $update["keywordstatus"] = "优化中";
-            $bool = $keyword->fill($update)->save();
-            if($bool)
-            {
-            }
-            else throw new Exception("update--keyword--fail");
-
-            DB::commit();
-            return response_success([]);
-        }
-        catch (Exception $e)
-        {
-            DB::rollback();
-            $msg = '操作失败，请重试！';
-            $msg = $e->getMessage();
-//            exit($e->getMessage());
-            return response_fail([],$msg);
-        }
-
+        $me = Auth::guard('client')->user();
+        $list_decode = json_decode($post_data['list'],true);
+        $recommend_list_decode = json_decode($post_data['recommend_list'],true);
+
+        $cellData = array_merge($list_decode,$recommend_list_decode);
+        array_unshift($cellData,['关键词','百度PC','百度移动','360','搜狗','神马','难度指数','难度指数','优化周期']);
+
+//        dd($cellData);
+
+        $title = '【关键词价格查询】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+
+        return false;
     }
 
 
@@ -3469,7 +3771,7 @@ class IndexRepository {
 
 
 
-    // 返回【添加站点工单】视图
+    // 【站点工单】返回-添加-视图
     public function view_business_site_work_order_create($post_data)
     {
         $me = Auth::guard('admin')->user();
@@ -3481,7 +3783,7 @@ class IndexRepository {
         $view_blade = 'mt.admin.entrance.business.site-work-order-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0, 'site_data'=>$site_data]);
     }
-    // 返回【编辑站点工单】视图
+    // 【站点工单】返回-编辑-视图
     public function view_business_site_work_order_edit($post_data)
     {
         $me = Auth::guard('admin')->user();
@@ -3514,7 +3816,7 @@ class IndexRepository {
         }
     }
 
-    // 保存【站点工单】
+    // 【站点工单】保存数据
     public function operate_business_site_work_order_save($post_data)
     {
         $messages = [
@@ -3611,7 +3913,7 @@ class IndexRepository {
     }
 
 
-    // 返回【站点工单】视图
+    // 【站点工单】返回-列表-视图
     public function show_business_site_work_order_list($post_data)
     {
         $site_id = $post_data["site-id"];
@@ -3619,7 +3921,7 @@ class IndexRepository {
         return view('mt.admin.entrance.business.site-work-order-list')
             ->with(['data'=>$site_data]);
     }
-    // 返回【站点工单】列表
+    // 【站点工单】返回-列表-数据
     public function get_business_site_work_order_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -3657,13 +3959,13 @@ class IndexRepository {
     }
 
 
-    // 返回【工单】视图
+    // 【工单】返回-列表-视图
     public function show_business_work_order_list()
     {
         return view('mt.admin.entrance.business.work-order-list')
             ->with(['sidebar_work_order_list_active'=>'active menu-open']);
     }
-    // 返回【工单】列表
+    // 【工单】返回-列表-数据
     public function get_business_work_order_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -3700,7 +4002,7 @@ class IndexRepository {
     }
 
 
-    // 获取【工单】详情
+    // 【工单】获取详情
     public function operate_business_work_order_get($post_data)
     {
         $messages = [
@@ -3720,16 +4022,16 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'work-order-get') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usergroup != "Manage") return response_error([],"你没有操作权限！");
 
-        $work_order = Item::find($id);
-        return response_success($work_order,"");
+        $item = Item::find($id);
+        return response_success($item,"");
 
     }
-    // 推送【工单】
+    // 【工单】推送
     public function operate_business_work_order_push($post_data)
     {
         $messages = [
@@ -3749,20 +4051,20 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'work-order-push') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usertype != "admin") return response_error([],"你没有操作权限");
 
-        $work_order = Item::find($id);
-        if(!$work_order) return response_error([],"该工单不存在，刷新页面重试");
+        $item = Item::find($id);
+        if(!$item) return response_error([],"该工单不存在，刷新页面重试");
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $work_order->active = 1;
-            $bool = $work_order->save();
+            $item->active = 1;
+            $bool = $item->save();
             if(!$bool) throw new Exception("update--item--fail");
 
             DB::commit();
@@ -3778,7 +4080,7 @@ class IndexRepository {
         }
 
     }
-    // 删除【工单】
+    // 【工单】删除
     public function operate_business_work_order_delete($post_data)
     {
         $messages = [
@@ -3798,19 +4100,19 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'work-order-delete') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该站点不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usertype != "admin") return response_error([],"你没有操作权限");
 
-        $work_order = Item::find($id);
-        if(!$work_order) return response_error([],"该工单不存在，刷新页面重试");
+        $item = Item::find($id);
+        if(!$item) return response_error([],"该工单不存在，刷新页面重试");
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $bool = $work_order->delete();
+            $bool = $item->delete();
             if(!$bool) throw new Exception("delete--item--fail");
 
             DB::commit();
@@ -3830,129 +4132,11 @@ class IndexRepository {
 
 
 
-    // 返回【关键词查询】视图
-    public function view_business_keyword_search()
-    {
-        $mine = Auth::guard('client')->user();
-        $view_blade = 'mt.admin.entrance.business.keyword-search';
-        return view($view_blade)->with([
-            'operate'=>'search',
-            'operate_id'=>0,
-            'sidebar_business_active'=>'active',
-            'sidebar_business_keyword_search_active'=>'active'
-        ]);
-    }
-
-    // 查询【关键词】
-    public function operate_business_keyword_search($post_data)
-    {
-        $messages = [
-            'keywords.required' => '关键词不能为空',
-        ];
-        $v = Validator::make($post_data, [
-            'keywords' => 'required',
-        ], $messages);
-        if ($v->fails())
-        {
-            $messages = $v->errors();
-            return response_error([],$messages->first());
-        }
-
-        $mine = Auth::guard('admin')->user();
-        $mine_id = $mine->id;
-        if($mine->usergroup != "Manage") return response_error([],"你没有操作权限！");
-
-        $CommonRepository = new CommonRepository();
-
-
-        $keywords = $post_data['keywords'];
-
-        // 将回车换行替换成逗号
-        $keywords = str_replace(array("\r\n", "\r", "\n"), ",", $keywords);
-
-//        //将回车换行替换成逗号
-//        $kws = str_replace(",","\r\n", $keywords);
-//        $kws = str_replace(",","\r", $keywords);
-//        $kws = str_replace(",","\n", $keywords);
-
-        $keyword_array = explode(',' , $keywords );
-        // 去重空值
-        $keyword_array = array_filter( $keyword_array );
-        // 去重操作
-        $keyword_array = array_values(array_unique( $keyword_array ));
-
-        $KeywordLengthPriceIndexOptions = config('seo.KeywordLengthPriceIndexOptions');
-
-        $search_engine_keys = array_keys($KeywordLengthPriceIndexOptions);
-
-        //组成字符
-        $keywords = implode(',' , $keyword_array);
-
-        //
-        foreach ( $keyword_array as $key => $vo ){
-
-            // 去掉关键词前后的空额
-            //$vo = strtolower(trim($vo));
-            $vo = trim($vo);
-            $replace = array(" ","　","\n","\r","\t");
-            $vo = str_replace($replace, "", $vo);
-            $temp['keyword'] = $vo;
-            foreach ( $search_engine_keys as $vo2 )
-            {
-                $temp[$vo2] = 0;
-            }
-            $arr[] = $temp;
-        }
-
-        $list = $CommonRepository -> combKeywordSearchResults( $arr );
-        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
-        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
-//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
-//        $html = response($html)->getContent();
-
-
-        $recommend_list = $CommonRepository->get_keyword_recommend($post_data);
-        $recommend_html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$recommend_list])->__toString();
-
-        return response_success([
-            'list'=>json_encode($list),
-            'html'=>$html,
-            'recommend_list'=>json_encode($recommend_list),
-            'recommend_html'=>$recommend_html
-        ]);
-
-    }
-
-    // 查询【关键词】导出
-    public function operate_business_keyword_search_export($post_data)
-    {
-        $me = Auth::guard('client')->user();
-        $list_decode = json_decode($post_data['list'],true);
-        $recommend_list_decode = json_decode($post_data['recommend_list'],true);
-
-        $cellData = array_merge($list_decode,$recommend_list_decode);
-        array_unshift($cellData,['关键词','百度PC','百度移动','360','搜狗','神马','难度指数','难度指数','优化周期']);
-
-//        dd($cellData);
-
-        $title = '【关键词价格查询】 - '.date('YmdHis');
-        Excel::create($title,function($excel) use ($cellData){
-            $excel->sheet('all', function($sheet) use ($cellData){
-                $sheet->rows($cellData);
-            });
-        })->export('xls');
-
-        return false;
-    }
-
-
-
-
 
     /*
      * 财务系统
      */
-    // 返回【财务概览】视图
+    // 【财务概览】返回-列表-视图
     public function show_finance_overview()
     {
 //        $this_month = date('Y-m');
@@ -4002,7 +4186,7 @@ class IndexRepository {
                 'sidebar_finance_overview_active'=>'active'
             ]);
     }
-    // 返回【财务概览】数据
+    // 【财务概览】返回-列表-数据
     public function get_finance_overview_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -4053,7 +4237,7 @@ class IndexRepository {
     }
 
 
-    // 返回【月份财务】视图
+    // 【月份财务】返回-列表-视图
     public function show_finance_overview_month($post_data)
     {
         $month = $post_data['month'];
@@ -4068,7 +4252,7 @@ class IndexRepository {
                 'sidebar_finance_active'=>'active'
             ]);
     }
-    // 返回【月份财务】数据
+    // 【月份财务】返回-列表-数据
     public function get_finance_overview_month_datatable($post_data)
     {
         $admin = Auth::guard("admin")->user();
@@ -4130,7 +4314,7 @@ class IndexRepository {
     }
 
 
-    // 返回【充值记录】数据
+    // 【充值记录】返回-列表-数据
     public function get_finance_recharge_record_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -4181,7 +4365,7 @@ class IndexRepository {
     }
 
 
-    // 返回【消费记录】数据
+    // 【消费记录】返回-列表-数据
     public function get_finance_expense_record_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -4222,7 +4406,7 @@ class IndexRepository {
 //        dd($list->toArray());
         return datatable_response($list, $draw, $total);
     }
-    // 返回【每日消费记录】数据
+    // 【每日消费记录】返回-列表-数据
     public function get_finance_expense_record_daily_datatable($post_data)
     {
         $admin_id = Auth::guard("admin")->user()->id;
@@ -4271,7 +4455,7 @@ class IndexRepository {
     }
 
 
-    // 返回【关键词检测】视图
+    // 【资金冻结记录】返回-列表-视图
     public function show_finance_freeze_record()
     {
         $freeze_data = [];
@@ -4282,7 +4466,7 @@ class IndexRepository {
                 'sidebar_finance_freeze_active'=>'active'
             ]);
     }
-    // 返回【冻结资金】数据
+    // 【资金冻结记录】返回-列表-数据
     public function get_finance_freeze_record_datatable($post_data)
     {
         $admin = Auth::guard("admin")->user();
@@ -4326,7 +4510,7 @@ class IndexRepository {
     {
         $admin = Auth::guard('admin')->user();
         $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $activity = Activity::find($id);
         if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
@@ -4356,13 +4540,12 @@ class IndexRepository {
         }
 
     }
-
     // 启用
     public function enable($post_data)
     {
         $admin = Auth::guard('admin')->user();
         $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $activity = Activity::find($id);
         if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
@@ -4396,7 +4579,7 @@ class IndexRepository {
     {
         $admin = Auth::guard('admin')->user();
         $id = decode($post_data["id"]);
-        if(intval($id) !== 0 && !$id) return response_error([],"该文章不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $activity = Activity::find($id);
         if($activity->admin_id != $admin->id) return response_error([],"你没有操作权限");
@@ -4476,14 +4659,14 @@ class IndexRepository {
     /*
      * 公告&通知
      */
-    // 返回【添加公告】视图
+    // 【公告】返回-添加-视图
     public function view_notice_notice_create()
     {
         $admin = Auth::guard('admin')->user();
         $view_blade = 'mt.admin.entrance.notice.notice-edit';
         return view($view_blade)->with(['operate'=>'create', 'operate_id'=>0]);
     }
-    // 返回【编辑公告】视图
+    // 【公告】返回-编辑-视图
     public function view_notice_notice_edit($post_data)
     {
         $me = Auth::guard('admin')->user();
@@ -4513,7 +4696,7 @@ class IndexRepository {
             else return response("该公告不存在！", 404);
         }
     }
-    // 保存【公告】
+    // 【公告】保存数据
     public function operate_notice_notice_save($post_data)
     {
         $messages = [
@@ -4603,13 +4786,13 @@ class IndexRepository {
     }
 
 
-    // 返回【公告列表】视图
+    // 【公告】返回-列表-视图
     public function show_notice_notice_list()
     {
         return view('mt.admin.entrance.notice.notice-list')
             ->with(['sidebar_notice_notice_list_active'=>'active']);
     }
-    // 返回【公告列表】数据
+    // 【公告】返回-列表-数据
     public function get_notice_notice_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -4654,13 +4837,13 @@ class IndexRepository {
         return datatable_response($list, $draw, $total);
     }
 
-    // 返回【公告列表】视图
+    // 【我发布的公告】返回-列表-视图
     public function show_notice_my_notice_list()
     {
         return view('mt.admin.entrance.notice.my-notice-list')
             ->with(['sidebar_notice_my_notice_list_active'=>'active']);
     }
-    // 返回【公告列表】数据
+    // 【我发布的公告】返回-列表-数据
     public function get_notice_my_notice_list_datatable($post_data)
     {
         $me = Auth::guard("admin")->user();
@@ -4706,7 +4889,7 @@ class IndexRepository {
     }
 
 
-    // 获取【公告详情】
+    // 【公告】获取-详情
     public function operate_notice_notice_get($post_data)
     {
         $messages = [
@@ -4726,7 +4909,7 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'notice-get') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if(!in_array($me->usergroup,['Manage'])) return response_error([],"你没有操作权限！");
@@ -4735,7 +4918,7 @@ class IndexRepository {
         return response_success($work_order,"");
 
     }
-    // 推送【公告】
+    // 【公告】发布
     public function operate_notice_notice_push($post_data)
     {
         $messages = [
@@ -4755,20 +4938,20 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'notice-push') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usertype != "admin") return response_error([],"你没有操作权限");
 
-        $notice = Item::find($id);
-        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+        $item = Item::find($id);
+        if(!$item) return response_error([],"该公告不存在，刷新页面重试");
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $notice->active = 1;
-            $bool = $notice->save();
+            $item->active = 1;
+            $bool = $item->save();
             if(!$bool) throw new Exception("update--item--fail");
 
             DB::commit();
@@ -4784,7 +4967,7 @@ class IndexRepository {
         }
 
     }
-    // 删除【公告】
+    // 【公告】删除
     public function operate_notice_notice_delete($post_data)
     {
         $messages = [
@@ -4804,19 +4987,19 @@ class IndexRepository {
         $operate = $post_data["operate"];
         if($operate != 'notice-delete') return response_error([],"参数有误！");
         $id = $post_data["id"];
-        if(intval($id) !== 0 && !$id) return response_error([],"该公告不存在，刷新页面试试！");
+        if(intval($id) !== 0 && !$id) return response_error([],"参数ID有误！");
 
         $me = Auth::guard('admin')->user();
         if($me->usertype != "admin") return response_error([],"你没有操作权限");
 
-        $notice = Item::find($id);
-        if(!$notice) return response_error([],"该公告不存在，刷新页面重试");
+        $item = Item::find($id);
+        if(!$item) return response_error([],"该公告不存在，刷新页面重试");
 
         // 启动数据库事务
         DB::beginTransaction();
         try
         {
-            $bool = $notice->delete();
+            $bool = $item->delete();
             if(!$bool) throw new Exception("delete--item--fail");
 
             DB::commit();

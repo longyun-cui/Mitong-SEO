@@ -303,7 +303,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "搜索引擎",
+                        "title": "搜索<br>引擎",
                         "data": "searchengine",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -343,7 +343,7 @@
                     {
                         "width": "40px",
                         "className": "text-center",
-                        "title": "初始 排名",
+                        "title": "初始<br>排名",
                         "data": "initialranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -353,7 +353,7 @@
                     {
                         "width": "64px",
                         "className": "",
-                        "title": "最新排名",
+                        "title": "最新<br>排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -373,7 +373,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "最新 消费",
+                        "title": "最新<br>消费",
                         "data": "latestconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -397,7 +397,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "达标 天数",
+                        "title": "达标<br>天数",
                         "data": "standarddays",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -406,7 +406,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "累计 消费",
+                        "title": "累计<br>消费",
                         "data": "totalconsumption",
                         'orderable': false,
                         render: function(data, type, row, meta) {

@@ -157,7 +157,8 @@
                                 <option value ="合作停">合作停</option>
                                 <option value ="被拒绝">被拒绝</option>
                             </select>
-                            <span class="input-group-addon btn btn-default" id="review-keyword-bulk-submit"><i class="fa fa-check"></i>提交</span>
+                            <span class="input-group-addon btn btn-default" id="review-keyword-bulk-submit"><i class="fa fa-check"></i> 批量审核</span>
+                            <span class="input-group-addon btn btn-default" id="delete-keyword-bulk-submit"><i class="fa fa-trash-o"></i> 批量删除</span>
                         </div>
                     </div>
                 </div>
@@ -675,7 +676,7 @@
                     },
                     {
                         "width": "72px",
-                        "title": "创建时间",
+                        "title": "创建<br>时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -756,7 +757,7 @@
                     },
                     {
                         "width": "72px",
-                        "title": "检测时间",
+                        "title": "检测<br>时间",
                         "data": "detectiondate",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -1214,6 +1215,40 @@
                 }
             });
 
+        });
+
+        // 【批量审核】
+        $(".datatable-body").on('click', '#delete-keyword-bulk-submit', function() {
+            var $checked = [];
+            $('input[name="bulk-keyword-id"]:checked').each(function() {
+                $checked.push($(this).val());
+            });
+
+            layer.msg('确定"批量删除"么', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+
+                    $.post(
+                        "{{ url('/admin/business/keyword-delete-bulk') }}",
+                        {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            operate: "keyword-delete-bulk",
+                            bulk_keyword_id: $checked
+                        },
+                        function(data){
+                            layer.close(index);
+                            if(!data.success) layer.msg(data.msg);
+                            else
+                            {
+                                $('#datatable_ajax').DataTable().ajax.reload();
+                            }
+                        },
+                        'json'
+                    );
+
+                }
+            });
 
         });
 
