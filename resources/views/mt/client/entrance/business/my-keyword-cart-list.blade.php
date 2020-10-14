@@ -252,8 +252,8 @@
                         "data": "cartstatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == '未购买') return '<small class="label bg-teal">未购买</small>';
-                            else if(data == '已购买') return '<small class="label bg-red">已购买</small>';
+                            if(data == '未购买') return '<small class="btn-xs bg-teal">未购买</small>';
+                            else if(data == '已购买') return '<small class="btn-xs bg-red">已购买</small>';
                             else return data;
                         }
                     },

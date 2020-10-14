@@ -1075,22 +1075,26 @@ class IndexRepository {
         $cart_id = $post_data["id"];
         if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该待选关键词不存在，刷新页面试试！");
 
-        $mine = Auth::guard('client')->user();
-        if($mine->usergroup != "Service") return response_error([],"你没有操作权限！");
+        $me = Auth::guard('client')->user();
+        if($me->usergroup != "Service") return response_error([],"你没有操作权限！");
 
         $cart = SEOCart::find($cart_id);
-        if($cart->createuserid != $mine->id) return response_error([],"该待选关键词不是你的，你无权操作！");
+        if($cart->createuserid != $me->id) return response_error([],"该待选关键词不是你的，你无权操作！");
 
         $site_id = $post_data["website"];
         $site = SEOSite::find($site_id);
         if(!$site) return response_error([],"该站点不存在，刷新页面试试！");
-        if($site->createuserid != $mine->id) return response_error([],"该站点不是你的，你无权操作！");
+        if($site->createuserid != $me->id) return response_error([],"该站点不是你的，你无权操作！");
+
+        $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where('keywordstatus',"待审核")->sum('price');
+        $frozen_amount = ($my_to_review_keyword_price_sum + $cart->price) * 30;
+        if($frozen_amount > $me->fund_available) return response_error([],"可用余额小于待审核关键词冻结资金，请先充值！");
 
 
         $current_time = date('Y-m-d H:i:s');
-        $keyword_data["owner_id"] = $mine->id;
-        $keyword_data["createuserid"] = $mine->id;
-        $keyword_data["createusername"] = $mine->username;
+        $keyword_data["owner_id"] = $me->id;
+        $keyword_data["createuserid"] = $me->id;
+        $keyword_data["createusername"] = $me->username;
         $keyword_data["createtime"] = $current_time;
         $keyword_data["keywordstatus"] = "待审核";
         $keyword_data["status"] = 1;
@@ -1170,7 +1174,6 @@ class IndexRepository {
             $messages = $v->errors();
             return response_error([],$messages->first());
         }
-//        dd($post_data);
 
         $me = Auth::guard('client')->user();
         if($me->usergroup != "Service") return response_error([],"你没有操作权限！");
@@ -1192,6 +1195,12 @@ class IndexRepository {
 
                 $cart = SEOCart::find($cart_id);
                 if($cart->createuserid != $me->id) return response_error([],"该待选关键词不是你的，你无权操作！");
+
+
+                $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where('keywordstatus',"待审核")->sum('price');
+                $frozen_amount = ($my_to_review_keyword_price_sum + $cart->price) * 30;
+                if($frozen_amount > $me->fund_available) return response_error([],"可用余额小于待审核关键词冻结资金，请先充值！");
+
 
                 $current_time = date('Y-m-d H:i:s');
                 $keyword_data["owner_id"] = $me->id;
