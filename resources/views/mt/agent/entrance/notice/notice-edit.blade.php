@@ -5,7 +5,7 @@
 @section('list-text') 公告列表 @endsection
 
 @section('head_title')
-    @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif - 管理员后台 - 搜索引擎智能营销系统 - 米同科技
+    @if($operate == 'create') @yield('create-text') @else @yield('edit-text') @endif - 代理商系统 - 搜索引擎智能营销系统 - 米同科技
 @endsection
 
 @section('header')

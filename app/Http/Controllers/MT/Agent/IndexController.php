@@ -316,4 +316,16 @@ class IndexController extends Controller
 
 
 
+    /*
+     * 公告
+     */
+    // 返回【工单】详情
+    public function view_item_item_detail()
+    {
+        return $this->repo->view_item_item_detail(request()->all());
+    }
+
+
+
+
 }

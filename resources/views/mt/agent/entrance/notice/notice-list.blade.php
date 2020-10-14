@@ -1,6 +1,6 @@
 @extends('mt.agent.layout.layout')
 
-@section('head_title','公告列表 - 搜索引擎智能营销系统 - 米同科技')
+@section('head_title','公告列表 - 代理商系统 - 搜索引擎智能营销系统 - 米同科技')
 
 @section('header','公告列表')
 @section('description','搜索引擎智能营销系统-米同科技')
@@ -40,7 +40,7 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>ID</th>
+                        <th>序号</th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -235,7 +235,7 @@
                 "columns": [
                     {
                         "width": "48px",
-                        "title": "ID",
+                        "title": "序号",
                         "data": "id",
                         "orderable": true,
                         render: function(data, type, row, meta) {
@@ -292,7 +292,7 @@
                         "width": "144px",
                         "title": "发布时间",
                         "data": "updated_at",
-                        "orderable": false,
+                        "orderable": true,
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data*1000);
@@ -365,6 +365,12 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();

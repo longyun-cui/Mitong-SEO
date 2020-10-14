@@ -40,7 +40,9 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
+                        <th>序号</th>
                         <th>ID</th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -50,6 +52,7 @@
                         <th>操作</th>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="title" style="width:100%;" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="creator" style="width:100%;" /></td>
@@ -68,6 +71,7 @@
                                 <option value ="11">客户</option>
                             </select>
                         </td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td>
@@ -235,6 +239,15 @@
                 "columns": [
                     {
                         "width": "48px",
+                        "title": "序号",
+                        "data": "id",
+                        "orderable": true,
+                        render: function(data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        "width": "48px",
                         "title": "ID",
                         "data": "id",
                         "orderable": true,
@@ -289,10 +302,30 @@
                     },
                     {
                         "className": "",
-                        "width": "144px",
+                        "width": "112px",
+                        "title": "创建时间",
+                        "data": "created_at",
+                        "orderable": true,
+                        render: function(data, type, row, meta) {
+//                            return data;
+                            var $date = new Date(data*1000);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            var $hour = ('00'+$date.getHours()).slice(-2);
+                            var $minute = ('00'+$date.getMinutes()).slice(-2);
+                            var $second = ('00'+$date.getSeconds()).slice(-2);
+//                            return $year+'-'+$month+'-'+$day;
+                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute;
+//                            return $year+'-'+$month+'-'+$day+'&nbsp;&nbsp;'+$hour+':'+$minute+':'+$second;
+                        }
+                    },
+                    {
+                        "className": "",
+                        "width": "112px",
                         "title": "发布时间",
                         "data": "updated_at",
-                        "orderable": false,
+                        "orderable": true,
                         render: function(data, type, row, meta) {
 //                            return data;
                             var $date = new Date(data*1000);
@@ -365,6 +398,12 @@
                     }
                 ],
                 "drawCallback": function (settings) {
+
+                    let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
+                    this.api().column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML =  startIndex + i + 1;
+                    });
+
                     ajax_datatable.$('.tooltips').tooltip({placement: 'top', html: true});
                     $("a.verify").click(function(event){
                         event.preventDefault();

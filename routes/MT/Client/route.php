@@ -77,6 +77,12 @@ Route::group([], function () {
         Route::match(['get','post'], '/notice/notice-get', $controller.'@operate_notice_notice_get');
 
 
+
+
+        // item
+        Route::match(['get','post'], '/item/item-detail', $controller.'@view_item_item_detail');
+
+
     });
 
 

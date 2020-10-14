@@ -1,9 +1,9 @@
 @extends('mt.agent.layout.layout')
 
-@section('head_title','我发布的公告 - 搜索引擎智能营销系统')
+@section('head_title','我发布的公告 - 代理商系统')
 
 @section('header','我发布的公告')
-@section('description','搜索引擎智能营销系统')
+@section('description','搜索引擎智能营销系统-米同科技')
 
 
 @section('breadcrumb')

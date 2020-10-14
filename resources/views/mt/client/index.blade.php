@@ -100,6 +100,48 @@
         </div>
         <!-- /.widget-user -->
     </div>
+
+
+    <div class="col-md-4">
+        <div class="box box-info">
+
+            <div class="box-header with-border">
+
+                <h3 class="box-title">
+                    <span class="text-red">最新公告</span>
+                </h3>
+
+                <div class="box-tools pull-right _none">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="box-body no-padding">
+                <ul class="nav nav-stacked">
+                    @foreach($recently_notices as $notice)
+                    <li>
+                        <a href="{{ url('/client/item/item-detail?id='.$notice->id) }}">
+                            <b class="">{{ $notice->title or '' }}</b>
+                            <span class="pull-right badge bg-blue">{{ $notice->updated_at or '' }}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+
+            <div class="box-footer">
+                <a href="{{ url('/client/notice/notice-list') }}">更多公告 </a>
+            </div>
+
+        </div>
+    </div>
+
+
 </div>
 
 

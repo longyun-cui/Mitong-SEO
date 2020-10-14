@@ -105,10 +105,24 @@ class IndexRepository {
         else $index_data->keyword_standard_rate = "--";
 
 
+        //
+        $recently_notices = Item::select('*')->with(['creator'])->where('category',9)->where('active',1)
+            ->where( function($query) use($me) {
+                $query
+                    ->where( function($query1) {
+                        $query1->whereHas('creator', function($query0) { $query0->where('usergroup','Manage'); })->whereIn('type',[1,11]);
+                    })
+                    ->orWhere( function($query2) use($me) {
+                        $query2->where('creator_id',$me->pid)->whereIn('type',[1,11]);
+                    });
+            })->orderBy("updated_at", "desc")->limit(5)->get();
+
+
         return view('mt.client.index')
             ->with([
                 'index_data'=>$index_data,
-                'consumption_data'=>$consumption_data
+                'consumption_data'=>$consumption_data,
+                'recently_notices'=>$recently_notices
             ]);
     }
 
@@ -1715,9 +1729,26 @@ class IndexRepository {
         $me = Auth::guard('client')->user();
         if(!in_array($me->usergroup,['Service'])) return response_error([],"你没有操作权限！");
 
-        $work_order = Item::find($id);
-        return response_success($work_order,"");
+        $item = Item::find($id);
+        return response_success($item,"");
 
+    }
+
+
+
+
+    /*
+     * 公告
+     */
+    // 获取【内容详情】
+    public function view_item_item_detail($post_data)
+    {
+        $me = Auth::guard("client")->user();
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response("该内容不存在！", 404);
+
+        $item = Item::find($id);
+        return view('mt.client.entrance.item.item-detail')->with(['data'=>$item]);
     }
 
 

@@ -72,11 +72,25 @@ class IndexRepository {
             ->whereRaw("fund_balance < (fund_expense_daily * 7)")
             ->get();
 
+
+        //
+        $recently_notices = Item::select('*')
+            ->with(['creator'])
+            ->where('category',9)
+            ->where( function($query) use($me) {
+                $query->where('creator_id',$me->id)->orWhere( function($query1) {
+                    $query1->where('active',1)->whereIn('type',[1,9]);
+                });
+            })
+            ->orderBy("updated_at", "desc")->limit(5)->get();
+
+
         $agent_data = $agent;
         return view('mt.agent.index')
             ->with([
                 'agent_data'=>$agent_data,
-                'insufficient_clients'=>$insufficient_clients
+                'insufficient_clients'=>$insufficient_clients,
+                'recently_notices'=>$recently_notices
             ]);
     }
 
@@ -1527,6 +1541,23 @@ class IndexRepository {
             return response_fail([],$msg);
         }
 
+    }
+
+
+
+
+    /*
+     * 公告
+     */
+    // 获取【内容详情】
+    public function view_item_item_detail($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+        $id = $post_data["id"];
+        if(intval($id) !== 0 && !$id) return response("该内容不存在！", 404);
+
+        $item = Item::find($id);
+        return view('mt.agent.entrance.item.item-detail')->with(['data'=>$item]);
     }
 
 

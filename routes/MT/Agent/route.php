@@ -84,8 +84,14 @@ Route::group([], function () {
         Route::match(['get','post'], '/notice/notice-push', $controller.'@operate_notice_notice_push');
         Route::match(['get','post'], '/notice/notice-delete', $controller.'@operate_notice_notice_delete');
 
-    });
 
+
+
+        // item
+        Route::match(['get','post'], '/item/item-detail', $controller.'@view_item_item_detail');
+
+
+    });
 
 
 });
