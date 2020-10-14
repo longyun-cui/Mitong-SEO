@@ -123,14 +123,20 @@
 
             <div class="box-body no-padding">
                 <ul class="nav nav-stacked">
-                    @foreach($recently_notices as $notice)
+                    @forelse($recently_notices as $notice)
                     <li>
                         <a href="{{ url('/client/item/item-detail?id='.$notice->id) }}">
                             <b class="">{{ $notice->title or '' }}</b>
                             <span class="pull-right badge bg-blue">{{ $notice->updated_at or '' }}</span>
                         </a>
                     </li>
-                    @endforeach
+                    @empty
+                    <li>
+                        <a href="javascript:void(0);">
+                            暂无公告
+                        </a>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
 
