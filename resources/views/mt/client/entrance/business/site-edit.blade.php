@@ -97,9 +97,7 @@
                     <label class="control-label col-md-2">FTP</label>
                     <div class="col-md-8 ">
                         {{--<input type="text" class="form-control" name="ftp" placeholder="FTP" value="{{ $data->ftp or '' }}">--}}
-                        <textarea class="form-control" name="ftp" rows="3" cols="100%" placeholder="请准确FTP信息,以便优化师调整">
-                            {{ $data->ftp or '' }}
-                        </textarea>
+                        <textarea class="form-control" name="ftp" rows="3" cols="100%" placeholder="请准确FTP信息,以便优化师调整">{{ $data->ftp or '' }}</textarea>
                     </div>
                 </div>
                 {{--管理后台--}}
@@ -107,9 +105,7 @@
                     <label class="control-label col-md-2">管理后台</label>
                     <div class="col-md-8 ">
                         {{--<input type="text" class="form-control" name="ftp" placeholder="FTP" value="{{ $data->ftp or '' }}">--}}
-                        <textarea class="form-control" name="managebackground" rows="3" cols="100%" placeholder="请填写后台管理账号,以便优化师调整">
-                            {{ $data->managebackground or '' }}
-                        </textarea>
+                        <textarea class="form-control" name="managebackground" rows="3" cols="100%" placeholder="请填写后台管理账号,以便优化师调整">{{ $data->managebackground or '' }}</textarea>
                     </div>
                 </div>
 

@@ -186,8 +186,9 @@
                         "data": "sitestatus",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            if(data == '待审核') return '<small class="label bg-teal">待审核</small>';
-                            else if(data == '合作停') return '<small class="label bg-red">合作停</small>';
+                            if(data == '待审核') return '<small class="btn-xs bg-teal">待审核</small>';
+                            else if(data == '优化中') return '<small class="btn-xs bg-primary">优化中</small>';
+                            else if(data == '合作停') return '<small class="btn-xs bg-red">合作停</small>';
                             else return data;
                         }
                     },
@@ -215,15 +216,13 @@
                         "data": 'id',
                         'orderable': false,
                         render: function(data, type, row, meta) {
+                            var $edit_html = '<a class="btn btn-xs btn-default disabled">编辑</a>';
+                            var $delete_html = '<a class="btn btn-xs btn-default disabled">删除</a>';
+
                             if(row.sitestatus == "待审核")
                             {
-                                var $edit_html = '<a class="btn btn-xs bg-navy item-edit-link" data-id="'+data+'" >编辑</a>';
-                                var $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
-                            }
-                            else
-                            {
-                                var $edit_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >编辑</a>';
-                                var $delete_html = '<a class="btn btn-xs btn-default disabled" data-id="'+data+'" >删除</a>';
+                                $edit_html = '<a class="btn btn-xs bg-navy item-edit-link" data-id="'+data+'" >编辑</a>';
+                                $delete_html = '<a class="btn btn-xs bg-navy item-delete-submit" data-id="'+data+'" >删除</a>';
                             }
                             var html =
 //                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
@@ -323,7 +322,7 @@
         });
 
         // 【编辑】
-        $("#item-main-body").on('click', ".item-edit-submit", function() {
+        $("#item-main-body").on('click', ".item-edit-link", function() {
             var that = $(this);
             window.location.href = "/client/business/site-edit?id="+that.attr('data-id');
         });

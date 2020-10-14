@@ -90,10 +90,10 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" style="width:100%;" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" style="width:100%;" /></td>
                         <td>
-                            <select name="searchengine" class="form-control form-filter">
+                            <select name="searchengine" class="form-control form-filter" style="width:64px;">
                                 <option value ="0">全部</option>
                                 <option value ="baidu">百度PC</option>
                                 <option value ="baidu_mobile">百度移动</option>
@@ -660,8 +660,8 @@
                         }
                     },
                     {
-                        "width": "72px",
-                        "title": "搜索引擎",
+                        "width": "64px",
+                        "title": "搜索<br>引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -706,8 +706,8 @@
                         }
                     },
                     {
-                        "width": "72px",
-                        "title": "最新排名",
+                        "width": "64px",
+                        "title": "最新<br>排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
