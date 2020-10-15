@@ -19,22 +19,43 @@
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
 
-                <div class="caption">
+                <div class="caption pull-right">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
                     <a href="{{ url('/admin/user/agent-edit') }}">
                         <button type="button" onclick="" class="btn btn-success pull-right"><i class="fa fa-plus"></i> 添加代理商</button>
                     </a>
                 </div>
-                <div class="pull-right" style="display:none;">
+
+                <div class="pull-right _none">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                        <i class="fa fa-minus"></i></button>
+                        <i class="fa fa-minus"></i>
+                    </button>
                     <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                        <i class="fa fa-times"></i></button>
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
             </div>
 
             <div class="box-body datatable-body" id="item-main-body">
+
+
+                <div class="row col-md-12 datatable-search-row">
+                    <div class="input-group">
+
+                        <input type="text" class="form-control form-filter item-search-keyup" name="username" placeholder="代理商" />
+
+                        <button type="button" class="form-control btn btn-flat btn-success filter-submit" id="filter-submit">
+                            <i class="fa fa-search"></i> 搜索
+                        </button>
+                        <button type="button" class="form-control btn btn-flat btn-default filter-cancel">
+                            <i class="fa fa-circle-o-notch"></i> 重置
+                        </button>
+
+                    </div>
+                </div>
+
+
                 <!-- datatable start -->
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
@@ -50,9 +71,9 @@
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="username" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="username-" /></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -61,7 +82,7 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit-">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
                                 {{--<button type="button" class="btn btn-sm btn-success">搜索</button>--}}
@@ -542,6 +563,31 @@
 </script>
 <script>
     $(function() {
+
+        // 【搜索】
+        $(".item-main-body").on('click', ".filter-submit", function() {
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【重置】
+        $(".item-main-body").on('click', ".filter-cancel", function() {
+            $('textarea.form-filter, input.form-filter, select.form-filter').each(function () {
+                $(this).val("");
+            });
+
+//                $('select.form-filter').selectpicker('refresh');
+            $('select.form-filter option').attr("selected",false);
+            $('select.form-filter').find('option:eq(0)').attr('selected', true);
+
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【查询】回车
+        $(".item-main-body").on('keyup', ".item-search-keyup", function(event) {
+            if(event.keyCode ==13)
+            {
+                $("#filter-submit").click();
+            }
+        });
+
 
         // 【下载二维码】
         $("#item-main-body").on('click', ".item-download-qrcode-submit", function() {

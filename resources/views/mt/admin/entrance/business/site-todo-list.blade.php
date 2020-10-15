@@ -19,19 +19,21 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-                <div class="caption">
+                <div class="caption pull-right">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
                 </div>
                 <div class="pull-right" style="display:none;">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                        <i class="fa fa-minus"></i></button>
+                        <i class="fa fa-minus"></i>
+                    </button>
                     <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                        <i class="fa fa-times"></i></button>
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="box-body datatable-body" id="item-main-body">
+            <div class="box-body datatable-body item-main-body" id="item-main-body">
                 <!-- datatable start -->
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
@@ -45,7 +47,7 @@
                         <th></th>
                         <th>操作</th>
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
                         <td></td>
                         <td></td>

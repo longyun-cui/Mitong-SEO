@@ -48,7 +48,7 @@
 
             <div class="box-header with-border" style="margin:16px 0;">
                 <h3 class="box-title">内容列表</h3>
-                <div class="caption">
+                <div class="caption pull-right">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
                 </div>
@@ -63,6 +63,42 @@
             </div>
 
             <div class="box-body datatable-body item-main-body" id="item-main-body">
+
+
+                <div class="row col-md-12 datatable-search-row">
+                    <div class="input-group">
+
+                        <input type="text" class="form-control form-filter item-search-keyup" name="keyword" placeholder="关键词" />
+                        <input type="text" class="form-control form-filter item-search-keyup" name="website" placeholder="站点" />
+
+                        <select class="form-control form-filter" name="searchengine" style="width:96px;">
+                            <option value ="0">搜索引擎</option>
+                            <option value ="baidu">百度PC</option>
+                            <option value ="baidu_mobile">百度移动</option>
+                            <option value ="sougou">搜狗</option>
+                            <option value ="360">360</option>
+                            <option value ="shenma">神马</option>
+                        </select>
+
+                        <select class="form-control form-filter" name="keywordstatus" style="width:80px;">
+                            <option value ="0">状态</option>
+                            <option value ="优化中">优化中</option>
+                            <option value ="待审核">待审核</option>
+                            <option value ="合作停">合作停</option>
+                            <option value ="已删除">已删除</option>
+                        </select>
+
+                        <button type="button" class="form-control btn btn-flat btn-success filter-submit" id="filter-submit">
+                            <i class="fa fa-search"></i> 搜索
+                        </button>
+                        <button type="button" class="form-control btn btn-flat btn-default filter-cancel">
+                            <i class="fa fa-circle-o-notch"></i> 重置
+                        </button>
+
+                    </div>
+                </div>
+
+
                 <!-- datatable start -->
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
@@ -85,15 +121,15 @@
                         <th></th>
                         <th>历史数据</th>
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" style="width:100%;" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" style="width:100%;" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
                         <td>
-                            <select name="searchengine" class="form-control form-filter" style="width:64px;">
+                            <select name="searchengine-" class="form-control form-filter" style="width:64px;">
                                 <option value ="0">全部</option>
                                 <option value ="baidu">百度PC</option>
                                 <option value ="baidu_mobile">百度移动</option>
@@ -111,7 +147,7 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <select name="keywordstatus" class="form-control form-filter">
+                            <select name="keywordstatus-" class="form-control form-filter" style="width:64px;">
                                 <option value ="0">全部</option>
                                 <option value ="优化中">优化中</option>
                                 <option value ="待审核">待审核</option>
@@ -120,19 +156,19 @@
                             </select>
                         </td>
                         <td>
-                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit">搜索</a>
+                            <a href="javascript:void(0);" class="btn btn-xs filter-submit" id="filter-submit-">搜索</a>
                             <a href="javascript:void(0);" class="btn btn-xs filter-cancel">重置</a>
                             {{--<div class="btn-group">--}}
-                                {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
-                                {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
-                                    {{--<span class="caret"></span>--}}
-                                    {{--<span class="sr-only">Toggle Dropdown</span>--}}
-                                {{--</button>--}}
-                                {{--<ul class="dropdown-menu" role="menu">--}}
-                                    {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
-                                    {{--<li class="divider"></li>--}}
-                                    {{--<li><a href="#">Separated link</a></li>--}}
-                                {{--</ul>--}}
+                            {{--<button type="button" class="btn btn-sm btn-success filter-submit" id="filter-submit">搜索</button>--}}
+                            {{--<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">--}}
+                            {{--<span class="caret"></span>--}}
+                            {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                            {{--</button>--}}
+                            {{--<ul class="dropdown-menu" role="menu">--}}
+                            {{--<li><a href="javascript:void(0);" class="filter-cancel">重置</a></li>--}}
+                            {{--<li class="divider"></li>--}}
+                            {{--<li><a href="#">Separated link</a></li>--}}
+                            {{--</ul>--}}
                             {{--</div>--}}
                         </td>
                     </tr>
@@ -558,7 +594,7 @@
             var dt = $('#datatable_ajax');
             var ajax_datatable = dt.DataTable({
 //                "aLengthMenu": [[20, 50, 200, 500, -1], ["20", "50", "200", "500", "全部"]],
-                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
+//                "aLengthMenu": [[20, 50, 200], ["20", "50", "200"]],
                 "bAutoWidth": false,
                 "processing": true,
                 "serverSide": true,
@@ -573,6 +609,7 @@
                         d.website = $('input[name="website"]').val();
                         d.searchengine = $('select[name="searchengine"]').val();
                         d.keywordstatus = $('select[name="keywordstatus"]').val();
+//                        d.length = $('select[name="length"]').val();
 //
 //                        d.created_at_from = $('input[name="created_at_from"]').val();
 //                        d.created_at_to = $('input[name="created_at_to"]').val();
@@ -830,7 +867,7 @@
 //                                    '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >数据详情</a>'+
                                     '<a class="btn btn-xs bg-primary item-data-detail-show" data-id="'+data+'" data-keyword="'+row.keyword+'">数据详情</a>'+
                                     '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
-                                    ''
+                                    '';
                             return html;
                         }
                     }
@@ -1146,13 +1183,30 @@
 <script>
     $(function() {
 
-        // 表格【查询】
-        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+        // 【搜索】
+        $(".item-main-body").on('click', ".filter-submit", function() {
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【重置】
+        $(".item-main-body").on('click', ".filter-cancel", function() {
+            $('textarea.form-filter, input.form-filter, select.form-filter').each(function () {
+                $(this).val("");
+            });
+
+//                $('select.form-filter').selectpicker('refresh');
+            $('select.form-filter option').attr("selected",false);
+            $('select.form-filter').find('option:eq(0)').attr('selected', true);
+
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【查询】回车
+        $(".item-main-body").on('keyup', ".item-search-keyup", function(event) {
             if(event.keyCode ==13)
             {
                 $("#filter-submit").click();
             }
         });
+
 
         // 【下载二维码】
         $(".item-main-body").on('click', ".item-download-qrcode-submit", function() {

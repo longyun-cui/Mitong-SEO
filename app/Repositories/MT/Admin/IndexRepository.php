@@ -1060,12 +1060,15 @@ class IndexRepository {
     {
         $me = Auth::guard('admin')->user();
 
+        $agents = User::where(['userstatus'=>'正常','status'=>1])->whereIn('usergroup',['Agent','Agent2'])->orderby('id','desc')->get();
+
         $insufficient_clients = User::where(['userstatus'=>'正常','status'=>1,'usergroup'=>'Service'])->where('fund_expense_daily','>',0)
             ->whereRaw("fund_balance < (fund_expense_daily * 7)")->get();
 
         $view_blade = 'mt.admin.entrance.user.client-list';
         return view($view_blade)->with([
             'sidebar_client_list_active'=>'active menu-open',
+            'agents'=>$agents,
             'insufficient_clients'=>$insufficient_clients
         ]);
     }

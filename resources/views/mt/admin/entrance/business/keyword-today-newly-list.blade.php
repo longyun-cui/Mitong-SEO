@@ -54,7 +54,7 @@
                         <th></th>
                         <th>历史数据</th>
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
                         <td></td>
                         <td></td>

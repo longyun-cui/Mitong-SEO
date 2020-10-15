@@ -99,6 +99,6 @@
 .form-group.has-success .fileinput .thumbnail {
   border-color: #d6e9c6;
 }
-.input-group-addon:not(:first-child) {
-  border-left: 0;
-}
+/*.input-group-addon:not(:first-child) {*/
+  /*border-left: 0;*/
+/*}*/

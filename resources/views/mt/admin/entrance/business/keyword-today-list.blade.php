@@ -67,19 +67,54 @@
 
             <div class="box-header with-border" style="margin:0;">
                 <h3 class="box-title">内容列表</h3>
-                <div class="caption">
+                <div class="caption pull-right">
                     <i class="icon-pin font-blue"></i>
                     <span class="caption-subject font-blue sbold uppercase"></span>
                 </div>
-                <div class="pull-right" style="display:none;">
+                <div class="pull-right _none">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
-                        <i class="fa fa-minus"></i></button>
+                        <i class="fa fa-minus"></i>
+                    </button>
                     <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
-                        <i class="fa fa-times"></i></button>
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
             </div>
 
             <div class="box-body datatable-body item-main-body" id="item-main-body">
+
+
+                <div class="row col-md-12 datatable-search-row">
+                    <div class="input-group">
+
+                        <input type="text" class="form-control form-filter item-search-keyup" name="keyword" placeholder="关键词" />
+                        <input type="text" class="form-control form-filter item-search-keyup" name="website" placeholder="站点" />
+
+                        <select class="form-control form-filter" name="searchengine" style="width:96px;">
+                            <option value ="0">搜索引擎</option>
+                            <option value ="baidu">百度PC</option>
+                            <option value ="baidu_mobile">百度移动</option>
+                            <option value ="sougou">搜狗</option>
+                            <option value ="360">360</option>
+                            <option value ="shenma">神马</option>
+                        </select>
+
+                        <select class="form-control form-filter" name="latest_ranking" style="width:96px;">
+                            <option value ="0">达标状态</option>
+                            <option value ="1">已达标</option>
+                        </select>
+
+                        <button type="button" class="form-control btn btn-flat btn-success filter-submit" id="filter-submit">
+                            <i class="fa fa-search"></i> 搜索
+                        </button>
+                        <button type="button" class="form-control btn btn-flat btn-default filter-cancel">
+                            <i class="fa fa-circle-o-notch"></i> 重置
+                        </button>
+
+                    </div>
+                </div>
+
+
                 <!-- datatable start -->
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
@@ -101,14 +136,14 @@
                         <th>状态</th>
                         <th>历史数据</th>
                     </tr>
-                    <tr>
+                    <tr class="_none">
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword" /></td>
-                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword-" /></td>
+                        <td><input type="text" class="form-control form-filter item-search-keyup" name="website-" /></td>
                         <td>
-                            <select name="searchengine" class="form-control form-filter">
+                            <select class="form-control form-filter" name="searchengine-">
                                 <option value ="0">全部</option>
                                 <option value ="baidu">百度PC</option>
                                 <option value ="baidu_mobile">百度移动</option>
@@ -121,7 +156,7 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <select name="latest_ranking" class="form-control form-filter">
+                            <select class="form-control form-filter" name="latest_ranking-">
                                 <option value ="0">全部</option>
                                 <option value ="1">已达标</option>
                             </select>
@@ -993,13 +1028,30 @@
 <script>
     $(function() {
 
-        // 表格【查询】
-        $("#product-list-body").on('keyup', ".item-search-keyup", function(event) {
+        // 【搜索】
+        $(".item-main-body").on('click', ".filter-submit", function() {
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【重置】
+        $(".item-main-body").on('click', ".filter-cancel", function() {
+            $('textarea.form-filter, input.form-filter, select.form-filter').each(function () {
+                $(this).val("");
+            });
+
+//                $('select.form-filter').selectpicker('refresh');
+            $('select.form-filter option').attr("selected",false);
+            $('select.form-filter').find('option:eq(0)').attr('selected', true);
+
+            $('#datatable_ajax').DataTable().ajax.reload();
+        });
+        // 【查询】回车
+        $(".item-main-body").on('keyup', ".item-search-keyup", function(event) {
             if(event.keyCode ==13)
             {
                 $("#filter-submit").click();
             }
         });
+
 
         // 【下载二维码】
         $(".item-main-body").on('click', ".item-download-qrcode-submit", function() {
