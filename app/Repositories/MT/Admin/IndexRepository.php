@@ -1930,7 +1930,14 @@ class IndexRepository {
         }
         if(!empty($post_data['keywordstatus']))
         {
-            if($post_data['keywordstatus'] == "已删除")
+            if($post_data['keywordstatus'] == "默认")
+            {
+                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
+            }
+            else if($post_data['keywordstatus'] == "全部")
+            {
+            }
+            else if($post_data['keywordstatus'] == "已删除")
             {
                 $query->where('status','!=',1);
             }
@@ -1938,6 +1945,10 @@ class IndexRepository {
             {
                 $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
             }
+        }
+        else
+        {
+            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
         }
 
         $total = $query->count();

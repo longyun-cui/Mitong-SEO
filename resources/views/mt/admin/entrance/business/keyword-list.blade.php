@@ -81,7 +81,8 @@
                         </select>
 
                         <select class="form-control form-filter" name="keywordstatus" style="width:80px;">
-                            <option value ="0">状态</option>
+                            <option value ="默认">默认</option>
+                            <option value ="全部">全部</option>
                             <option value ="优化中">优化中</option>
                             <option value ="待审核">待审核</option>
                             <option value ="合作停">合作停</option>
