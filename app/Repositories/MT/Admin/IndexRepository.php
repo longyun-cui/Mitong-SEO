@@ -1896,6 +1896,13 @@ class IndexRepository {
         $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
 
 
+        if($keyword_count > 0)
+        {
+            $data['keyword_standard_rate'] = round($data['keyword_standard_count']/$keyword_count*100)."％";
+        }
+        else $data['keyword_standard_rate'] = "--";
+
+
         $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
         $keyword_standard_fund_sum_1 = $query_detect->count('*');
         $data['keyword_standard_sum_by_detect'] = $keyword_standard_fund_sum_1;
