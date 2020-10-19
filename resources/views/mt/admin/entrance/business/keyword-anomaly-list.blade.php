@@ -638,7 +638,7 @@
                             var $html = "";
                             if(row.detects[1])
                             {
-                                var $detect = row.detects[2];
+                                var $detect = row.detects[1];
                                 var $date = $detect.detect_time.trim().split(" ")[0];
                                 var $rank = $detect.rank;
                                 if(($rank > 0) && ($rank <= 10)) $rank = '<samll class="text-red">'+$rank+'</samll>';
@@ -652,7 +652,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "最新 排名",
+                        "title": "最新<br>排名",
                         "data": "latestranking",
                         'orderable': false,
                         render: function(data, type, row, meta) {

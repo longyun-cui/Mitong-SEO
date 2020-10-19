@@ -2237,7 +2237,7 @@ class IndexRepository {
             ->with([
                 'creator',
                 'detects'=>function($query) {
-                    $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")))->orderby('detect_time','desc');
+                    $query->whereDate('detect_time','>',date("Y-m-d",strtotime("-8 day")))->orderby('id','desc');
                 }
             ])
             ->where(['keywordstatus'=>'优化中','status'=>1,'standardstatus'=>'未达标'])
