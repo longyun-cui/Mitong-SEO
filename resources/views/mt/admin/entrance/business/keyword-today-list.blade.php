@@ -120,7 +120,7 @@
                     <thead>
                     <tr role='row' class='heading'>
                         <th>序号</th>
-                        <th>ID</th>
+                        {{--<th>ID</th>--}}
                         <th>客户</th>
                         <th>关键词</th>
                         <th>站点</th>
@@ -138,7 +138,7 @@
                     </tr>
                     <tr class="_none">
                         <td></td>
-                        <td></td>
+                        {{--<td></td>--}}
                         <td></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="keyword-" /></td>
                         <td><input type="text" class="form-control form-filter item-search-keyup" name="website-" /></td>
@@ -509,15 +509,15 @@
                         "targets": 0,
                         'orderable': false
                     },
-                    {
-                        "width": "32px",
-                        "title": "ID",
-                        "data": "id",
-                        'orderable': true,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
+//                    {
+//                        "width": "32px",
+//                        "title": "ID",
+//                        "data": "id",
+//                        'orderable': true,
+//                        render: function(data, type, row, meta) {
+//                            return data;
+//                        }
+//                    },
                     {
                         "className": "text-left",
                         "width": "",

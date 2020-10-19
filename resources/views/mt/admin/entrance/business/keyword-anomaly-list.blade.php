@@ -39,7 +39,7 @@
                     <thead>
                     <tr role='row' class='heading'>
                         <th>序号</th>
-                        <th>ID</th>
+                        {{--<th>ID</th>--}}
                         <th></th>
                         <th></th>
                         <th></th>
@@ -58,7 +58,7 @@
                     </tr>
                     <tr class="_none">
                         <td></td>
-                        <td></td>
+                        {{--<td></td>--}}
                         <td></td>
                         <td></td>
                         <td></td>
@@ -414,21 +414,21 @@
                 "orderCellsTop": true,
                 "columns": [
                     {
-                        "width": "48px",
+                        "width": "32px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
                         'orderable': false
                     },
-                    {
-                        "width": "48px",
-                        "title": "ID",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return data;
-                        }
-                    },
+//                    {
+//                        "width": "32px",
+//                        "title": "ID",
+//                        "data": "id",
+//                        'orderable': false,
+//                        render: function(data, type, row, meta) {
+//                            return data;
+//                        }
+//                    },
                     {
                         "className": "text-left",
                         "width": "",
