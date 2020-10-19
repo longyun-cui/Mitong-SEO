@@ -3772,7 +3772,7 @@ class IndexRepository {
         $recommend_list_decode = json_decode($post_data['recommend_list'],true);
 
         $cellData = array_merge($list_decode,$recommend_list_decode);
-        array_unshift($cellData,['关键词','百度PC','百度移动','360','搜狗','神马','难度指数','难度指数','优化周期']);
+        array_unshift($cellData,['关键词','百度PC(元/天)','百度移动(元/天)','360(元/天)','搜狗(元/天)','神马(元/天)','难度指数','难度指数','优化周期']);
 
 //        dd($cellData);
 
