@@ -1456,8 +1456,8 @@ class IndexRepository {
             ->where('createuserid',$me->id)
             ->whereDate('detectiondate',date("Y-m-d"))
             ->orderby('id','desc')
-            ->get();
-        $cellData = $cellData->toArray();
+            ->get()
+            ->toArray();
         array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
 
         $title = '【今日关键词】 - '.date('YmdHis');
