@@ -90,8 +90,8 @@
                             <td class="text-left" style="text-align:left">关键词</td>
                             <td class="text-center key_pc"><img alt="" src="/seo/img/baidu.png" style="width: 100px;"></td>
                             <td class="text-center key_yidong"><img alt="" src="/seo/img/baidu_mobile.png" style="width: 100px;"></td>
-                            <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
                             <td class="text-center key_sougou"><img alt="" src="/seo/img/sougou.png" style="width: 100px;"></td>
+                            <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
                             <td class="text-center key_shenma"><img alt="" src="/seo/img/shenma.png" style="width: 100px;"></td>
                             <td class="text-center" width="96px">难度指数</td>
                             <td class="text-center" width="96px">优化周期</td>
@@ -221,6 +221,7 @@
             var that = $(this);
             var $search = $("#keyword-search-result");
             var $search_list = $search.attr('data-list');
+            console.log($search_list);
             var $search_recommend_list = $search.attr('data-recommend-list');
             layer.msg('确定要"导出"么？', {
                 time: 0

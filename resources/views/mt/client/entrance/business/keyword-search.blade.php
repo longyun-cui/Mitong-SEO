@@ -92,8 +92,8 @@
                                 <td class="text-left" style="text-align:left">关键词</td>
                                 <td class="text-center key_pc"><img alt="" src="/seo/img/baidu.png" style="width: 100px;"></td>
                                 <td class="text-center key_yidong"><img alt="" src="/seo/img/baidu_mobile.png" style="width: 100px;"></td>
-                                <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
                                 <td class="text-center key_sougou"><img alt="" src="/seo/img/sougou.png" style="width: 100px;"></td>
+                                <td class="text-center key_360"><img alt="" src="/seo/img/360.png" style="width: 100px;"></td>
                                 <td class="text-center key_shenma"><img alt="" src="/seo/img/shenma.png" style="width: 100px;"></td>
                                 <td class="text-center" width="140px">操作</td>
                                 <td class="text-center" width="100px">难度指数</td>
