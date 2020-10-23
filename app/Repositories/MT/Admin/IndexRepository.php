@@ -499,6 +499,7 @@ class IndexRepository {
             $mine = new User;
             $current_time = date('Y-m-d H:i:s');
             $post_data["usergroup"] = "Agent";
+            $post_data["usertype"] = "agent";
             $post_data["pid"] = $admin->id;
             $post_data["createuserid"] = $admin->id;
             $post_data["createtime"] = $current_time;

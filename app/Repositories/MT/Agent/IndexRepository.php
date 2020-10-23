@@ -569,6 +569,7 @@ class IndexRepository {
             $sub_agent = new User;
             $current_time = date('Y-m-d H:i:s');
             $post_data["usergroup"] = "Agent2";
+            $post_data["usertype"] = "agent2";
             $post_data["pid"] = $mine->id;
             $post_data["createuserid"] = $mine->id;
             $post_data["createtime"] = $current_time;
@@ -704,6 +705,7 @@ class IndexRepository {
             $client = new User;
             $current_time = date('Y-m-d H:i:s');
             $post_data["usergroup"] = "Service";
+            $post_data["usertype"] = "sub";
             $post_data["pid"] = $mine->id;
             $post_data["createuserid"] = $mine->id;
             $post_data["createtime"] = $current_time;
