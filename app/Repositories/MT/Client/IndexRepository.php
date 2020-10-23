@@ -1452,8 +1452,6 @@ class IndexRepository {
         $me = Auth::guard('client')->user();
         if($me->usertype != "sub") return response_error([],"你没有操作权限!");
 
-        dd($me->id);
-
         $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
             ->where('createuserid',$me->id)
             ->whereDate('detectiondate',date("Y-m-d"))
