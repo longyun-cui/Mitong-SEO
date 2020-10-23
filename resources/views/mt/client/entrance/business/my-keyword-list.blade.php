@@ -83,6 +83,10 @@
                     <span style="margin-right:12px;">
                         今日消费 <span class="text-red font-20px">{{ $data->keyword_standard_cost_sum or 0 }}</span> 元
                     </span>
+
+                    <span style="margin-right:12px;">
+                        <a class="text-green font-16px" href="/client/business/download/keyword-today"><button>下载今日关键词</button></a>
+                    </span>
                 </div>
             </div>
         </div>
@@ -114,7 +118,7 @@
                 </div>
             </div>
 
-            <div class="box-body datatable-body" id="item-main-body">
+            <div class="box-body datatable-body item-main-body" id="item-main-body">
                 <!-- datatable start -->
                 <table class='table table-striped- table-bordered table-hover' id='datatable_ajax'>
                     <thead>
@@ -435,16 +439,18 @@
                     {
                         "data": "id",
                         'orderable': false,
-                        render: function(value) {
+                        render: function(data, type, row, meta) {
                             var html =
-//                                '<a class="btn btn-xs item-enable-submit" data-id="'+value+'">启用</a>'+
-//                                '<a class="btn btn-xs item-disable-submit" data-id="'+value+'">禁用</a>'+
-//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+value+'">下载二维码</a>'+
-//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+value+'">流量统计</a>'+
-                                {{--'<a class="btn btn-xs" href="/item/edit?id='+value+'">编辑</a>'+--}}
-//                                '<a class="btn btn-xs item-edit-submit" data-id="'+value+'">编辑</a>'+
-//                                '<a class="btn btn-xs item-delete-submit" data-id="'+value+'" >删除</a>';
-                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+value+'" >历史数据</a>';
+//                                '<a class="btn btn-xs item-enable-submit" data-id="'+data+'">启用</a>'+
+//                                '<a class="btn btn-xs item-disable-submit" data-id="'+data+'">禁用</a>'+
+//                                '<a class="btn btn-xs item-download-qrcode-submit" data-id="'+data+'">下载二维码</a>'+
+//                                '<a class="btn btn-xs item-statistics-submit" data-id="'+data+'">流量统计</a>'+
+                                {{--'<a class="btn btn-xs" href="/item/edit?id='+data+'">编辑</a>'+--}}
+//                                '<a class="btn btn-xs item-edit-submit" data-id="'+data+'">编辑</a>'+
+//                                '<a class="btn btn-xs item-delete-submit" data-id="'+data+'" >删除</a>';
+                                '<a class="btn btn-xs bg-primary item-data-detail-link" data-id="'+data+'" >历史数据</a>'+
+                                '<a class="btn btn-xs bg-olive item-download-link" data-id="'+data+'" >下载</a>'+
+                                '';
                             return html;
                         }
                     }
@@ -568,6 +574,25 @@
             ('#modal-body').modal('show');
         });
 
+
+
+
+        // 【下载】
+        $(".item-main-body").on('click', ".item-download-link", function() {
+            var that = $(this);
+            layer.msg('确定要"下载"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    window.open("/client/business/download/keyword-detect?id="+that.attr('data-id'));
+                }
+            });
+        });
+
+
+
+
         // 【删除】
         $("#item-main-body").on('click', ".item-delete-submit", function() {
             var that = $(this);
@@ -590,7 +615,6 @@
                 }
             });
         });
-
         // 【启用】
         $("#item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -613,7 +637,6 @@
                 }
             });
         });
-
         // 【禁用】
         $("#item-main-body").on('click', ".item-disable-submit", function() {
             var that = $(this);

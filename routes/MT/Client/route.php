@@ -69,6 +69,11 @@ Route::group([], function () {
         Route::match(['get','post'], '/business/my-work-order-complete', $controller.'@operate_business_my_work_order_complete');
 
 
+        Route::match(['get','post'], '/business/download/', $controller.'@operate_download');
+        Route::match(['get','post'], '/business/download/keyword-today', $controller.'@operate_download_keyword_today');
+        Route::match(['get','post'], '/business/download/keyword-detect', $controller.'@operate_download_keyword_detect');
+
+
 
         // finance
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');

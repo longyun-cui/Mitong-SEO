@@ -1446,6 +1446,60 @@ class IndexRepository {
 
 
 
+    // 下载
+    public function operate_download_keyword_today()
+    {
+        $me = Auth::guard('client')->user();
+        if($me->usertype != "sub") return response_error([],"你没有操作权限!");
+
+        dd($me->id);
+
+        $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
+            ->where('createuserid',$me->id)
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->orderby('id','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
+
+        $title = '【今日关键词】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+    }
+
+    // 下载
+    public function operate_download_keyword_detect($post_data)
+    {
+        $me = Auth::guard('client')->user();
+        if($me->usertype != "sub") return response_error([],"你没有操作权限!");
+
+        $keyword_id = $post_data["id"];
+        $keyword = SEOKeyword::find($keyword_id);
+        if(!$keyword) return response_fail([],'关键词不存在，请重试！');
+        if($keyword->createuserid != $me->id) return response_fail([],'关键词不是你的，你无权操作！');
+
+        $cellData = SEOKeywordDetectRecord::select('detect_time','rank')
+            ->where('keywordid',$keyword_id)->orderby('detect_time','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['检测时间','排名']);
+
+        $title = "【关键词】{$keyword->keyword}-{$keyword->searchengine}-{$keyword->price}元 - ".date('YmdHis');
+        $engine = $keyword->searchengine;
+        Excel::create($title,function($excel) use ($cellData,$keyword,$engine){
+            $excel->sheet($engine, function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+        return response_success([]);
+    }
+
+
+
+
     /*
      * 财务系统
      */

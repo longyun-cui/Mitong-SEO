@@ -197,6 +197,19 @@ class IndexController extends Controller
 
 
 
+    public function operate_download_keyword_today()
+    {
+        $this->repo->operate_download_keyword_today();
+    }
+
+    public function operate_download_keyword_detect()
+    {
+        $this->repo->operate_download_keyword_detect(request()->all());
+    }
+
+
+
+
     /*
      * 财务系统
      */
