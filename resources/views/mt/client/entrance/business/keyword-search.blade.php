@@ -132,6 +132,7 @@
                         </label>
 
                         <a class="btn bg-black keyword-cart-all-add">加入清单</a>
+                        <button type="button" class="btn btn-success" id="search-export-submit"><i class="fa fa-check"></i> 导出价目表</button>
 
                         <button type="button" onclick="" class="btn btn-primary _none"><i class="fa fa-check"></i> 提交</button>
                         <button type="button" onclick="history.go(-1);" class="btn btn-default _none">返回</button>
@@ -241,6 +242,29 @@
             $("#form-search-item").ajaxSubmit(options);
             $("#search-overlay").show();
         });
+
+
+
+
+        // 【导出】
+        $("#keyword-search-result").on('click', "#search-export-submit", function() {
+            var that = $(this);
+            var $search = $("#keyword-search-result");
+            var $search_list = $search.attr('data-list');
+            console.log($search_list);
+            var $search_recommend_list = $search.attr('data-recommend-list');
+            layer.msg('确定要"导出"么？', {
+                time: 0
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    window.open("/client/business/keyword-search-export?list="+$search_list+"&recommend_list="+$search_recommend_list);
+                }
+            });
+        });
+
+
+
 
         // 添加or编辑
         $("#keyword-search-result").on('click', '.keyword-cart-add', function() {
@@ -473,11 +497,11 @@
 
 
 
-            kstr = kstr.substr(1, 5);
-            if (kw != undefined) {
-                $(this).find('a:eq(0)').attr('href', '/Keyword/doAdd/keyword/' + kw.substr(0, kw.indexOf('::')) + '/keywords/nihao,wohao/type/' + kstr + '/pricestr/' + pricestr);
-                $(this).find(':checkbox').val(kw.substr(0, kw.indexOf('::')) + '::' + kstr + '::' + pricestr);
-            }
+//            kstr = kstr.substr(1, 5);
+//            if (kw != undefined) {
+//                $(this).find('a:eq(0)').attr('href', '/Keyword/doAdd/keyword/' + kw.substr(0, kw.indexOf('::')) + '/keywords/nihao,wohao/type/' + kstr + '/pricestr/' + pricestr);
+//                $(this).find(':checkbox').val(kw.substr(0, kw.indexOf('::')) + '::' + kstr + '::' + pricestr);
+//            }
 
         });
     }

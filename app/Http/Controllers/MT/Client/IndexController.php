@@ -74,13 +74,6 @@ class IndexController extends Controller
         else if(request()->isMethod('post')) return $this->repo->get_business_my_keyword_list_datatable(request()->all());
     }
 
-    // 返回【关键词查询】视图
-    public function operate_keyword_search()
-    {
-        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
-        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
-    }
-
     // 返回【关键词购物车】视图
     public function view_my_keyword_cart_list()
     {
@@ -97,6 +90,21 @@ class IndexController extends Controller
     {
         if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
         else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+    }
+
+
+
+
+    // 返回【关键词查询】视图
+    public function operate_keyword_search()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
+        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
+    }
+    // 【关键词】导出-查询-结果
+    public function operate_keyword_search_export()
+    {
+        return $this->repo->operate_business_keyword_search_export(request()->all());
     }
 
 

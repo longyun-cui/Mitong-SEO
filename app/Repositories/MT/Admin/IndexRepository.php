@@ -3767,7 +3767,7 @@ class IndexRepository {
     // 【关键词】导出-查询-结果
     public function operate_business_keyword_search_export($post_data)
     {
-        $me = Auth::guard('client')->user();
+        $me = Auth::guard('admin')->user();
         $list_decode = json_decode($post_data['list'],true);
         $recommend_list_decode = json_decode($post_data['recommend_list'],true);
 

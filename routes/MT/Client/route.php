@@ -38,14 +38,21 @@ Route::group([], function () {
 
         // business
         Route::match(['get','post'], '/business/my-site-list', $controller.'@view_my_site_list');
-        Route::match(['get','post'], '/business/my-keyword-list', $controller.'@view_my_keyword_list');
-        Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
-        Route::match(['get','post'], '/business/my-keyword-cart-list', $controller.'@view_my_keyword_cart_list');
-        Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
 
         Route::match(['get','post'], '/business/site-create', $controller.'@operate_business_site_create');
         Route::match(['get','post'], '/business/site-edit', $controller.'@operate_business_site_edit');
         Route::match(['get','post'], '/business/site-delete', $controller.'@operate_business_site_delete');
+
+
+        Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
+        Route::match(['get','post'], '/business/keyword-search-export', $controller.'@operate_keyword_search_export');
+
+
+        Route::match(['get','post'], '/business/my-keyword-list', $controller.'@view_my_keyword_list');
+        Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
+
+
+        Route::match(['get','post'], '/business/my-keyword-cart-list', $controller.'@view_my_keyword_cart_list');
 
         Route::match(['get','post'], '/business/keyword-cart-add', $controller.'@operate_keyword_cart_add');
         Route::match(['get','post'], '/business/keyword-cart-delete', $controller.'@operate_keyword_cart_delete');

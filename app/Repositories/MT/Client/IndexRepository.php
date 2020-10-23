@@ -12,8 +12,9 @@ use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\Item;
 
 use App\Repositories\Common\CommonRepository;
+
 use Response, Auth, Validator, DB, Exception;
-use QrCode;
+use QrCode, Excel;
 
 class IndexRepository {
 
@@ -732,7 +733,6 @@ class IndexRepository {
             'sidebar_business_active'=>'active','sidebar_business_keyword_search_active'=>'active'
         ]);
     }
-
     // 查询【关键词】
     public function operate_business_keyword_search($post_data)
     {
@@ -880,6 +880,27 @@ class IndexRepository {
             'recommend_html'=>$recommend_html
         ]);
 
+    }
+    // 【关键词】导出-查询-结果
+    public function operate_business_keyword_search_export($post_data)
+    {
+        $me = Auth::guard('client')->user();
+        $list_decode = json_decode($post_data['list'],true);
+        $recommend_list_decode = json_decode($post_data['recommend_list'],true);
+
+        $cellData = array_merge($list_decode,$recommend_list_decode);
+        array_unshift($cellData,['关键词','百度PC(元/天)','百度移动(元/天)','搜狗(元/天)','360(元/天)','神马(元/天)','难度指数','难度指数','优化周期']);
+
+//        dd($cellData);
+
+        $title = '【关键词价格查询】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+
+        return false;
     }
 
 
