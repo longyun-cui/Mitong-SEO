@@ -7,7 +7,7 @@
 
 
 @section('breadcrumb')
-    <li><a href="{{url('/admin')}}"><i class="fa fa-dashboard"></i>首页</a></li>
+    <li><a href="{{url('/agent')}}"><i class="fa fa-dashboard"></i>首页</a></li>
     <li><a href="#"><i class="fa "></i>Here</a></li>
 @endsection
 
@@ -39,7 +39,7 @@
                     </span>
 
                     <span style="margin-right:12px;">
-                        <a class="text-green font-16px" href="/admin/business/download/keyword-today"><button>下载今日关键词</button></a>
+                        <a class="text-green font-16px" href="/agent/business/download/keyword-today"><button>下载今日关键词</button></a>
                     </span>
                 </div>
             </div>
@@ -637,7 +637,7 @@
                         "data": "createuserid",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return row.creator == null ? '未知' : '<a target="_blank" href="/admin/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
+                            return row.creator == null ? '未知' : '<a target="_blank" href="/agent/user/client?id='+row.creator.id+'">'+row.creator.username+'</a>';
                         }
                     },
                     {
