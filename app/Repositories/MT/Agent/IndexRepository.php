@@ -694,7 +694,7 @@ class IndexRepository {
 
 
         $mine = Auth::guard('agent')->user();
-        if($mine->usergroup != "Agent") return response_error([],"你没有操作权限");
+        if(!in_array($mine->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限");
 
 
         $operate = $post_data["operate"];
