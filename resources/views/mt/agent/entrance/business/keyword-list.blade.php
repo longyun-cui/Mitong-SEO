@@ -112,7 +112,6 @@
                 <table class='table table-striped table-bordered' id='datatable_ajax'>
                     <thead>
                     <tr role='row' class='heading'>
-                        <th>选择</th>
                         <th>序号</th>
                         {{--<th>ID</th>--}}
                         <th></th>
@@ -131,7 +130,6 @@
                         <th>历史数据</th>
                     </tr>
                     <tr class="_none">
-                        <td></td>
                         <td></td>
                         {{--<td></td>--}}
                         <td></td>
@@ -188,7 +186,7 @@
                 <!-- datatable end -->
             </div>
 
-            <div class="box-footer">
+            <div class="box-footer _none">
                 <div class="row" style="margin:16px 0;">
                     <div class="col-md-offset-0 col-md-4 col-sm-8 col-xs-12">
                         {{--<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>--}}
@@ -607,15 +605,6 @@
                 "columns": [
                     {
                         "width": "32px",
-                        "title": "选择",
-                        "data": "id",
-                        'orderable': false,
-                        render: function(data, type, row, meta) {
-                            return '<label><input type="checkbox" name="bulk-keyword-id" class="minimal" value="'+data+'"></label>';
-                        }
-                    },
-                    {
-                        "width": "32px",
                         "title": "序号",
                         "data": null,
                         "targets": 0,
@@ -858,7 +847,7 @@
                 "drawCallback": function (settings) {
 
                     let startIndex = this.api().context[0]._iDisplayStart;//获取本页开始的条数
-                    this.api().column(1).nodes().each(function(cell, i) {
+                    this.api().column(0).nodes().each(function(cell, i) {
                         cell.innerHTML =  startIndex + i + 1;
                     });
 
