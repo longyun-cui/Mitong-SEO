@@ -66,6 +66,22 @@ Route::group([], function () {
 
 
 
+
+        // keyword
+        Route::match(['get','post'], '/business/keyword-search', $controller.'@operate_keyword_search');
+        Route::match(['get','post'], '/business/keyword-recommend', $controller.'@operate_keyword_recommend');
+        Route::match(['get','post'], '/business/keyword-search-export', $controller.'@operate_keyword_search_export');
+
+        Route::match(['get','post'], '/business/keyword-list', $controller.'@view_business_keyword_list');
+        Route::match(['get','post'], '/business/keyword-detect-record', $controller.'@view_business_keyword_detect_record');
+
+
+        Route::match(['get','post'], '/business/download/', $controller.'@operate_download');
+        Route::match(['get','post'], '/business/download/keyword-today', $controller.'@operate_download_keyword_today');
+        Route::match(['get','post'], '/business/download/keyword-detect', $controller.'@operate_download_keyword_detect');
+
+
+
         // finance
         Route::match(['get','post'], '/finance/overview', $controller.'@view_finance_overview');
         Route::match(['get','post'], '/finance/recharge-record', $controller.'@view_finance_recharge_record');

@@ -3677,7 +3677,7 @@ class IndexRepository {
     // 【关键词】返回-查询-视图
     public function view_business_keyword_search()
     {
-        $mine = Auth::guard('client')->user();
+        $me = Auth::guard('admin')->user();
         $view_blade = 'mt.admin.entrance.business.keyword-search';
         return view($view_blade)->with([
             'operate'=>'search',

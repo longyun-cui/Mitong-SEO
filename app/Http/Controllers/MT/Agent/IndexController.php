@@ -230,6 +230,57 @@ class IndexController extends Controller
 
 
     /*
+     * 业务系统
+     */
+    // 【关键词】返回-查询-视图
+    public function operate_keyword_search()
+    {
+        if(request()->isMethod('get')) return $this->repo->view_business_keyword_search();
+        else if (request()->isMethod('post')) return $this->repo->operate_business_keyword_search(request()->all());
+    }
+    // 【关键词】返回-推荐-视图
+    public function operate_keyword_recommend()
+    {
+        return $this->repo->operate_business_keyword_recommend(request()->all());
+    }
+    // 【关键词】导出-查询-结果
+    public function operate_keyword_search_export()
+    {
+        return $this->repo->operate_business_keyword_search_export(request()->all());
+    }
+
+
+    // 【关键词】返回-列表-视图
+    public function view_business_keyword_list()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_list();
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_list_datatable(request()->all());
+    }
+
+    // 【关键词检测记录】返回-列表-视图
+    public function view_business_keyword_detect_record()
+    {
+        if(request()->isMethod('get')) return $this->repo->show_business_keyword_detect_record(request()->all());
+        else if(request()->isMethod('post')) return $this->repo->get_business_keyword_detect_record_datatable(request()->all());
+    }
+
+
+
+
+    public function operate_download_keyword_today()
+    {
+        $this->repo->operate_download_keyword_today();
+    }
+
+    public function operate_download_keyword_detect()
+    {
+        $this->repo->operate_download_keyword_detect(request()->all());
+    }
+
+
+
+
+    /*
      * 财务系统
      */
     // 返回【财务概览】视图

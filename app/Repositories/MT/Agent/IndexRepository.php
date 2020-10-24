@@ -12,8 +12,9 @@ use App\Models\MT\SEOKeywordDetectRecord;
 use App\Models\MT\Item;
 
 use App\Repositories\Common\CommonRepository;
+
 use Response, Auth, Validator, DB, Exception;
-use QrCode;
+use QrCode, Excel;
 
 class IndexRepository {
 
@@ -1088,6 +1089,347 @@ class IndexRepository {
 //            exit($e->getMessage());
             return response_fail([],$msg);
         }
+    }
+
+
+
+
+    // 【关键词】返回-查询-视图
+    public function view_business_keyword_search()
+    {
+        $me = Auth::guard('agent')->user();
+        $view_blade = 'mt.agent.entrance.business.keyword-search';
+        return view($view_blade)->with([
+            'operate'=>'search',
+            'operate_id'=>0,
+            'sidebar_business_active'=>'active',
+            'sidebar_business_keyword_search_active'=>'active'
+        ]);
+    }
+    // 【关键词】返回-查询-结果
+    public function operate_business_keyword_search($post_data)
+    {
+        $messages = [
+            'keywords.required' => '关键词不能为空',
+        ];
+        $v = Validator::make($post_data, [
+            'keywords' => 'required',
+        ], $messages);
+        if ($v->fails())
+        {
+            $messages = $v->errors();
+            return response_error([],$messages->first());
+        }
+
+        $mine = Auth::guard('agent')->user();
+        $mine_id = $mine->id;
+        if(!in_array($mine->usergroup,['Agent','Agent2'])) return response_error([],"你没有操作权限！");
+
+        $CommonRepository = new CommonRepository();
+
+
+        $keywords = $post_data['keywords'];
+
+        // 将回车换行替换成逗号
+        $keywords = str_replace(array("\r\n", "\r", "\n"), ",", $keywords);
+
+//        //将回车换行替换成逗号
+//        $kws = str_replace(",","\r\n", $keywords);
+//        $kws = str_replace(",","\r", $keywords);
+//        $kws = str_replace(",","\n", $keywords);
+
+        $keyword_array = explode(',' , $keywords );
+        // 去重空值
+        $keyword_array = array_filter( $keyword_array );
+        // 去重操作
+        $keyword_array = array_values(array_unique( $keyword_array ));
+
+        $KeywordLengthPriceIndexOptions = config('seo.KeywordLengthPriceIndexOptions');
+
+        $search_engine_keys = array_keys($KeywordLengthPriceIndexOptions);
+
+        //组成字符
+        $keywords = implode(',' , $keyword_array);
+
+        //
+        foreach ( $keyword_array as $key => $vo ){
+
+            // 去掉关键词前后的空额
+            //$vo = strtolower(trim($vo));
+            $vo = trim($vo);
+            $replace = array(" ","　","\n","\r","\t");
+            $vo = str_replace($replace, "", $vo);
+            $temp['keyword'] = $vo;
+            foreach ( $search_engine_keys as $vo2 )
+            {
+                $temp[$vo2] = 0;
+            }
+            $arr[] = $temp;
+        }
+
+        $list = $CommonRepository -> combKeywordSearchResults( $arr );
+        $view_blade = 'mt.admin.entrance.business.keyword-search-result';
+        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list])->__toString();
+//        $html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$list]);
+//        $html = response($html)->getContent();
+
+
+        $recommend_list = $CommonRepository->get_keyword_recommend($post_data);
+        $recommend_html = view($view_blade)->with(['keywords'=>$keywords,'items'=>$recommend_list])->__toString();
+
+        return response_success([
+            'list'=>json_encode($list),
+            'html'=>$html,
+            'recommend_list'=>json_encode($recommend_list),
+            'recommend_html'=>$recommend_html
+        ]);
+
+    }
+    // 【关键词】导出-查询-结果
+    public function operate_business_keyword_search_export($post_data)
+    {
+        $me = Auth::guard('agent')->user();
+        $list_decode = json_decode($post_data['list'],true);
+        $recommend_list_decode = json_decode($post_data['recommend_list'],true);
+
+        $cellData = array_merge($list_decode,$recommend_list_decode);
+        array_unshift($cellData,['关键词','百度PC(元/天)','百度移动(元/天)','搜狗(元/天)','360(元/天)','神马(元/天)','难度指数','难度指数','优化周期']);
+
+//        dd($cellData);
+
+        $title = '【关键词价格查询】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+
+        return false;
+    }
+
+
+
+
+    // 【关键词】返回-列表-视图
+    public function show_business_keyword_list()
+    {
+        $me = Auth::guard("agent")->user();
+
+        $data = [];
+
+        $query = SEOKeyword::where(['keywordstatus'=>'优化中','status'=>1])
+            ->whereHas('creator',function($query) use($me) { $query->where('pid',$me->id); });
+
+        // 优化关键词总数
+        $keyword_count = $query->count('*');
+        $data['keyword_count'] = $keyword_count;
+
+        // 检测关键词总数
+        $query_1 = $query->whereDate('detectiondate',date("Y-m-d"));
+        $keyword_detect_count = $query_1->count("*");
+        $data['keyword_detect_count'] = $keyword_detect_count;
+
+        // 已达标关键词总数
+        $query_2 = $query->whereDate('standarddate',date("Y-m-d"))->where('standardstatus','已达标');
+        $keyword_standard_count = $query_2->count("*");
+        $data['keyword_standard_count'] = $keyword_standard_count;
+
+        // 已达标关键词消费
+        $keyword_standard_fund_sum = $query_2->sum('latestconsumption');
+        $data['keyword_standard_fund_sum'] = $keyword_standard_fund_sum;
+
+
+        if($keyword_count > 0)
+        {
+            $data['keyword_standard_rate'] = round($data['keyword_standard_count']/$keyword_count*100)."％";
+        }
+        else $data['keyword_standard_rate'] = "--";
+
+
+//        $query_detect = SEOKeywordDetectRecord::whereDate('createtime',date("Y-m-d"))->where('rank','>',0)->where('rank','<=',10);
+//        $keyword_standard_fund_sum_1 = $query_detect->count('*');
+//        $data['keyword_standard_sum_by_detect'] = $keyword_standard_fund_sum_1;
+//
+//
+//        $query_expense = ExpenseRecord::whereDate('createtime',date("Y-m-d"));
+//        $keyword_standard_fund_sum_2 = $query_expense->count('*');
+//        $data['keyword_standard_sum_by_expense'] = $keyword_standard_fund_sum_2;
+
+        return view('mt.agent.entrance.business.keyword-list')
+            ->with([
+                'data'=>$data,
+                'sidebar_business_keyword_active'=>'active',
+                'sidebar_business_keyword_list_active'=>'active'
+            ]);
+    }
+    // 【关键词】返回-列表-数据
+    public function get_business_keyword_list_datatable($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+        $query = SEOKeyword::select('*')->with('creator')
+            ->whereHas('creator',function($query) use($me) { $query->where('pid',$me->id); });
+
+        if(!empty($post_data['searchengine'])) $query->where('searchengine', $post_data['searchengine']);
+        if(!empty($post_data['keyword'])) $query->where('keyword', 'like', "%{$post_data['keyword']}%");
+        if(!empty($post_data['website'])) $query->where('website', 'like', "%{$post_data['website']}%");
+        if(!empty($post_data['latest_ranking']))
+        {
+            if($post_data['latest_ranking'] = 1)
+            {
+                $query->where('latestranking', '>', 0)->where('latestranking', '<=', 10);
+            }
+        }
+        if(!empty($post_data['keywordstatus']))
+        {
+            if($post_data['keywordstatus'] == "默认")
+            {
+                $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']);
+            }
+            else if($post_data['keywordstatus'] == "全部")
+            {
+            }
+            else if($post_data['keywordstatus'] == "已删除")
+            {
+                $query->where('status','!=',1);
+            }
+            else
+            {
+                $query->where(['status'=>1,'keywordstatus'=>$post_data['keywordstatus']]);
+            }
+        }
+        else
+        {
+            $query->where(['status'=>1,'keywordstatus'=>['优化中','待审核']]);
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("id", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+    // 【关键词排名】返回-列表-视图
+    public function show_business_keyword_detect_record($post_data)
+    {
+        $id = $post_data["id"];
+        $keyword_data = SEOKeyword::select('*')->with('creator')->where('id',$id)->first();
+        return view('mt.agent.entrance.business.keyword-detect-record')
+            ->with(['data'=>$keyword_data]);
+    }
+    // 【关键词排名】返回-列表-数据
+    public function get_business_keyword_detect_record_datatable($post_data)
+    {
+        $me = Auth::guard("agent")->user();
+
+        $id  = $post_data["id"];
+        $query = SEOKeywordDetectRecord::select('*')->where('keywordid',$id);
+
+        if(!empty($post_data['rank']))
+        {
+            if($post_data['rank'] = 1)
+            {
+                $query->where('rank', '>', 0)->where('rank', '<=', 10);
+            }
+        }
+
+        $total = $query->count();
+
+        $draw  = isset($post_data['draw'])  ? $post_data['draw']  : 1;
+        $skip  = isset($post_data['start'])  ? $post_data['start']  : 0;
+        $limit = isset($post_data['length']) ? $post_data['length'] : 20;
+
+        if(isset($post_data['order']))
+        {
+            $columns = $post_data['columns'];
+            $order = $post_data['order'][0];
+            $order_column = $order['column'];
+            $order_dir = $order['dir'];
+
+            $field = $columns[$order_column]["data"];
+            $query->orderBy($field, $order_dir);
+        }
+        else $query->orderBy("createtime", "desc");
+
+        if($limit == -1) $list = $query->get();
+        else $list = $query->skip($skip)->take($limit)->get();
+
+        foreach ($list as $k => $v)
+        {
+            $list[$k]->encode_id = encode($v->id);
+        }
+//        dd($list->toArray());
+        return datatable_response($list, $draw, $total);
+    }
+
+
+
+
+    // 下载
+    public function operate_download_keyword_today()
+    {
+        $me = Auth::guard("agent")->user();
+        $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
+            ->whereDate('detectiondate',date("Y-m-d"))
+            ->whereHas('creator',function($query) use($me) { $query->where('pid',$me->id); })
+            ->orderby('id','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
+
+        $title = '【今日关键词】 - '.date('YmdHis');
+        Excel::create($title,function($excel) use ($cellData){
+            $excel->sheet('all', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+    }
+
+    // 下载
+    public function operate_download_keyword_detect($post_data)
+    {
+//        echo 0;
+        $keyword_id = $post_data["id"];
+        $keyword = SEOKeyword::find($keyword_id);
+        if(!$keyword) return response_fail([],'关键词不存在，请重试！');
+
+        $cellData = SEOKeywordDetectRecord::select('detect_time','rank')
+            ->where('keywordid',$keyword_id)
+            ->orderby('detect_time','desc')
+            ->get()
+            ->toArray();
+        array_unshift($cellData,['检测时间','排名']);
+
+        $title = "【关键词】{$keyword->keyword}-{$keyword->searchengine}-{$keyword->price}元 - ".date('YmdHis');
+        $engine = $keyword->searchengine;
+        Excel::create($title,function($excel) use ($cellData,$keyword,$engine){
+            $excel->sheet($engine, function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
+        return response_success([]);
     }
 
 

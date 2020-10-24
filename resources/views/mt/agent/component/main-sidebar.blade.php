@@ -50,6 +50,21 @@
             </li>
 
 
+            {{--关键词管理--}}
+            <li class="header">关键词管理</li>
+
+            <li class="treeview {{ $sidebar_business_keyword_list_active or '' }}">
+                <a href="{{ url('/agent/business/keyword-list') }}">
+                    <i class="fa fa-text-width"></i><span>关键词列表</span>
+                </a>
+            </li>
+            <li class="treeview {{ $sidebar_business_keyword_search_active or '' }}">
+                <a href="{{ url('/agent/business/keyword-search') }}">
+                    <i class="fa fa-search"></i><span>关键词查询</span>
+                </a>
+            </li>
+
+
 
 
             {{--财务管理--}}
