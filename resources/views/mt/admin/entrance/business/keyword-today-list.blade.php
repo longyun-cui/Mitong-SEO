@@ -1156,8 +1156,6 @@
                 }
             });
         });
-
-
         // 【启用】
         $(".item-main-body").on('click', ".item-enable-submit", function() {
             var that = $(this);
@@ -1272,7 +1270,8 @@
                     else
                     {
                         var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                        TableDatatablesAjax_inner.init($keyword_id);
+//                        TableDatatablesAjax_inner.init($keyword_id);
+                        $('#datatable_ajax_inner').DataTable().ajax.reload(null,false);
                     }
                 },
                 'json'
@@ -1333,7 +1332,8 @@
                                 });
 
                                 var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
+//                                TableDatatablesAjax_inner.init($keyword_id);
+                                $('#datatable_ajax_inner').DataTable().ajax.reload();
                             }
                         },
                         'json'
@@ -1407,7 +1407,8 @@
                         });
 
                         var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                        TableDatatablesAjax_inner.init($keyword_id);
+//                        TableDatatablesAjax_inner.init($keyword_id);
+                        $('#datatable_ajax_inner').DataTable().ajax.reload(null,false);
                     }
                 },
                 'json'

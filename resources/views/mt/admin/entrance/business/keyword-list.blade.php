@@ -1269,7 +1269,7 @@
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
-                                $('#datatable_ajax').DataTable().ajax.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload(null,false);
                             }
                         },
                         'json'
@@ -1304,7 +1304,7 @@
                             if(!data.success) layer.msg(data.msg);
                             else
                             {
-                                $('#datatable_ajax').DataTable().ajax.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload(null,false);
                             }
                         },
                         'json'
@@ -1362,7 +1362,7 @@
                             {
                                 layer.msg(data.msg);
 //                                location.reload();
-                                $('#datatable_ajax').DataTable().ajax.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload(null,false);
                             }
                         }
                     };
@@ -1417,7 +1417,7 @@
                             else
                             {
 //                                location.reload();
-                                $('#datatable_ajax').DataTable().ajax.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload(null,false);
                             }
                         },
                         'json'
@@ -1447,7 +1447,7 @@
                             else
                             {
 //                                location.reload();
-                                $('#datatable_ajax').DataTable().ajax.reload();
+                                $('#datatable_ajax').DataTable().ajax.reload(null,false);
                             }
                         },
                         'json'
@@ -1647,7 +1647,8 @@
                     else
                     {
                         var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                        TableDatatablesAjax_inner.init($keyword_id);
+//                        TableDatatablesAjax_inner.init($keyword_id);
+                        $('#datatable_ajax_inner').DataTable().ajax.reload(null,false);
                     }
                 },
                 'json'
@@ -1708,7 +1709,8 @@
                                 });
 
                                 var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                                TableDatatablesAjax_inner.init($keyword_id);
+//                                TableDatatablesAjax_inner.init($keyword_id);
+                                $('#datatable_ajax_inner').DataTable().ajax.reload();
                             }
                         },
                         'json'
@@ -1782,7 +1784,8 @@
                         });
 
                         var $keyword_id = $("#set-rank-bulk-submit").attr("data-keyword-id");
-                        TableDatatablesAjax_inner.init($keyword_id);
+//                        TableDatatablesAjax_inner.init($keyword_id);
+                        $('#datatable_ajax_inner').DataTable().ajax.reload(null,false);
                     }
                 },
                 'json'
