@@ -4637,11 +4637,19 @@ class IndexRepository {
     // 下载
     public function operate_download_keyword_today()
     {
-        $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
+        $cellData = SEOKeyword::select('keyword','createusername','website','searchengine','price','detectiondate','latestranking')
             ->whereDate('detectiondate',date("Y-m-d"))->orderby('id','desc')
             ->get()
             ->toArray();
-        array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
+        foreach($cellData as $k => $v)
+        {
+            if($v['searchengine'] == "baidu") $v['searchengine'] = '百度PC';
+            else if($v['searchengine'] == "baidu_mobile") $v['searchengine'] = '百度移动';
+            else if($v['searchengine'] == "sougou") $v['searchengine'] = '搜狗';
+            else if($v['searchengine'] == "360") $v['searchengine'] = '360';
+            else if($v['searchengine'] == "shenma") $v['searchengine'] = '神马';
+        }
+        array_unshift($cellData,['关键词','客户','站点','搜索引擎','价格','检测时间','排名']);
 
         $title = '【今日关键词】 - '.date('YmdHis');
         Excel::create($title,function($excel) use ($cellData){

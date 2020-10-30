@@ -162,7 +162,7 @@ desired effect
 {{--<script src="https://cdn.bootcss.com/Swiper/4.2.2/js/swiper.min.js"></script>--}}
 <script src="{{ asset('/lib/js/swiper-4.2.2.min.js') }}"></script>
 
-<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+{{--<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>--}}
 
 
 <script src="{{ asset('/js/admin/index.js') }}"></script>
