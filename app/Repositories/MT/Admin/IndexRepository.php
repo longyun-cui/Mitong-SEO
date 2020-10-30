@@ -4641,7 +4641,7 @@ class IndexRepository {
             ->whereDate('detectiondate',date("Y-m-d"))->orderby('id','desc')
             ->get()
             ->toArray();
-        foreach($cellData as $k => $v)
+        foreach($cellData as $v)
         {
             if($v['searchengine'] == "baidu") $v['searchengine'] = '百度PC';
             else if($v['searchengine'] == "baidu_mobile") $v['searchengine'] = '百度移动';
