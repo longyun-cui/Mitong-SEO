@@ -4641,13 +4641,13 @@ class IndexRepository {
             ->whereDate('detectiondate',date("Y-m-d"))->orderby('id','desc')
             ->get()
             ->toArray();
-        foreach($cellData as $v)
+        foreach($cellData as $k => $v)
         {
-            if($v['searchengine'] == "baidu") $v['searchengine'] = '百度PC';
-            else if($v['searchengine'] == "baidu_mobile") $v['searchengine'] = '百度移动';
-            else if($v['searchengine'] == "sougou") $v['searchengine'] = '搜狗';
-            else if($v['searchengine'] == "360") $v['searchengine'] = '360';
-            else if($v['searchengine'] == "shenma") $v['searchengine'] = '神马';
+            if($v['searchengine'] == "baidu") $cellData[$k]['searchengine'] = '百度PC';
+            else if($v['searchengine'] == "baidu_mobile") $cellData[$k]['searchengine'] = '百度移动';
+            else if($v['searchengine'] == "sougou") $cellData[$k]['searchengine'] = '搜狗';
+            else if($v['searchengine'] == "360") $cellData[$k]['searchengine'] = '360';
+            else if($v['searchengine'] == "shenma") $cellData[$k]['searchengine'] = '神马';
         }
         array_unshift($cellData,['关键词','客户','站点','搜索引擎','价格','检测时间','排名']);
 
