@@ -61,7 +61,7 @@
 @section('custom-style')
     <style>
         body.login-page {
-            background: url(/seo/img/bg_login.png) no-repeat center top;
+            background: url(/seo/img/bg_login.jpg) no-repeat center top;
             width: 100%;
             height: 100%;
             min-width: 375px;

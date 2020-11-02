@@ -432,6 +432,7 @@ if(!function_exists('get_html_img')){
 
 
 
+
 /**
  * 上传文件
  */
@@ -479,9 +480,7 @@ EOF;
         return $returnData;
     }
 }
-/**
- * 上传文件
- */
+
 if (!function_exists('upload_storage')) {
     function upload_storage($file, $filename = '', $saveFolder = 'research/common')
     {
@@ -528,9 +527,7 @@ EOF;
         return $returnData;
     }
 }
-/**
- * 上传文件
- */
+
 if (!function_exists('upload_file_storage')) {
     function upload_file_storage($file, $saveFolder = 'common', $patch = 'research', $filename = '')
     {
@@ -579,9 +576,7 @@ EOF;
         return $returnData;
     }
 }
-/**
- * 上传文件
- */
+
 if (!function_exists('upload_s')) {
     function upload_s($file, $saveFolder = 'common', $patch = 'research', $filename = '')
     {
@@ -678,6 +673,9 @@ if (! function_exists('storage_path')) {
         return app('path.storage').($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 }
+
+
+
 
 /*检查是否是手机号码*/
 if(! function_exists('isMobile'))
