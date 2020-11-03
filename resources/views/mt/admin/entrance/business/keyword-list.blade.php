@@ -759,11 +759,13 @@
                         'orderable': true,
                         render: function(data, type, row, meta) {
                             var $gif = '';
-                            if(data < row.initialranking)
+                            var $initialranking = row.initialranking;
+//                            if($initialranking == 0) $initialranking = 115;
+                            if(data < $initialranking)
                             {
                                 $gif = '<img src="/seo/img/up.gif" style="vertical-align:middle;float:right;">';
                             }
-                            else if(data > row.initialranking)
+                            else if(data > $initialranking)
                             {
                                 $gif = '<img src="/seo/img/down.gif" style="vertical-align:middle;float:right;">';
                             }
