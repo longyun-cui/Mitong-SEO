@@ -1452,13 +1452,21 @@ class IndexRepository {
         $me = Auth::guard('client')->user();
         if($me->usertype != "sub") return response_error([],"你没有操作权限!");
 
-        $cellData = SEOKeyword::select('keyword','searchengine','price','detectiondate','latestranking')
+        $cellData = SEOKeyword::select('keyword','website','searchengine','price','latestranking','detectiondate')
             ->where('createuserid',$me->id)
             ->whereDate('detectiondate',date("Y-m-d"))
             ->orderby('id','desc')
             ->get()
             ->toArray();
-        array_unshift($cellData,['关键词','搜索引擎','价格','检测时间','排名']);
+        foreach($cellData as $k => $v)
+        {
+            if($v['searchengine'] == "baidu") $cellData[$k]['searchengine'] = '百度PC';
+            else if($v['searchengine'] == "baidu_mobile") $cellData[$k]['searchengine'] = '百度移动';
+            else if($v['searchengine'] == "sougou") $cellData[$k]['searchengine'] = '搜狗';
+            else if($v['searchengine'] == "360") $cellData[$k]['searchengine'] = '360';
+            else if($v['searchengine'] == "shenma") $cellData[$k]['searchengine'] = '神马';
+        }
+        array_unshift($cellData,['关键词','站点','搜索引擎','价格','排名','检测时间']);
 
         $title = '【今日关键词】 - '.date('YmdHis');
         Excel::create($title,function($excel) use ($cellData){

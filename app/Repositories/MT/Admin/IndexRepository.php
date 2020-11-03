@@ -1315,10 +1315,10 @@ class IndexRepository {
             ->withCount([
                 'keywords'=>function ($query) { $query->where('status',1)->whereIn('keywordstatus',['优化中','待审核']); },
                 'keywords as standard_today_count'=>function ($query) {
-                    $query->where('standardstatus','已达标');
+                    $query->where('status',1)->whereDate('detectiondate',date("Y-m-d"))->where('standardstatus','已达标');
                 },
                 'keywords as consumption_today_sum'=>function ($query) {
-                    $query->select(DB::raw("sum(price) as consumption_today_sum"))->where('standardstatus','已达标');
+                    $query->select(DB::raw("sum(price) as consumption_today_sum"))->where('status',1)->whereDate('detectiondate',date("Y-m-d"))->where('standardstatus','已达标');
                 },
                 'keywords as standard_all_sum'=>function ($query) {
                     $query->select(DB::raw("sum(standarddays) as standard_all_sum"));
