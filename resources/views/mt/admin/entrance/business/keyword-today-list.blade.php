@@ -570,7 +570,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "搜索引擎",
+                        "title": "搜索<br>引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -584,7 +584,7 @@
                     },
                     {
                         "width": "72px",
-                        "title": "创建时间",
+                        "title": "创建<br>时间",
                         "data": "createtime",
                         'orderable': false,
                         render: function(data, type, row, meta) {
@@ -607,16 +607,16 @@
                     },
                     {
                         "width": "40px",
-                        "title": "初始 排名",
+                        "title": "初始<br>排名",
                         "data": "initialranking",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }
                     },
                     {
                         "width": "64px",
-                        "title": "最新排名",
+                        "title": "最新<br>排名",
                         "data": "latestranking",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -635,7 +635,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "最新 消费",
+                        "title": "最新<br>消费",
                         "data": "latestconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -645,7 +645,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "达标 天数",
+                        "title": "达标<br>天数",
                         "data": "standarddays",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -655,7 +655,7 @@
                     },
                     {
                         "width": "40px",
-                        "title": "累计 消费",
+                        "title": "累计<br>消费",
                         "data": "totalconsumption",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -665,7 +665,7 @@
                     },
                     {
                         "width": "72px",
-                        "title": "检测日期",
+                        "title": "检测<br>日期",
                         "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {

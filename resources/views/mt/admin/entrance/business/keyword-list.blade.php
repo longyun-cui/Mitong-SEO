@@ -747,7 +747,7 @@
                         "width": "40px",
                         "title": "初始<br>排名",
                         "data": "initialranking",
-                        'orderable': false,
+                        'orderable': true,
                         render: function(data, type, row, meta) {
                             return data;
                         }

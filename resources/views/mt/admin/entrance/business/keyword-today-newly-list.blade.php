@@ -476,7 +476,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "搜索引擎",
+                        "title": "搜索<br>引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {

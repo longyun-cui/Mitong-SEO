@@ -481,7 +481,7 @@
                     },
                     {
                         "width": "64px",
-                        "title": "搜索引擎",
+                        "title": "搜索<br>引擎",
                         "data": "searchengine",
                         'orderable': true,
                         render: function(data, type, row, meta) {
@@ -675,7 +675,7 @@
                     },
                     {
                         "width": "72px",
-                        "title": "检测日期",
+                        "title": "检测<br>日期",
                         "data": "detectiondate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
