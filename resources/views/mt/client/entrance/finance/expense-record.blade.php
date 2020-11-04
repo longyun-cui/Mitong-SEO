@@ -210,8 +210,8 @@
                     },
                     {
                         "width": "192px",
-                        "title": "记录时间",
-                        "data": "createtime",
+                        "title": "消费时间",
+                        "data": "standarddate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
                             return data;
