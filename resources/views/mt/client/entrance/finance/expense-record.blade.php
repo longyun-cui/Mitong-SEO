@@ -214,7 +214,12 @@
                         "data": "standarddate",
                         'orderable': false,
                         render: function(data, type, row, meta) {
-                            return data;
+//                            return data;
+                            var $date = new Date(data);
+                            var $year = $date.getFullYear();
+                            var $month = ('00'+($date.getMonth()+1)).slice(-2);
+                            var $day = ('00'+($date.getDate())).slice(-2);
+                            return $year+'-'+$month+'-'+$day;
                         }
                     },
                     {
