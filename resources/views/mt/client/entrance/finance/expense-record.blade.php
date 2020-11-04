@@ -189,13 +189,16 @@
                         render: function(data, type, row, meta) {
                             if(row.keyword == null) return '未知';
                             else {
-                                var $engine = row.keyword.searchengine;
-                                if($engine = "baidu") return '百度PC';
-                                else if($engine = "baidu_mobile") return '百度移动';
-                                else if($engine = "sougou") return '搜狗';
-                                else if($engine = "360") return '360';
-                                else if($engine = "shenma") return '神马';
-                                else return $engine;
+                                if(row.keyword == null) return '未知';
+                                else {
+                                    var $engine = row.keyword.searchengine;
+                                    if($engine == "baidu") return '百度PC';
+                                    else if($engine == "baidu_mobile") return '百度移动';
+                                    else if($engine == "sougou") return '搜狗';
+                                    else if($engine == "360") return '360';
+                                    else if($engine == "shenma") return '神马';
+                                    else return $engine;
+                                }
                             }
                         }
                     },
