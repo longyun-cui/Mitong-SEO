@@ -1694,7 +1694,7 @@ class IndexRepository {
     public function get_finance_expense_record_datatable($post_data)
     {
         $client_id = Auth::guard("client")->user()->id;
-        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
+        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime','standarddate')
             ->with('user','site','keyword')
             ->where('ownuserid',$client_id);
 

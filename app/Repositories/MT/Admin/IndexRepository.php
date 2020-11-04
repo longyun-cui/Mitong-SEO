@@ -4392,7 +4392,7 @@ class IndexRepository {
     {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = ExpenseRecord::select('*')
-//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
+//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime','standarddate')
             ->with('user','site','keyword');
 
         if(!empty($post_data['standarddate']))
@@ -4433,7 +4433,7 @@ class IndexRepository {
     {
         $admin_id = Auth::guard("admin")->user()->id;
         $query = ExpenseRecord::select('*')
-//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime')
+//        $query = ExpenseRecord::select('id','siteid','keywordid','ownuserid','price','createtime','standarddate')
             ->with('user','site','keyword');
 
         if(!empty($post_data['createtime']))
