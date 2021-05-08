@@ -4352,7 +4352,7 @@ class IndexRepository {
         if(!empty($post_data['receiver']))
         {
             $receiver = $post_data['receiver'];
-            $query->whereHas('user', function ($query1) use($receiver) { $query1->where('username', 'like', $receiver); } );
+            $query->whereHas('user', function ($query1) use($receiver) { $query1->where('username', 'like', "%{$receiver}%"); } );
         }
 
 

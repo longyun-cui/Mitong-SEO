@@ -1107,7 +1107,7 @@ class IndexRepository {
         if(!$site) return response_error([],"该站点不存在，刷新页面试试！");
         if($site->createuserid != $me->id) return response_error([],"该站点不是你的，你无权操作！");
 
-        $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where('keywordstatus',"待审核")->sum('price');
+        $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where(['keywordstatus'=>'待审核','status'=>1])->sum('price');
         $frozen_amount = ($my_to_review_keyword_price_sum + $cart->price) * 30;
         if($frozen_amount > $me->fund_available) return response_error([],"可用余额小于待审核关键词冻结资金，请先充值！");
 
@@ -1210,6 +1210,7 @@ class IndexRepository {
         try
         {
             $cart_ids = $post_data["bulk_cart_id"];
+            $cart_sum = 0;
             foreach($cart_ids as $key => $cart_id)
             {
                 if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该待选关键词不存在，刷新页面试试！");
@@ -1217,10 +1218,20 @@ class IndexRepository {
                 $cart = SEOCart::find($cart_id);
                 if($cart->createuserid != $me->id) return response_error([],"该待选关键词不是你的，你无权操作！");
 
+                $cart_sum += $cart->price;
+            }
 
-                $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where('keywordstatus',"待审核")->sum('price');
-                $frozen_amount = ($my_to_review_keyword_price_sum + $cart->price) * 30;
-                if($frozen_amount > $me->fund_available) return response_error([],"可用余额小于待审核关键词冻结资金，请先充值！");
+            $my_to_review_keyword_price_sum = SEOKeyword::where('createuserid',$me->id)->where(['keywordstatus'=>'待审核','status'=>1])->sum('price');
+            $frozen_amount = ($my_to_review_keyword_price_sum + $cart_sum) * 30;
+            if($frozen_amount > $me->fund_available) return response_error([],"可用余额小于待审核关键词冻结资金，请先充值！");
+//            dd($frozen_amount);
+
+            foreach($cart_ids as $key => $cart_id)
+            {
+                if(intval($cart_id) !== 0 && !$cart_id) return response_error([],"该待选关键词不存在，刷新页面试试！");
+
+                $cart = SEOCart::find($cart_id);
+                if($cart->createuserid != $me->id) return response_error([],"该待选关键词不是你的，你无权操作！");
 
 
                 $current_time = date('Y-m-d H:i:s');
