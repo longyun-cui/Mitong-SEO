@@ -790,7 +790,7 @@ class IndexRepository {
             $arr[] = $temp;
         }
 
-        $list = $CommonRepository -> combKeywordSearchResults( $arr );
+        $list = $CommonRepository -> combKeywordSearchResults_new( $arr );
 
 
         $mine = Auth::guard('client')->user();
