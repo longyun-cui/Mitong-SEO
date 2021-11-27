@@ -351,6 +351,7 @@ class CommonRepository {
              * by longyun 2021-08-04
              */
 
+//            dd($keyword_arr);
             $data_all = [];
             foreach ($keyword_arr as $keyword) {
 
@@ -364,6 +365,7 @@ class CommonRepository {
                 $data_all[] = $data_index;
 
             }
+//            dd($data_all);
 
 
             foreach ($vo_list as $key => &$vo) {
@@ -439,13 +441,16 @@ class CommonRepository {
                         if ($vo_kd['vmin'] <= $baiduindex && $baiduindex <= $vo_kd['vmax']) {
                             $difficulty_index = $vo_kd['quotavalue'];
                         }
+                        else $difficulty_index = 5;
                     }
 
                     foreach ($KeywordOptimizationCycle4BaiduIndexOptions as $vo_ko) {
                         if ($vo_ko['vmin'] <= $baiduindex && $baiduindex <= $vo_ko['vmax']) {
                             $optimization_cycle = $vo_ko['quotavalue'];
                         }
+                        else $optimization_cycle = "3-6/月";
                     }
+//                    dd($KeywordOptimizationCycle4BaiduIndexOptions);
                 } else {
                     foreach ($KeywordDifficultyIndexOptions as $vo_kd) {
                         if ($vo_kd['vmin'] <= $len && $len <= $vo_kd['vmax']) {
