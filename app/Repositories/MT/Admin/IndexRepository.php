@@ -2399,6 +2399,7 @@ class IndexRepository {
             if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
             {
 
+                $keyword_owner->fund_expense_daily = $keyword_owner->fund_expense_daily + $keyword_price;
                 $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
                 $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
                 $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
@@ -2507,6 +2508,7 @@ class IndexRepository {
 
                 if(($keyword_status_original == '待审核') && ($keyword_status == '优化中'))
                 {
+                    $keyword_owner->fund_expense_daily = $keyword_owner->fund_expense_daily + $keyword_price;
                     $keyword_owner->fund_available = $keyword_owner->fund_available - ($keyword_price * 30);
                     $keyword_owner->fund_frozen = $keyword_owner->fund_frozen + ($keyword_price * 30);
                     $keyword_owner->fund_frozen_init = $keyword_owner->fund_frozen_init + ($keyword_price * 30);
